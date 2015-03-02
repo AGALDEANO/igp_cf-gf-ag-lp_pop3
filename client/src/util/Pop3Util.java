@@ -1,17 +1,17 @@
 package util;
-import base.Server;
+
 public class Pop3Util
 {
 	public static String getrequestAPOP(String username,String password)
 	{
-		String request="APOP"+username+" "+password;
-		return request;
+        String request = "APOP " + username + " " + password;
+        return request;
 		
 	}
 	public static String getrequestRETR(int numeroMessage)
 	{
-		String request="RETR"+numeroMessage;
-		return request;
+        String request = "RETR " + numeroMessage;
+        return request;
 	}
 	public static String getrequestQUIT()
 	{
