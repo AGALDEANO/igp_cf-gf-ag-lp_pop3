@@ -4,9 +4,9 @@ package base;
  * Created by alexandreg on 02/03/2015.
  */
 public enum State {
-    CLOSED(State.AUTH, State.TRANSACTION),
-    AUTH(State.CLOSED),
-    TRANSACTION(State.TRANSACTION);
+    AUTH(),
+    TRANSACTION(State.AUTH),
+    CLOSED(State.AUTH, State.TRANSACTION);
     private State[] previous;
 
     private State(State... previous) {
