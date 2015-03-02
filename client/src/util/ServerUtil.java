@@ -1,6 +1,7 @@
 package util;
 
 import base.Server;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,18 +13,19 @@ import java.util.ArrayList;
  * Created by alexandreg on 02/03/2015.
  */
 public class ServerUtil {
+    private static Logger logger = Logger.getLogger(ServerUtil.class.getName());
     private static ServerUtil instance;
     private Server server;
     private OutputStream out;
     private InputStream in;
-
     private ServerUtil(Server server) {
         this.server = server;
         try {
             this.out = server.getSocket().getOutputStream();
             this.in = server.getSocket().getInputStream();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.fatal(e.toString());
+            System.exit(-1);
         }
     }
 
@@ -46,14 +48,18 @@ public class ServerUtil {
         try {
             return new String(data, "ascii");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error(e.toString());
         }
         return null;
     }
 
+    public Server getServer() {
+        return server;
+    }
+
     public void send(byte[] data) throws IOException {
-        server.getSocket().getOutputStream().write(data);
-        server.getSocket().getOutputStream().flush();
+        out.write(data);
+        out.flush();
     }
 
     public void send(String str) throws IOException {
@@ -65,6 +71,7 @@ public class ServerUtil {
         int i;
         i = in.read();
         while (i != -1) {
+            logger.debug(String.format("data : %x", (byte) i));
             bytes.add((byte) i);
         }
         byte[] array = new byte[bytes.size()];

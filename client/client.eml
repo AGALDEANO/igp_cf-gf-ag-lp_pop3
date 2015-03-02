@@ -3,4 +3,7 @@
 	<output-test url="file://$MODULE_DIR$/../out/test/client"/>
 	<exclude-output/>
 	<contentEntry url="file://$MODULE_DIR$"/>
+	<levels>
+		<level name="log4j" value="project"/>
+	</levels>
 </component>
