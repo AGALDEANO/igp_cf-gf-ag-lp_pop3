@@ -3,6 +3,7 @@ package base;
 import exceptions.BadResponseServerException;
 import exceptions.ErrorResponseServerException;
 import exceptions.UnallowedActionClientException;
+import org.apache.log4j.Logger;
 import util.Pop3Util;
 import util.ServerUtil;
 
@@ -12,21 +13,32 @@ import java.io.IOException;
  * Created by alexandreg on 02/03/2015.
  */
 public class Client {
+    private static Logger log = Logger.getLogger(
+            Client.class.getName());
     private State state;
     private ServerUtil serverUtil;
-    private int unreadMessage;
+    private int unreadMessage = 0;
 
     public Client() {
     }
 
-    public Boolean connexion(String hostname, int port) {
+    /**
+     * Attempts to connect at the hostname
+     * with the port specified
+     * Return false if it failed
+     *
+     * @param hostname
+     * @param port
+     * @return
+     */
+    public Boolean connexionAction(String hostname, int port) throws UnallowedActionClientException {
         if (state == null || State.CLOSED.equals(state)) {
             connexionRequest(hostname, port);
             if (connexionResponse()) {
                 state = State.AUTH;
                 return Boolean.TRUE;
             }
-        }
+        } else throw new UnallowedActionClientException();
         return Boolean.FALSE;
     }
 
@@ -39,9 +51,9 @@ public class Client {
             String message = getResponse();
             return Boolean.TRUE;
         } catch (ErrorResponseServerException e) {
-            e.printStackTrace();
+            log.warn(e.toString());
         } catch (BadResponseServerException e) {
-            e.printStackTrace();
+            log.error(e.toString());
         }
         return Boolean.FALSE;
     }
@@ -55,7 +67,7 @@ public class Client {
      * @param password
      * @return
      */
-    public Boolean signIn(String username, String password) {
+    public Boolean signInAction(String username, String password) throws UnallowedActionClientException {
         if (state.equals(State.AUTH)) {
             signInRequest(username, password);
             unreadMessage = signInResponse();
@@ -63,16 +75,18 @@ public class Client {
                 state.changeTo(State.TRANSACTION);
                 return Boolean.TRUE;
             }
-        } else new UnallowedActionClientException();
+        } else throw new UnallowedActionClientException();
 
         return Boolean.FALSE;
     }
 
     private void signInRequest(String username, String password) {
         try {
-            serverUtil.send(Pop3Util.getrequestAPOP(username, password));
+            String request = Pop3Util.getrequestAPOP(username, password);
+            serverUtil.send(request);
+            log.info("Request : " + request);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn(e.toString());
         }
     }
 
@@ -93,9 +107,9 @@ public class Client {
             // message = N
             return Integer.parseInt(message);
         } catch (ErrorResponseServerException e) {
-            e.printStackTrace();
+            log.warn(e.toString());
         } catch (BadResponseServerException e) {
-            e.printStackTrace();
+            log.error(e.toString());
         }
         return -1;
     }
@@ -106,7 +120,7 @@ public class Client {
      *
      * @return
      */
-    public Boolean quit() {
+    public Boolean quitAction() {
         if (!state.equals(State.CLOSED)) {
             quitRequest();
             if (quitResponse()) {
@@ -120,15 +134,58 @@ public class Client {
 
     public void quitRequest() {
         try {
-            serverUtil.send(Pop3Util.getrequestQUIT());
+            String request = Pop3Util.getrequestQUIT();
+            serverUtil.send(request);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn(e.toString());
         }
     }
 
     public Boolean quitResponse() {
-
+        try {
+            String message = getResponse();
+            return Boolean.TRUE;
+        } catch (ErrorResponseServerException e) {
+            log.warn(e.toString());
+        } catch (BadResponseServerException e) {
+            log.error(e.toString());
+        }
         return Boolean.FALSE;
+    }
+
+
+    /**
+     * Return true if quit success
+     * else return false
+     *
+     * @return
+     */
+    public String retreiveAction(int i) throws UnallowedActionClientException {
+        if (state.equals(State.TRANSACTION) && i > 0 && i <= unreadMessage) {
+            retreiveRequest(i);
+            return retreiveResponse();
+        } else throw new UnallowedActionClientException();
+    }
+
+    public void retreiveRequest(int i) {
+        try {
+            String request = Pop3Util.getrequestRETR(i);
+            serverUtil.send(request);
+        } catch (IOException e) {
+            log.warn(e.toString());
+        }
+    }
+
+    public String retreiveResponse() {
+        try {
+            String message = getResponse();
+            return message;
+        } catch (ErrorResponseServerException e) {
+            log.warn(e.toString());
+        } catch (BadResponseServerException e) {
+            log.error(e.toString());
+        }
+        return null;
     }
 
     private String getResponse() throws ErrorResponseServerException, BadResponseServerException {
@@ -136,9 +193,10 @@ public class Client {
         try {
             response = serverUtil.receive();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn(e.toString());
         }
         String str = ServerUtil.bytesToAsciiString(response);
+        log.info("Response : " + str);
         if (str.startsWith(ServerUtil.errorResponse())) {
             String message = str.split(ServerUtil.errorResponse() + ' ', 2)[1];
             throw new ErrorResponseServerException(message);
