@@ -1,5 +1,8 @@
 package base;
 
+import exceptions.BadResponseServerException;
+import exceptions.ErrorResponseServerException;
+import exceptions.UnallowedActionClientException;
 import util.Pop3Util;
 import util.ServerUtil;
 
@@ -11,79 +14,139 @@ import java.io.IOException;
 public class Client {
     private State state;
     private ServerUtil serverUtil;
+    private int unreadMessage;
 
-    public Client(String hostname, int port) {
+    public Client() {
+    }
+
+    public Boolean connexion(String hostname, int port) {
+        if (state == null || State.CLOSED.equals(state)) {
+            connexionRequest(hostname, port);
+            if (connexionResponse()) {
+                state = State.AUTH;
+                return Boolean.TRUE;
+            }
+        }
+        return Boolean.FALSE;
+    }
+
+    private void connexionRequest(String hostname, int port) {
         serverUtil = ServerUtil.getInstance(new Server(hostname, port));
     }
 
-    public void signIn(String username, String password) throws IOException {
+    private Boolean connexionResponse() {
+        try {
+            String message = getResponse();
+            return Boolean.TRUE;
+        } catch (ErrorResponseServerException e) {
+            e.printStackTrace();
+        } catch (BadResponseServerException e) {
+            e.printStackTrace();
+        }
+        return Boolean.FALSE;
+    }
+
+    /**
+     * Attempts to sign in to the server
+     * return true if it succeed, else
+     * return false
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    public Boolean signIn(String username, String password) {
         if (state.equals(State.AUTH)) {
+            signInRequest(username, password);
+            unreadMessage = signInResponse();
+            if (unreadMessage > -1) {
+                state.changeTo(State.TRANSACTION);
+                return Boolean.TRUE;
+            }
+        } else new UnallowedActionClientException();
+
+        return Boolean.FALSE;
+    }
+
+    private void signInRequest(String username, String password) {
+        try {
             serverUtil.send(Pop3Util.getrequestAPOP(username, password));
-        } else new UnallowedActionClientException();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void quit() throws IOException {
+    /**
+     * If sign in failed return -1
+     * return the amount of unread message
+     *
+     * @return
+     * @throws IOException
+     */
+    private int signInResponse() {
+        try {
+            String message = getResponse();
+            // message = +OK XXX’s maildrop has N messages (YYY bytes)
+            message = message.split("has ", 2)[1];
+            // message = N messages (YYY bytes)
+            message = message.split(" ", 2)[0];
+            // message = N
+            return Integer.parseInt(message);
+        } catch (ErrorResponseServerException e) {
+            e.printStackTrace();
+        } catch (BadResponseServerException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * Return true if quit success
+     * else return false
+     *
+     * @return
+     */
+    public Boolean quit() {
         if (!state.equals(State.CLOSED)) {
-            serverUtil.send(Pop3Util.getrequestQUIT());
+            quitRequest();
+            if (quitResponse()) {
+                state.changeTo(State.CLOSED);
+                return Boolean.TRUE;
+            }
         } else new UnallowedActionClientException();
-    }
-}
 
-class UnallowedActionClientException extends Exception {
-    /**
-     * Constructs a new exception with {@code null} as its detail message.
-     * The cause is not initialized, and may subsequently be initialized by a
-     * call to {@link #initCause}.
-     */
-    public UnallowedActionClientException() {
-        super();
+        return Boolean.FALSE;
     }
 
-    /**
-     * Constructs a new exception with the specified detail message.  The
-     * cause is not initialized, and may subsequently be initialized by
-     * a call to {@link #initCause}.
-     *
-     * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
-     */
-    public UnallowedActionClientException(String message) {
-        super(message);
+    public void quitRequest() {
+        try {
+            serverUtil.send(Pop3Util.getrequestQUIT());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    /**
-     * Constructs a new exception with the specified detail message and
-     * cause.  <p>Note that the detail message associated with
-     * {@code cause} is <i>not</i> automatically incorporated in
-     * this exception's detail message.
-     *
-     * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
-     * @param cause   the cause (which is saved for later retrieval by the
-     *                {@link #getCause()} method).  (A <tt>null</tt> value is
-     *                permitted, and indicates that the cause is nonexistent or
-     *                unknown.)
-     * @since 1.4
-     */
-    public UnallowedActionClientException(String message, Throwable cause) {
-        super(message, cause);
+    public Boolean quitResponse() {
+
+        return Boolean.FALSE;
     }
 
-    /**
-     * Constructs a new exception with the specified cause and a detail
-     * message of <tt>(cause==null ? null : cause.toString())</tt> (which
-     * typically contains the class and detail message of <tt>cause</tt>).
-     * This constructor is useful for exceptions that are little more than
-     * wrappers for other throwables (for example, {@link
-     * java.security.PrivilegedActionException}).
-     *
-     * @param cause the cause (which is saved for later retrieval by the
-     *              {@link #getCause()} method).  (A <tt>null</tt> value is
-     *              permitted, and indicates that the cause is nonexistent or
-     *              unknown.)
-     * @since 1.4
-     */
-    public UnallowedActionClientException(Throwable cause) {
-        super(cause);
+    private String getResponse() throws ErrorResponseServerException, BadResponseServerException {
+        byte[] response = new byte[0];
+        try {
+            response = serverUtil.receive();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String str = ServerUtil.bytesToAsciiString(response);
+        if (str.startsWith(ServerUtil.errorResponse())) {
+            String message = str.split(ServerUtil.errorResponse() + ' ', 2)[1];
+            throw new ErrorResponseServerException(message);
+        } else if (str.startsWith(ServerUtil.successResponse())) {
+            String message = str.split(ServerUtil.successResponse() + ' ', 2)[1];
+            return message;
+        } else {
+            throw new BadResponseServerException(str);
+        }
     }
 }

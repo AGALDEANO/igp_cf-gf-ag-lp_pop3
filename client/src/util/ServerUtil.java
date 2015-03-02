@@ -27,6 +27,14 @@ public class ServerUtil {
         }
     }
 
+    public static String successResponse() {
+        return "+OK";
+    }
+
+    public static String errorResponse() {
+        return "+ERR";
+    }
+
     public static ServerUtil getInstance(Server server) {
         if (instance == null) {
             instance = new ServerUtil(server);
