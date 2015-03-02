@@ -1,24 +1,24 @@
 package base;
 
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.*;
 
 /**
  * Created by alexandreg on 02/03/2015.
  */
 public class server {
-    private InetAddress address;
+    private InetAddress inetAddress;
     private String hostname;
     private int port = 110;
-    private DatagramSocket socket;
+    private SocketAddress socketAddress;
+    private DatagramSocket datagramSocket;
 
     public server(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
     }
 
-    public InetAddress getAddress() {
-        return address;
+    public InetAddress getInetAddress() {
+        return inetAddress;
     }
 
     public String getHostname() {
@@ -26,7 +26,15 @@ public class server {
     }
 
     public void setHostname(String hostname) {
+        if (hostname == null) throw new NullPointerException();
         this.hostname = hostname;
+        try {
+            updateAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        updateSocketAddress();
+        updateDatagramSocket();
     }
 
     public int getPort() {
@@ -34,14 +42,25 @@ public class server {
     }
 
     public void setPort(int port) {
-        this.port = port;
+        if (port >= 0) {
+            this.port = port;
+            updateDatagramSocket();
+        }
     }
 
-    public DatagramSocket getSocket() {
-        return socket;
+    public DatagramSocket getDatagramSocket() {
+        return datagramSocket;
     }
 
-    private void updateAddress() {
+    private void updateAddress() throws UnknownHostException {
+        if (inetAddress == null) inetAddress = InetAddress.getByName(hostname);
+    }
 
+    private void updateDatagramSocket() {
+
+    }
+
+    private void updateSocketAddress() {
+        socketAddress = new InetSocketAddress(inetAddress, port);
     }
 }
