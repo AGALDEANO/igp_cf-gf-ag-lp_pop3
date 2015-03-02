@@ -18,6 +18,7 @@ public class ServerUtil {
     private Server server;
     private OutputStream out;
     private InputStream in;
+
     private ServerUtil(Server server) {
         this.server = server;
         try {
@@ -68,11 +69,17 @@ public class ServerUtil {
 
     public byte[] receive() throws IOException {
         ArrayList<Byte> bytes = new ArrayList<Byte>();
-        int i;
-        i = in.read();
-        while (i != -1) {
-            logger.debug(String.format("data : %x", (byte) i));
+        int i = in.read();
+        logger.debug(String.format("data : %x", (byte) i));
+        int previous = -1;
+        while (i != -1 && !(i == 10 && previous == 13)) {
             bytes.add((byte) i);
+            previous = i;
+            i = in.read();
+            logger.debug(String.format("data : %x", (byte) i));
+        }
+        if (i == 10 && previous == 13) {
+            bytes.remove(bytes.size() - 1);
         }
         byte[] array = new byte[bytes.size()];
         for (int j = 0; j < array.length; j++) {
@@ -80,5 +87,4 @@ public class ServerUtil {
         }
         return array;
     }
-    
 }

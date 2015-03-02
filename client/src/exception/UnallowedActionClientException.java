@@ -1,19 +1,15 @@
-package exceptions;
+package exception;
 
 /**
  * Created by alexandreg on 02/03/2015.
  */
-
-/**
- * Use when the server responded with a error message
- */
-public class ErrorResponseServerException extends Exception {
+public class UnallowedActionClientException extends Exception {
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public ErrorResponseServerException() {
+    public UnallowedActionClientException() {
         super();
     }
 
@@ -25,7 +21,7 @@ public class ErrorResponseServerException extends Exception {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public ErrorResponseServerException(String message) {
+    public UnallowedActionClientException(String message) {
         super(message);
     }
 
@@ -43,7 +39,7 @@ public class ErrorResponseServerException extends Exception {
      *                unknown.)
      * @since 1.4
      */
-    public ErrorResponseServerException(String message, Throwable cause) {
+    public UnallowedActionClientException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -61,7 +57,7 @@ public class ErrorResponseServerException extends Exception {
      *              unknown.)
      * @since 1.4
      */
-    public ErrorResponseServerException(Throwable cause) {
+    public UnallowedActionClientException(Throwable cause) {
         super(cause);
     }
 }

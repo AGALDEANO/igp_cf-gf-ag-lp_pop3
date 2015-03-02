@@ -1,8 +1,8 @@
 package base;
 
-import exceptions.BadResponseServerException;
-import exceptions.ErrorResponseServerException;
-import exceptions.UnallowedActionClientException;
+import exception.BadFormatResponseServerException;
+import exception.ErrorResponseServerException;
+import exception.UnallowedActionClientException;
 import org.apache.log4j.Logger;
 import util.Pop3Util;
 import util.ServerUtil;
@@ -76,7 +76,7 @@ public class Client {
             return Boolean.TRUE;
         } catch (ErrorResponseServerException e) {
             logger.warn(e.toString());
-        } catch (BadResponseServerException e) {
+        } catch (BadFormatResponseServerException e) {
             logger.error(e.toString());
             System.exit(-1);
         } catch (IOException e) {
@@ -98,7 +98,8 @@ public class Client {
         logger.info("==================================");
         logger.info("==== Authentification started ====");
         if (State.AUTH.equals(state)) {
-            signInRequest(username, password);
+            if (serverUtil.getServer().getApop()) signInRequestApop(username, password);
+            else signInRequest(username, password);
             unreadMessage = signInResponse();
             if (unreadMessage > -1) {
                 state.changeTo(State.TRANSACTION);
@@ -109,7 +110,7 @@ public class Client {
         return Boolean.FALSE;
     }
 
-    private void signInRequest(String username, String password) {
+    private void signInRequestApop(String username, String password) {
         try {
             logger.info(String.format("Attempting to connect to %s@%s", username, serverUtil.getServer().getHostname()));
             String request = Pop3Util.getrequestAPOP(username, password);
@@ -117,6 +118,25 @@ public class Client {
             logger.info("Request : " + request);
         } catch (IOException e) {
             logger.warn(e.toString());
+        }
+    }
+
+    private void signInRequest(String username, String password) {
+        try {
+            logger.info(String.format("Attempting to connect to %s@%s", username, serverUtil.getServer().getHostname()));
+            String request = Pop3Util.getrequestUSER(username);
+            serverUtil.send(request);
+            logger.info("Request : " + request);
+            String message = getResponse();
+            request = Pop3Util.getrequestPASS(password);
+            serverUtil.send(request);
+            logger.info("Request : " + request);
+        } catch (IOException e) {
+            logger.warn(e.toString());
+        } catch (BadFormatResponseServerException e) {
+            e.printStackTrace();
+        } catch (ErrorResponseServerException e) {
+            e.printStackTrace();
         }
     }
 
@@ -138,7 +158,7 @@ public class Client {
             return Integer.parseInt(message);
         } catch (ErrorResponseServerException e) {
             logger.warn(e.toString());
-        } catch (BadResponseServerException e) {
+        } catch (BadFormatResponseServerException e) {
             logger.error(e.toString());
         } catch (IOException e) {
             logger.error(e.toString());
@@ -179,7 +199,7 @@ public class Client {
             return Boolean.TRUE;
         } catch (ErrorResponseServerException e) {
             logger.warn(e.toString());
-        } catch (BadResponseServerException e) {
+        } catch (BadFormatResponseServerException e) {
             logger.error(e.toString());
         } catch (IOException e) {
             logger.error(e.toString());
@@ -216,7 +236,7 @@ public class Client {
             return message;
         } catch (ErrorResponseServerException e) {
             logger.warn(e.toString());
-        } catch (BadResponseServerException e) {
+        } catch (BadFormatResponseServerException e) {
             logger.error(e.toString());
         } catch (IOException e) {
             logger.error(e.toString());
@@ -224,19 +244,19 @@ public class Client {
         return null;
     }
 
-    private String getResponse() throws ErrorResponseServerException, BadResponseServerException, IOException {
+    private String getResponse() throws ErrorResponseServerException, BadFormatResponseServerException, IOException {
         byte[] response;
         response = serverUtil.receive();
         String str = ServerUtil.bytesToAsciiString(response);
         logger.info("Response : " + str);
         if (str.startsWith(ServerUtil.errorResponse())) {
-            String message = str.split(ServerUtil.errorResponse() + ' ', 2)[1];
+            String message = str.split("\\" + ServerUtil.errorResponse() + ' ', 2)[1];
             throw new ErrorResponseServerException(message);
         } else if (str.startsWith(ServerUtil.successResponse())) {
-            String message = str.split(ServerUtil.successResponse() + ' ', 2)[1];
+            String message = str.split("\\" + ServerUtil.successResponse() + ' ', 2)[1];
             return message;
         } else {
-            throw new BadResponseServerException(str);
+            throw new BadFormatResponseServerException(str);
         }
     }
 }

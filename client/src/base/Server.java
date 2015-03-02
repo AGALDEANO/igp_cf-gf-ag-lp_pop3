@@ -1,6 +1,6 @@
 package base;
 
-import exceptions.WrongPortServerException;
+import exception.WrongPortServerException;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -20,6 +20,7 @@ public class Server {
     private int port = 110;
     private int timeout = 2000;
     private Socket socket;
+    private Boolean apop = Boolean.TRUE;
 
     public Server(String hostname, int port) {
         if (port >= 0) {
@@ -101,6 +102,14 @@ public class Server {
         return socket;
     }
 
+    public Boolean getApop() {
+        return apop;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
     private void updateAddress() throws UnknownHostException {
         inetAddress = InetAddress.getByName(hostname);
     }
@@ -114,7 +123,5 @@ public class Server {
             }
         }
         socket = new Socket(inetAddress, port);
-        socket.setSoTimeout(timeout);
-
     }
 }

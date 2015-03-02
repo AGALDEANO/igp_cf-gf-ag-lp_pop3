@@ -1,15 +1,19 @@
-package exceptions;
+package exception;
 
 /**
  * Created by alexandreg on 02/03/2015.
  */
-public class WrongPortServerException extends Exception {
+
+/**
+ * Use when the server responded with a error message
+ */
+public class ErrorResponseServerException extends Exception {
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public WrongPortServerException() {
+    public ErrorResponseServerException() {
         super();
     }
 
@@ -21,7 +25,7 @@ public class WrongPortServerException extends Exception {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public WrongPortServerException(String message) {
+    public ErrorResponseServerException(String message) {
         super(message);
     }
 
@@ -39,7 +43,7 @@ public class WrongPortServerException extends Exception {
      *                unknown.)
      * @since 1.4
      */
-    public WrongPortServerException(String message, Throwable cause) {
+    public ErrorResponseServerException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -57,7 +61,7 @@ public class WrongPortServerException extends Exception {
      *              unknown.)
      * @since 1.4
      */
-    public WrongPortServerException(Throwable cause) {
+    public ErrorResponseServerException(Throwable cause) {
         super(cause);
     }
 }

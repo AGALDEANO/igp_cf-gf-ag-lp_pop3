@@ -1,6 +1,6 @@
 package base;
 
-import exceptions.UnallowedActionClientException;
+import exception.UnallowedActionClientException;
 import org.apache.log4j.Logger;
 
 /**
@@ -8,20 +8,17 @@ import org.apache.log4j.Logger;
  */
 public class Main {
     public static String[] hostname = {
-            "localhost",
-            "firethorn-PC"
+            "localhost"
     };
     public static int[] port = {
-            110,
-            3306,
-            80
+            110
     };
     private static Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
         Client cli = new Client();
         try {
-            cli.connexionAction("user:pw@" + hostname[0] + ":" + port[1]);
+            cli.connexionAction("admin:pw@" + hostname[0] + ":" + port[0]);
         } catch (UnallowedActionClientException e) {
             logger.error("fofdfgdgdf");
         }
