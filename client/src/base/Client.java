@@ -166,6 +166,41 @@ public class Client {
         return -1;
     }
 
+    private void statRequest() {
+        try {
+            logger.info("Obtaining details");
+            String request = Pop3Util.getrequestSTAT();
+            logger.info("Request : " + request);
+            serverUtil.send(request);
+        } catch (IOException e) {
+            logger.warn(e.toString());
+        }
+    }
+
+    /**
+     * If sign in failed return -1
+     * return the amount of unread message
+     *
+     * @return
+     * @throws IOException
+     */
+    private int statResponse() {
+        try {
+            String message = getResponse();
+            // N number of message, M number of bytes
+            // message = N M
+            message = message.split(" ", 2)[0];
+            return Integer.parseInt(message);
+        } catch (ErrorResponseServerException e) {
+            logger.warn(e.toString());
+        } catch (BadFormatResponseServerException e) {
+            logger.error(e.toString());
+        } catch (IOException e) {
+            logger.error(e.toString());
+        }
+        return -1;
+    }
+
     /**
      * Return true if quit success
      * else return false
@@ -246,14 +281,18 @@ public class Client {
 
     private String getResponse() throws ErrorResponseServerException, BadFormatResponseServerException, IOException {
         byte[] response;
+        String[] split;
+        String message = "";
         response = serverUtil.receive();
         String str = ServerUtil.bytesToAsciiString(response);
         logger.info("Response : " + str);
         if (str.startsWith(ServerUtil.errorResponse())) {
-            String message = str.split("\\" + ServerUtil.errorResponse() + ' ', 2)[1];
+            split = str.split("\\" + ServerUtil.errorResponse() + ' ', 2);
+            if (split.length > 1) message = split[1];
             throw new ErrorResponseServerException(message);
         } else if (str.startsWith(ServerUtil.successResponse())) {
-            String message = str.split("\\" + ServerUtil.successResponse() + ' ', 2)[1];
+            split = str.split("\\" + ServerUtil.successResponse() + ' ', 2);
+            if (split.length > 1) message = split[1];
             return message;
         } else {
             throw new BadFormatResponseServerException(str);

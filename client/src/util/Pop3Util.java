@@ -8,6 +8,8 @@ import java.security.NoSuchAlgorithmException;
 public class Pop3Util {
     private static Logger logger = Logger.getLogger(Pop3Util.class.getName());
 
+    private static String endRequest = "\r\n";
+
     public static String getrequestAPOP(String username, String password) {
         try {
             byte[] digestPassword = MessageDigest.getInstance("MD5").digest(password.getBytes());
@@ -15,6 +17,7 @@ public class Pop3Util {
             for (byte b : digestPassword) {
                 request += String.format("%x", b);
             }
+            request += endRequest;
             return request;
         } catch (NoSuchAlgorithmException e) {
             logger.error(e.toString());
@@ -24,6 +27,7 @@ public class Pop3Util {
 
     public static String getrequestUSER(String username) {
         String request = "USER " + username;
+        request += endRequest;
         return request;
     }
 
@@ -34,6 +38,7 @@ public class Pop3Util {
             for (byte b : digestPassword) {
                 request += String.format("%x", b);
             }
+            request += endRequest;
             return request;
         } catch (NoSuchAlgorithmException e) {
             logger.error(e.toString());
@@ -43,16 +48,19 @@ public class Pop3Util {
 
     public static String getrequestRETR(int numeroMessage) {
         String request = "RETR " + numeroMessage;
+        request += endRequest;
         return request;
     }
 
     public static String getrequestQUIT() {
         String request = "QUIT";
+        request += endRequest;
         return request;
     }
 
     public static String getrequestSTAT() {
         String request = "STAT";
+        request += endRequest;
         return request;
     }
 }
