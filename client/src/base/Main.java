@@ -1,11 +1,6 @@
 package base;
 
-import exception.ErrorResponseServerException;
-import exception.UnallowedActionException;
 import org.apache.log4j.Logger;
-import util.Action;
-import util.CurrentState;
-import util.ServerUtil;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -20,51 +15,39 @@ public class Main {
     private static Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        CurrentState currentState = null;
-        try {
-            ServerUtil.initialize(new Server(hostname[0], port[0]));
-            Action.response();
-            currentState = CurrentState.AUTHORIZATION;
-        } catch (ErrorResponseServerException e) {
-            e.printStackTrace();
-        }
+        Client client = new Client();
+        client.start();
+        client.openConnexion(hostname[0], port[0]);
+        waitForAnswer(client);
+        client.enterLogin("admin");
+        waitForAnswer(client);
+        client.enterPassword("pw");
+        waitForAnswer(client);
+        client.getStat();
+        waitForAnswer(client);
+        client.getMessage(1);
+        waitForAnswer(client);
+        client.signIn("ffd");
+        waitForAnswer(client);
+        client.getMessageList();
+        waitForAnswer(client);
+        client.getMessageDetails(1);
+        waitForAnswer(client);
+        client.closeConnexion();
+        waitForAnswer(client);
+    }
 
-        try {
-            Action.USER.execute(currentState, "admin");
-            currentState = currentState.changeTo(Action.USER.getIfSucceed());
-        } catch (UnallowedActionException e) {
-            e.printStackTrace();
-        } catch (ErrorResponseServerException e) {
-            e.printStackTrace();
-            currentState = currentState.changeTo(Action.PASS.getIfFailed());
-            e.printStackTrace();
-        }
-        try {
-            Action.PASS.execute(currentState, "pw");
-            currentState = currentState.changeTo(Action.PASS.getIfSucceed());
-        } catch (UnallowedActionException e) {
-            e.printStackTrace();
-        } catch (ErrorResponseServerException e) {
-            currentState = currentState.changeTo(Action.PASS.getIfFailed());
-            e.printStackTrace();
-        }
-        try {
-            Action.STAT.execute(currentState);
-            currentState = currentState.changeTo(Action.STAT.getIfSucceed());
-        } catch (UnallowedActionException e) {
-            e.printStackTrace();
-        } catch (ErrorResponseServerException e) {
-            currentState = currentState.changeTo(Action.STAT.getIfFailed());
-            e.printStackTrace();
-        }
-        try {
-            Action.QUIT.execute(currentState);
-            currentState = currentState.changeTo(Action.QUIT.getIfSucceed());
-        } catch (UnallowedActionException e) {
-            e.printStackTrace();
-        } catch (ErrorResponseServerException e) {
-            currentState = currentState.changeTo(Action.QUIT.getIfFailed());
-            e.printStackTrace();
-        }
+    public static void waitForAnswer(Client client) {
+        String success, error;
+        do {
+            success = client.getSucessMessage();
+            error = client.getErrorMessage();
+            if (success != null) {
+                System.out.println(success);
+            }
+            if (error != null) {
+                System.out.println(error);
+            }
+        } while (success == null && error == null);
     }
 }

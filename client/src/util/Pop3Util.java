@@ -77,6 +77,22 @@ public class Pop3Util {
         return request;
     }
 
+    public static String getRequestLIST(String[] args) throws MissingArgumentException {
+        return (args.length == 0 ? getRequestLIST() : getRequestLIST(Integer.parseInt(args[0])));
+    }
+
+    public static String getRequestLIST() {
+        String request = "LIST";
+        request += endRequest;
+        return request;
+    }
+
+    public static String getRequestLIST(int i) {
+        String request = "LIST " + i;
+        request += endRequest;
+        return request;
+    }
+
     public static String getRequestSTAT(String[] args) throws MissingArgumentException {
         return getRequestSTAT();
     }

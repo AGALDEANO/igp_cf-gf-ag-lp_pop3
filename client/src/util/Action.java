@@ -20,6 +20,7 @@ public enum Action {
     PASS("PASS", CurrentState.TRANSACTION, CurrentState.AUTHORIZATION, CurrentState.USER_OK),
     RETR("RETR", CurrentState.TRANSACTION, CurrentState.TRANSACTION, CurrentState.TRANSACTION),
     STAT("STAT", CurrentState.TRANSACTION, CurrentState.TRANSACTION, CurrentState.TRANSACTION),
+    LIST("LIST", CurrentState.TRANSACTION, CurrentState.TRANSACTION, CurrentState.TRANSACTION),
     QUIT("QUIT", null, null, CurrentState.AUTHORIZATION, CurrentState.TRANSACTION, CurrentState.USER_OK);
     private static Logger logger = Logger.getLogger(Action.class.getName());
     private CurrentState[] allowedCurrentStates;
@@ -55,6 +56,7 @@ public enum Action {
                 split = str.split("\\" + ServerUtil.successResponse() + ' ', 2);
                 if (split.length > 1) message = split[1];
                 return message;
+            } else if (str.equals(".")) {
             } else {
                 try {
                     throw new BadFormatResponseServerException(str);
@@ -107,7 +109,7 @@ public enum Action {
     private void request(String... args) {
         try {
             if (this.equals(CONNEXION) && args.length == 2) {
-                ServerUtil.initialize(new Server(args[1], Integer.parseInt(args[1])));
+                ServerUtil.initialize(new Server(args[0], Integer.parseInt(args[1])));
             } else {
                 Method method = Pop3Util.class.getMethod("getRequest" + requestName, String[].class);
                 Object[] param = {args};
@@ -127,7 +129,8 @@ public enum Action {
     }
 
     private Boolean allowed(CurrentState currentState) {
-        if (allowedCurrentStates == null && currentState == null) return Boolean.TRUE;
+        if ((allowedCurrentStates == null || allowedCurrentStates.length == 0) && currentState == null)
+            return Boolean.TRUE;
         for (CurrentState st : allowedCurrentStates) {
             if (st != null && st.equals(currentState)) return Boolean.TRUE;
         }

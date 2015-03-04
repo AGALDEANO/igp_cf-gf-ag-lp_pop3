@@ -82,7 +82,6 @@ public class Client extends Thread {
      *
      * @see #start()
      * @see #stop()
-     * @see #Thread(ThreadGroup, Runnable, String)
      */
     @Override
     public void run() {
@@ -96,13 +95,13 @@ public class Client extends Thread {
                 try {
                     message = todo.execute(currentState, todoArgs);
                     logger.info(message);
-                    setCurrentState(getCurrentState().changeTo(todo.getIfSucceed()));
+                    setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfSucceed()));
                     setSucessMessage(message);
                 } catch (UnallowedActionException e) {
                     message = e.toString();
                     setErrorMessage(message);
                 } catch (ErrorResponseServerException e) {
-                    setCurrentState(getCurrentState().changeTo(todo.getIfFailed()));
+                    setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfFailed()));
                     setErrorMessage(e.toString());
                 } finally {
                     setWaitingTask(null);
@@ -118,9 +117,9 @@ public class Client extends Thread {
         setWaitingTaskArgs(args);
     }
 
-    public void closeConnexion(String hostname, int port) {
+    public void closeConnexion() {
         setWaitingTask(Action.QUIT);
-        String[] args = {hostname, Integer.toString(port)};
+        String[] args = {};
         setWaitingTaskArgs(args);
         quit = Boolean.TRUE;
     }
@@ -128,6 +127,18 @@ public class Client extends Thread {
     public void signIn(String username) {
         setWaitingTask(Action.APOP);
         String[] args = {username};
+        setWaitingTaskArgs(args);
+    }
+
+    public void getMessageList() {
+        setWaitingTask(Action.LIST);
+        String[] args = {};
+        setWaitingTaskArgs(args);
+    }
+
+    public void getMessageDetails(int i) {
+        setWaitingTask(Action.LIST);
+        String[] args = {Integer.toString(i)};
         setWaitingTaskArgs(args);
     }
 
@@ -149,9 +160,9 @@ public class Client extends Thread {
         setWaitingTaskArgs(args);
     }
 
-    public void getStat(int num) {
+    public void getStat() {
         setWaitingTask(Action.STAT);
-        String[] args = {Integer.toString(num)};
+        String[] args = {};
         setWaitingTaskArgs(args);
     }
 }

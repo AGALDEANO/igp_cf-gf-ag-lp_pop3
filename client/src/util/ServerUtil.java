@@ -36,7 +36,7 @@ public class ServerUtil {
     }
 
     public static String errorResponse() {
-        return "+ERR";
+        return "-ERR";
     }
 
     public static ServerUtil getInstance() {
