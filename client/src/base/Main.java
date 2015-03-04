@@ -1,7 +1,10 @@
 package base;
 
-import exception.UnallowedActionClientException;
+import base.action.Action;
+import exception.ErrorResponseServerException;
+import exception.UnallowedActionException;
 import org.apache.log4j.Logger;
+import util.ServerUtil;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -16,11 +19,50 @@ public class Main {
     private static Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        Client cli = new Client();
+        ServerUtil.initialize(new Server(hostname[0], port[0]));
+        State state = State.AUTHORIZATION;
         try {
-            cli.connexionAction("admin:pw@" + hostname[0] + ":" + port[0]);
-        } catch (UnallowedActionClientException e) {
-            logger.error("fofdfgdgdf");
+            Action.response();
+        } catch (ErrorResponseServerException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Action.USER.execute(state, "admin");
+            state = state.changeTo(Action.USER.getIfSucceed());
+        } catch (UnallowedActionException e) {
+            e.printStackTrace();
+        } catch (ErrorResponseServerException e) {
+            e.printStackTrace();
+            state = state.changeTo(Action.PASS.getIfFailed());
+            e.printStackTrace();
+        }
+        try {
+            Action.PASS.execute(state, "pw");
+            state = state.changeTo(Action.PASS.getIfSucceed());
+        } catch (UnallowedActionException e) {
+            e.printStackTrace();
+        } catch (ErrorResponseServerException e) {
+            state = state.changeTo(Action.PASS.getIfFailed());
+            e.printStackTrace();
+        }
+        try {
+            Action.STAT.execute(state);
+            state = state.changeTo(Action.STAT.getIfSucceed());
+        } catch (UnallowedActionException e) {
+            e.printStackTrace();
+        } catch (ErrorResponseServerException e) {
+            state = state.changeTo(Action.STAT.getIfFailed());
+            e.printStackTrace();
+        }
+        try {
+            Action.QUIT.execute(state);
+            state = state.changeTo(Action.QUIT.getIfSucceed());
+        } catch (UnallowedActionException e) {
+            e.printStackTrace();
+        } catch (ErrorResponseServerException e) {
+            state = state.changeTo(Action.QUIT.getIfFailed());
+            e.printStackTrace();
         }
     }
 }

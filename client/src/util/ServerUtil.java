@@ -30,6 +30,7 @@ public class ServerUtil {
         }
     }
 
+
     public static String successResponse() {
         return "+OK";
     }
@@ -38,11 +39,12 @@ public class ServerUtil {
         return "+ERR";
     }
 
-    public static ServerUtil getInstance(Server server) {
-        if (instance == null) {
-            instance = new ServerUtil(server);
-        }
+    public static ServerUtil getInstance() {
         return instance;
+    }
+
+    public static void initialize(Server server) {
+        instance = new ServerUtil(server);
     }
 
     public static String bytesToAsciiString(byte[] data) {

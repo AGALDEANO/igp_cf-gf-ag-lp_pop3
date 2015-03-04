@@ -1,15 +1,15 @@
 package exception;
 
 /**
- * Created by alexandreg on 02/03/2015.
+ * Created by alexandreg on 04/03/2015.
  */
-public class UnallowedActionClientException extends Exception {
+public class NotInitializedServer extends Exception {
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public UnallowedActionClientException() {
+    public NotInitializedServer() {
         super();
     }
 
@@ -21,7 +21,7 @@ public class UnallowedActionClientException extends Exception {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public UnallowedActionClientException(String message) {
+    public NotInitializedServer(String message) {
         super(message);
     }
 
@@ -39,7 +39,7 @@ public class UnallowedActionClientException extends Exception {
      *                unknown.)
      * @since 1.4
      */
-    public UnallowedActionClientException(String message, Throwable cause) {
+    public NotInitializedServer(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -57,7 +57,7 @@ public class UnallowedActionClientException extends Exception {
      *              unknown.)
      * @since 1.4
      */
-    public UnallowedActionClientException(Throwable cause) {
+    public NotInitializedServer(Throwable cause) {
         super(cause);
     }
 }
