@@ -2,7 +2,7 @@ package base;
 
 import exception.BadFormatResponseServerException;
 import exception.ErrorResponseServerException;
-import exception.UnallowedActionClientException;
+import exception.UnallowedActionException;
 import org.apache.log4j.Logger;
 import util.Pop3Util;
 import util.ServerUtil;
@@ -26,9 +26,9 @@ public class Client {
      *
      * @param email
      * @return
-     * @throws UnallowedActionClientException
+     * @throws exception.UnallowedActionException
      */
-    public Boolean connexionAction(String email) throws UnallowedActionClientException {
+    public Boolean connexionAction(String email) throws UnallowedActionException {
         String[] emailParts = email.split("@", 2);
         String[] user = emailParts[0].split(":", 2);
         String[] host = emailParts[1].split(":", 2);
@@ -47,26 +47,27 @@ public class Client {
      * @param port
      * @return
      */
-    private Boolean connexion(String hostname, int port) throws UnallowedActionClientException {
+    private Boolean connexion(String hostname, int port) throws UnallowedActionException {
         logger.info("===========================");
         logger.info("==== Connexion started ====");
         if (state == null || State.CLOSED.equals(state)) {
             connexionRequest(hostname, port);
             if (connexionResponse()) {
-                state = State.AUTH;
+                state = State.AUTHORIZATION;
                 logger.info("==== Connexion succeed ====");
                 return Boolean.TRUE;
             }
         } else {
             logger.warn("==== Connexion failed ====");
-            throw new UnallowedActionClientException();
+            throw new UnallowedActionException();
         }
         logger.warn("==== Connexion failed ====");
         return Boolean.FALSE;
     }
 
     private void connexionRequest(String hostname, int port) {
-        serverUtil = ServerUtil.getInstance(new Server(hostname, port));
+        ServerUtil.initialize(new Server(hostname, port));
+        serverUtil = ServerUtil.getInstance();
     }
 
     private Boolean connexionResponse() {
@@ -94,10 +95,10 @@ public class Client {
      * @param password
      * @return
      */
-    private Boolean signIn(String username, String password) throws UnallowedActionClientException {
+    private Boolean signIn(String username, String password) throws UnallowedActionException {
         logger.info("==================================");
         logger.info("==== Authentification started ====");
-        if (State.AUTH.equals(state)) {
+        if (State.AUTHORIZATION.equals(state)) {
             if (serverUtil.getServer().getApop()) signInRequestApop(username, password);
             else signInRequest(username, password);
             unreadMessage = signInResponse();
@@ -105,7 +106,7 @@ public class Client {
                 state.changeTo(State.TRANSACTION);
                 return Boolean.TRUE;
             }
-        } else throw new UnallowedActionClientException();
+        } else throw new UnallowedActionException();
 
         return Boolean.FALSE;
     }
@@ -113,7 +114,7 @@ public class Client {
     private void signInRequestApop(String username, String password) {
         try {
             logger.info(String.format("Attempting to connect to %s@%s", username, serverUtil.getServer().getHostname()));
-            String request = Pop3Util.getrequestAPOP(username, password);
+            String request = Pop3Util.getRequestAPOP(username, password);
             serverUtil.send(request);
             logger.info("Request : " + request);
         } catch (IOException e) {
@@ -124,11 +125,11 @@ public class Client {
     private void signInRequest(String username, String password) {
         try {
             logger.info(String.format("Attempting to connect to %s@%s", username, serverUtil.getServer().getHostname()));
-            String request = Pop3Util.getrequestUSER(username);
+            String request = Pop3Util.getRequestUSER(username);
             serverUtil.send(request);
             logger.info("Request : " + request);
             String message = getResponse();
-            request = Pop3Util.getrequestPASS(password);
+            request = Pop3Util.getRequestPASS(password);
             serverUtil.send(request);
             logger.info("Request : " + request);
         } catch (IOException e) {
@@ -169,7 +170,7 @@ public class Client {
     private void statRequest() {
         try {
             logger.info("Obtaining details");
-            String request = Pop3Util.getrequestSTAT();
+            String request = Pop3Util.getRequestSTAT();
             logger.info("Request : " + request);
             serverUtil.send(request);
         } catch (IOException e) {
@@ -214,14 +215,14 @@ public class Client {
                 state.changeTo(State.CLOSED);
                 return Boolean.TRUE;
             }
-        } else new UnallowedActionClientException();
+        } else new UnallowedActionException();
 
         return Boolean.FALSE;
     }
 
     private void quitRequest() {
         try {
-            String request = Pop3Util.getrequestQUIT();
+            String request = Pop3Util.getRequestQUIT();
             serverUtil.send(request);
         } catch (IOException e) {
             logger.warn(e.toString());
@@ -249,16 +250,16 @@ public class Client {
      *
      * @return
      */
-    public String retreiveAction(int i) throws UnallowedActionClientException {
+    public String retreiveAction(int i) throws UnallowedActionException {
         if (State.TRANSACTION.equals(state) && i > 0 && i <= unreadMessage) {
             retreiveRequest(i);
             return retreiveResponse();
-        } else throw new UnallowedActionClientException();
+        } else throw new UnallowedActionException();
     }
 
     private void retreiveRequest(int i) {
         try {
-            String request = Pop3Util.getrequestRETR(i);
+            String request = Pop3Util.getRequestRETR(i);
             serverUtil.send(request);
         } catch (IOException e) {
             logger.warn(e.toString());
