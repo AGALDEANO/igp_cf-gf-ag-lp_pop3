@@ -1,12 +1,10 @@
-package base.action;
+package util;
 
-import base.State;
+import base.Server;
 import exception.BadFormatResponseServerException;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
 import org.apache.log4j.Logger;
-import util.Pop3Util;
-import util.ServerUtil;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -16,20 +14,21 @@ import java.lang.reflect.Method;
  * Created by alexandreg on 04/03/2015.
  */
 public enum Action {
-    APOP("APOP", State.TRANSACTION, State.AUTHORIZATION, State.AUTHORIZATION),
-    USER("USER", State.USER_OK, State.AUTHORIZATION, State.AUTHORIZATION),
-    PASS("PASS", State.TRANSACTION, State.AUTHORIZATION, State.USER_OK),
-    RETR("RETR", State.TRANSACTION, State.TRANSACTION, State.TRANSACTION),
-    STAT("STAT", State.TRANSACTION, State.TRANSACTION, State.TRANSACTION),
-    QUIT("QUIT", null, null, null);
+    CONNEXION("CONNEXION", CurrentState.AUTHORIZATION, null),
+    APOP("APOP", CurrentState.TRANSACTION, CurrentState.AUTHORIZATION, CurrentState.AUTHORIZATION),
+    USER("USER", CurrentState.USER_OK, CurrentState.AUTHORIZATION, CurrentState.AUTHORIZATION),
+    PASS("PASS", CurrentState.TRANSACTION, CurrentState.AUTHORIZATION, CurrentState.USER_OK),
+    RETR("RETR", CurrentState.TRANSACTION, CurrentState.TRANSACTION, CurrentState.TRANSACTION),
+    STAT("STAT", CurrentState.TRANSACTION, CurrentState.TRANSACTION, CurrentState.TRANSACTION),
+    QUIT("QUIT", null, null, CurrentState.AUTHORIZATION, CurrentState.TRANSACTION, CurrentState.USER_OK);
     private static Logger logger = Logger.getLogger(Action.class.getName());
-    private State[] allowedStates;
+    private CurrentState[] allowedCurrentStates;
     private String requestName;
-    private State ifSucceed;
-    private State ifFailed;
+    private CurrentState ifSucceed;
+    private CurrentState ifFailed;
 
-    private Action(String requestName, State ifSucceed, State ifFailed, State... allowedStates) {
-        this.allowedStates = allowedStates;
+    private Action(String requestName, CurrentState ifSucceed, CurrentState ifFailed, CurrentState... allowedCurrentStates) {
+        this.allowedCurrentStates = allowedCurrentStates;
         this.requestName = requestName;
         this.ifSucceed = ifSucceed;
         this.ifFailed = ifFailed;
@@ -70,25 +69,25 @@ public enum Action {
         return message;
     }
 
-    public State[] getAllowedStates() {
-        return allowedStates;
+    public CurrentState[] getAllowedCurrentStates() {
+        return allowedCurrentStates;
     }
 
     public String getRequestName() {
         return requestName;
     }
 
-    public State getIfSucceed() {
+    public CurrentState getIfSucceed() {
         return ifSucceed;
     }
 
-    public State getIfFailed() {
+    public CurrentState getIfFailed() {
         return ifFailed;
     }
 
-    public String execute(State state, String... args) throws UnallowedActionException, ErrorResponseServerException {
+    public String execute(CurrentState currentState, String... args) throws UnallowedActionException, ErrorResponseServerException {
         logger.info(String.format("==== %s started ====", this.name()));
-        if (allowed(state)) {
+        if (allowed(currentState)) {
             request(args);
             String message = null;
             try {
@@ -107,11 +106,15 @@ public enum Action {
 
     private void request(String... args) {
         try {
-            Method method = Pop3Util.class.getMethod("getRequest" + requestName, String[].class);
-            Object[] param = {args};
-            String request = (String) method.invoke(null, param);
-            logger.info(String.format("Request : %s", request.replaceAll(Pop3Util.getEndRequest(), "")));
-            ServerUtil.getInstance().send(request);
+            if (this.equals(CONNEXION) && args.length == 2) {
+                ServerUtil.initialize(new Server(args[1], Integer.parseInt(args[1])));
+            } else {
+                Method method = Pop3Util.class.getMethod("getRequest" + requestName, String[].class);
+                Object[] param = {args};
+                String request = (String) method.invoke(null, param);
+                logger.info(String.format("Request : %s", request.replaceAll(Pop3Util.getEndRequest(), "")));
+                ServerUtil.getInstance().send(request);
+            }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -123,11 +126,10 @@ public enum Action {
         }
     }
 
-    private Boolean allowed(State state) {
-        if (allowedStates == null) return Boolean.TRUE;
-        for (State st : allowedStates) {
-            if (st == null && state == null) return Boolean.TRUE;
-            else if (st != null && st.equals(state)) return Boolean.TRUE;
+    private Boolean allowed(CurrentState currentState) {
+        if (allowedCurrentStates == null && currentState == null) return Boolean.TRUE;
+        for (CurrentState st : allowedCurrentStates) {
+            if (st != null && st.equals(currentState)) return Boolean.TRUE;
         }
         return Boolean.FALSE;
     }

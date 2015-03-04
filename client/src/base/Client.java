@@ -1,302 +1,157 @@
 package base;
 
-import exception.BadFormatResponseServerException;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
 import org.apache.log4j.Logger;
-import util.Pop3Util;
-import util.ServerUtil;
-
-import java.io.IOException;
+import util.Action;
+import util.CurrentState;
 
 /**
  * Created by alexandreg on 02/03/2015.
  */
-public class Client {
+public class Client extends Thread {
     private static Logger logger = Logger.getLogger(Client.class.getName());
-    private State state;
-    private ServerUtil serverUtil;
+    private CurrentState currentState = null;
     private int unreadMessage = 0;
+    private Action waitingTask = null;
+    private String[] waitingTaskArgs = null;
+    private Boolean quit = Boolean.FALSE;
+    private String sucessMessage = null;
+    private String errorMessage = null;
 
-    public Client() {
+    public synchronized String getSucessMessage() {
+        String message = sucessMessage;
+        sucessMessage = null;
+        return message;
+    }
+
+    private synchronized void setSucessMessage(String sucessMessage) {
+        this.sucessMessage = sucessMessage;
+    }
+
+    public synchronized String getErrorMessage() {
+        String message = errorMessage;
+        errorMessage = null;
+        return message;
+    }
+
+    private synchronized void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public synchronized String[] getWaitingTaskArgs() {
+        return waitingTaskArgs;
+    }
+
+    public synchronized void setWaitingTaskArgs(String[] waitingTaskArgs) {
+        this.waitingTaskArgs = waitingTaskArgs;
+    }
+
+
+    public synchronized CurrentState getCurrentState() {
+        return currentState;
+    }
+
+    private synchronized void setCurrentState(CurrentState currentState) {
+        this.currentState = currentState;
+    }
+
+    public synchronized int getUnreadMessage() {
+        return unreadMessage;
+    }
+
+    private synchronized void setUnreadMessage(int unreadMessage) {
+        this.unreadMessage = unreadMessage;
+    }
+
+    private synchronized Action getWaitingTask() {
+        return waitingTask;
+    }
+
+    private synchronized void setWaitingTask(Action waitingTask) {
+        this.waitingTask = waitingTask;
     }
 
     /**
-     * Try to connect using 'user:pw@host:port'
+     * If this thread was constructed using a separate
+     * <code>Runnable</code> run object, then that
+     * <code>Runnable</code> object's <code>run</code> method is called;
+     * otherwise, this method does nothing and returns.
+     * <p/>
+     * Subclasses of <code>Thread</code> should override this method.
      *
-     * @param email
-     * @return
-     * @throws exception.UnallowedActionException
+     * @see #start()
+     * @see #stop()
+     * @see #Thread(ThreadGroup, Runnable, String)
      */
-    public Boolean connexionAction(String email) throws UnallowedActionException {
-        String[] emailParts = email.split("@", 2);
-        String[] user = emailParts[0].split(":", 2);
-        String[] host = emailParts[1].split(":", 2);
-        if (connexion(host[0], Integer.parseInt(host[1]))) {
-            return signIn(user[0], user[1]);
-        }
-        return Boolean.FALSE;
-    }
-
-    /**
-     * Attempts to connect at the hostname
-     * with the port specified
-     * Return false if it failed
-     *
-     * @param hostname
-     * @param port
-     * @return
-     */
-    private Boolean connexion(String hostname, int port) throws UnallowedActionException {
-        logger.info("===========================");
-        logger.info("==== Connexion started ====");
-        if (state == null || State.CLOSED.equals(state)) {
-            connexionRequest(hostname, port);
-            if (connexionResponse()) {
-                state = State.AUTHORIZATION;
-                logger.info("==== Connexion succeed ====");
-                return Boolean.TRUE;
+    @Override
+    public void run() {
+        Action todo;
+        String[] todoArgs;
+        String message;
+        while (!(quit && getWaitingTask() == null && getWaitingTaskArgs() == null)) {
+            todo = getWaitingTask();
+            todoArgs = getWaitingTaskArgs();
+            if (todo != null && todoArgs != null) {
+                try {
+                    message = todo.execute(currentState, todoArgs);
+                    logger.info(message);
+                    setCurrentState(getCurrentState().changeTo(todo.getIfSucceed()));
+                    setSucessMessage(message);
+                } catch (UnallowedActionException e) {
+                    message = e.toString();
+                    setErrorMessage(message);
+                } catch (ErrorResponseServerException e) {
+                    setCurrentState(getCurrentState().changeTo(todo.getIfFailed()));
+                    setErrorMessage(e.toString());
+                } finally {
+                    setWaitingTask(null);
+                    setWaitingTaskArgs(null);
+                }
             }
-        } else {
-            logger.warn("==== Connexion failed ====");
-            throw new UnallowedActionException();
-        }
-        logger.warn("==== Connexion failed ====");
-        return Boolean.FALSE;
-    }
-
-    private void connexionRequest(String hostname, int port) {
-        ServerUtil.initialize(new Server(hostname, port));
-        serverUtil = ServerUtil.getInstance();
-    }
-
-    private Boolean connexionResponse() {
-        logger.info("==== Connexion response ====");
-        try {
-            String message = getResponse();
-            return Boolean.TRUE;
-        } catch (ErrorResponseServerException e) {
-            logger.warn(e.toString());
-        } catch (BadFormatResponseServerException e) {
-            logger.error(e.toString());
-            System.exit(-1);
-        } catch (IOException e) {
-            logger.error(e.toString());
-        }
-        return Boolean.FALSE;
-    }
-
-    /**
-     * Attempts to sign in to the server
-     * return true if it succeed, else
-     * return false
-     *
-     * @param username
-     * @param password
-     * @return
-     */
-    private Boolean signIn(String username, String password) throws UnallowedActionException {
-        logger.info("==================================");
-        logger.info("==== Authentification started ====");
-        if (State.AUTHORIZATION.equals(state)) {
-            if (serverUtil.getServer().getApop()) signInRequestApop(username, password);
-            else signInRequest(username, password);
-            unreadMessage = signInResponse();
-            if (unreadMessage > -1) {
-                state.changeTo(State.TRANSACTION);
-                return Boolean.TRUE;
-            }
-        } else throw new UnallowedActionException();
-
-        return Boolean.FALSE;
-    }
-
-    private void signInRequestApop(String username, String password) {
-        try {
-            logger.info(String.format("Attempting to connect to %s@%s", username, serverUtil.getServer().getHostname()));
-            String request = Pop3Util.getRequestAPOP(username, password);
-            serverUtil.send(request);
-            logger.info("Request : " + request);
-        } catch (IOException e) {
-            logger.warn(e.toString());
         }
     }
 
-    private void signInRequest(String username, String password) {
-        try {
-            logger.info(String.format("Attempting to connect to %s@%s", username, serverUtil.getServer().getHostname()));
-            String request = Pop3Util.getRequestUSER(username);
-            serverUtil.send(request);
-            logger.info("Request : " + request);
-            String message = getResponse();
-            request = Pop3Util.getRequestPASS(password);
-            serverUtil.send(request);
-            logger.info("Request : " + request);
-        } catch (IOException e) {
-            logger.warn(e.toString());
-        } catch (BadFormatResponseServerException e) {
-            e.printStackTrace();
-        } catch (ErrorResponseServerException e) {
-            e.printStackTrace();
-        }
+    public void openConnexion(String hostname, int port) {
+        setWaitingTask(Action.CONNEXION);
+        String[] args = {hostname, Integer.toString(port)};
+        setWaitingTaskArgs(args);
     }
 
-    /**
-     * If sign in failed return -1
-     * return the amount of unread message
-     *
-     * @return
-     * @throws IOException
-     */
-    private int signInResponse() {
-        try {
-            String message = getResponse();
-            // message = +OK XXX’s maildrop has N messages (YYY bytes)
-            message = message.split("has ", 2)[1];
-            // message = N messages (YYY bytes)
-            message = message.split(" ", 2)[0];
-            // message = N
-            return Integer.parseInt(message);
-        } catch (ErrorResponseServerException e) {
-            logger.warn(e.toString());
-        } catch (BadFormatResponseServerException e) {
-            logger.error(e.toString());
-        } catch (IOException e) {
-            logger.error(e.toString());
-        }
-        return -1;
+    public void closeConnexion(String hostname, int port) {
+        setWaitingTask(Action.QUIT);
+        String[] args = {hostname, Integer.toString(port)};
+        setWaitingTaskArgs(args);
+        quit = Boolean.TRUE;
     }
 
-    private void statRequest() {
-        try {
-            logger.info("Obtaining details");
-            String request = Pop3Util.getRequestSTAT();
-            logger.info("Request : " + request);
-            serverUtil.send(request);
-        } catch (IOException e) {
-            logger.warn(e.toString());
-        }
+    public void signIn(String username) {
+        setWaitingTask(Action.APOP);
+        String[] args = {username};
+        setWaitingTaskArgs(args);
     }
 
-    /**
-     * If sign in failed return -1
-     * return the amount of unread message
-     *
-     * @return
-     * @throws IOException
-     */
-    private int statResponse() {
-        try {
-            String message = getResponse();
-            // N number of message, M number of bytes
-            // message = N M
-            message = message.split(" ", 2)[0];
-            return Integer.parseInt(message);
-        } catch (ErrorResponseServerException e) {
-            logger.warn(e.toString());
-        } catch (BadFormatResponseServerException e) {
-            logger.error(e.toString());
-        } catch (IOException e) {
-            logger.error(e.toString());
-        }
-        return -1;
+    public void enterLogin(String username) {
+        setWaitingTask(Action.USER);
+        String[] args = {username};
+        setWaitingTaskArgs(args);
     }
 
-    /**
-     * Return true if quit success
-     * else return false
-     *
-     * @return
-     */
-    public Boolean quitAction() {
-        if (!State.CLOSED.equals(state)) {
-            quitRequest();
-            if (quitResponse()) {
-                state.changeTo(State.CLOSED);
-                return Boolean.TRUE;
-            }
-        } else new UnallowedActionException();
-
-        return Boolean.FALSE;
+    public void enterPassword(String password) {
+        setWaitingTask(Action.PASS);
+        String[] args = {password};
+        setWaitingTaskArgs(args);
     }
 
-    private void quitRequest() {
-        try {
-            String request = Pop3Util.getRequestQUIT();
-            serverUtil.send(request);
-        } catch (IOException e) {
-            logger.warn(e.toString());
-        }
+    public void getMessage(int num) {
+        setWaitingTask(Action.RETR);
+        String[] args = {Integer.toString(num)};
+        setWaitingTaskArgs(args);
     }
 
-    private Boolean quitResponse() {
-        try {
-            String message = getResponse();
-            return Boolean.TRUE;
-        } catch (ErrorResponseServerException e) {
-            logger.warn(e.toString());
-        } catch (BadFormatResponseServerException e) {
-            logger.error(e.toString());
-        } catch (IOException e) {
-            logger.error(e.toString());
-        }
-        return Boolean.FALSE;
-    }
-
-
-    /**
-     * Return true if quit success
-     * else return false
-     *
-     * @return
-     */
-    public String retreiveAction(int i) throws UnallowedActionException {
-        if (State.TRANSACTION.equals(state) && i > 0 && i <= unreadMessage) {
-            retreiveRequest(i);
-            return retreiveResponse();
-        } else throw new UnallowedActionException();
-    }
-
-    private void retreiveRequest(int i) {
-        try {
-            String request = Pop3Util.getRequestRETR(i);
-            serverUtil.send(request);
-        } catch (IOException e) {
-            logger.warn(e.toString());
-        }
-    }
-
-    private String retreiveResponse() {
-        try {
-            String message = getResponse();
-            return message;
-        } catch (ErrorResponseServerException e) {
-            logger.warn(e.toString());
-        } catch (BadFormatResponseServerException e) {
-            logger.error(e.toString());
-        } catch (IOException e) {
-            logger.error(e.toString());
-        }
-        return null;
-    }
-
-    private String getResponse() throws ErrorResponseServerException, BadFormatResponseServerException, IOException {
-        byte[] response;
-        String[] split;
-        String message = "";
-        response = serverUtil.receive();
-        String str = ServerUtil.bytesToAsciiString(response);
-        logger.info("Response : " + str);
-        if (str.startsWith(ServerUtil.errorResponse())) {
-            split = str.split("\\" + ServerUtil.errorResponse() + ' ', 2);
-            if (split.length > 1) message = split[1];
-            throw new ErrorResponseServerException(message);
-        } else if (str.startsWith(ServerUtil.successResponse())) {
-            split = str.split("\\" + ServerUtil.successResponse() + ' ', 2);
-            if (split.length > 1) message = split[1];
-            return message;
-        } else {
-            throw new BadFormatResponseServerException(str);
-        }
+    public void getStat(int num) {
+        setWaitingTask(Action.STAT);
+        String[] args = {Integer.toString(num)};
+        setWaitingTaskArgs(args);
     }
 }

@@ -1,9 +1,10 @@
 package base;
 
-import base.action.Action;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
 import org.apache.log4j.Logger;
+import util.Action;
+import util.CurrentState;
 import util.ServerUtil;
 
 /**
@@ -19,49 +20,50 @@ public class Main {
     private static Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        ServerUtil.initialize(new Server(hostname[0], port[0]));
-        State state = State.AUTHORIZATION;
+        CurrentState currentState = null;
         try {
+            ServerUtil.initialize(new Server(hostname[0], port[0]));
             Action.response();
+            currentState = CurrentState.AUTHORIZATION;
         } catch (ErrorResponseServerException e) {
             e.printStackTrace();
         }
 
         try {
-            Action.USER.execute(state, "admin");
-            state = state.changeTo(Action.USER.getIfSucceed());
+            Action.USER.execute(currentState, "admin");
+            currentState = currentState.changeTo(Action.USER.getIfSucceed());
         } catch (UnallowedActionException e) {
             e.printStackTrace();
         } catch (ErrorResponseServerException e) {
             e.printStackTrace();
-            state = state.changeTo(Action.PASS.getIfFailed());
+            currentState = currentState.changeTo(Action.PASS.getIfFailed());
             e.printStackTrace();
         }
         try {
-            Action.PASS.execute(state, "pw");
-            state = state.changeTo(Action.PASS.getIfSucceed());
+            Action.PASS.execute(currentState, "pw");
+            currentState = currentState.changeTo(Action.PASS.getIfSucceed());
         } catch (UnallowedActionException e) {
             e.printStackTrace();
         } catch (ErrorResponseServerException e) {
-            state = state.changeTo(Action.PASS.getIfFailed());
+            currentState = currentState.changeTo(Action.PASS.getIfFailed());
             e.printStackTrace();
         }
         try {
-            Action.STAT.execute(state);
-            state = state.changeTo(Action.STAT.getIfSucceed());
+            Action.STAT.execute(currentState);
+            currentState = currentState.changeTo(Action.STAT.getIfSucceed());
         } catch (UnallowedActionException e) {
             e.printStackTrace();
         } catch (ErrorResponseServerException e) {
-            state = state.changeTo(Action.STAT.getIfFailed());
+            currentState = currentState.changeTo(Action.STAT.getIfFailed());
             e.printStackTrace();
         }
         try {
-            Action.QUIT.execute(state);
-            state = state.changeTo(Action.QUIT.getIfSucceed());
+            Action.QUIT.execute(currentState);
+            currentState = currentState.changeTo(Action.QUIT.getIfSucceed());
         } catch (UnallowedActionException e) {
             e.printStackTrace();
         } catch (ErrorResponseServerException e) {
-            state = state.changeTo(Action.QUIT.getIfFailed());
+            currentState = currentState.changeTo(Action.QUIT.getIfFailed());
             e.printStackTrace();
         }
     }
