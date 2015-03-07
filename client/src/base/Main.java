@@ -15,7 +15,7 @@ public class Main {
     private static Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        Client client = new Client();
+        ClientThrowable client = new ClientThrowable();
         client.start();
         client.openConnexion(hostname[0], port[0]);
         waitForAnswer(client);

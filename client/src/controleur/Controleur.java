@@ -1,29 +1,45 @@
-//package controleur;
-//
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//
-//import modele.Modele;
-//import modele.Simulateur;
-//import vue.FenetrePrincipale;
-////dans cette classe le controleur va contenir le modele et la vue
-////afin d'avoir un acces a ces 2 classe en direct
-////ainsi qu'un simulateur qui va nous permettre d'avoir le temps d'execution ainsi que les fontions pause et play
-//public class Controleur {
-//	
-//	Modele modele;
-//	FenetrePrincipale fp;
-//	Simulateur sim;	
-//	//-------------
-//	//constructeur
-//	//-------------
-//	public Controleur()
-//	{		
-//		modele = new Modele();
-//		fp = new FenetrePrincipale(modele);
-//		modele.addObserver(fp);
-//		sim = new Simulateur(modele);
-//		//evenement pour l'evenement du bouton activer
+package controleur;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import vue.FenetrePrincipale;
+import base.Client;
+import base.ClientObservable;
+import base.ClientThrowable;
+//dans cette classe le controleur va contenir le modele et la vue
+//afin d'avoir un acces a ces 2 classe en direct
+//ainsi qu'un simulateur qui va nous permettre d'avoir le temps d'execution ainsi que les fontions pause et play
+public class Controleur {
+	ClientThrowable client;
+	ClientObservable clientObs;
+	FenetrePrincipale fp;	
+	//-------------
+	//constructeur
+	//-------------
+	public Controleur()
+	{
+		client=new ClientThrowable();
+		clientObs = new ClientObservable(client);
+		fp = new FenetrePrincipale(clientObs);
+		clientObs.addObserver(fp);
+		client.start();
+		//evenement pour l'evenement du bouton connexion
+		fp.getConnexion().addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				String username=fp.getIdentifiant().getText();
+				String password=fp.getMotDePasse().getText();
+				String nomServeur=fp.getNomServeur().getText();
+				if(fp.connexionServeur(nomServeur))
+				{
+					if(fp.connexionClient(username,password))
+					{
+						clientObs.notifierObserver();
+					}
+				}
+			}
+		});
+		//evenement pour l'evenement du bouton activer
 //		fp.getActiver().addActionListener(new ActionListener(){
 //			public void actionPerformed(ActionEvent evt){
 //				sim.play();
@@ -74,10 +90,9 @@
 //				sim.pause();
 //			}
 //		});
-//		sim.start();
-//	}
-//	//programme principale qui instancie juste le controleur qui va generer tout le reste
-//	public static void main(String[] args){
-//		new Controleur();
-//	}
-//}
+	}
+	//programme principale qui instancie juste le controleur qui va generer tout le reste
+	public static void main(String[] args){
+		new Controleur();
+	}
+}
