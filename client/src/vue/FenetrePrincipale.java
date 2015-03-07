@@ -41,11 +41,11 @@ import base.ClientObservable;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.io.File;
+import java.net.UnknownHostException;
 public class FenetrePrincipale extends JFrame implements Observer {
 	
 	private static final long serialVersionUID = 1L;
 	JPanel jpprincipal;
-	JPanel jpcases;
 	JPanel jpbord1;
 	JMenuBar menubar;
 	JMenu menu1;
@@ -91,42 +91,44 @@ public class FenetrePrincipale extends JFrame implements Observer {
 		nomServeur = new JTextField();
 		nomServeur.setColumns(10);
 		
-		connexion = new JButton("Connexion");
+		connexion = new JButton();
+		connexion.setText("Connexion");
+		connexion.setFocusPainted(false);
+		connexion.setBackground(Color.CYAN);
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel.createSequentialGroup()
 					.addGap(419)
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-							.addGroup(gl_panel.createSequentialGroup()
-								.addComponent(lblUserName)
-								.addGap(57)
-								.addComponent(identifiant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addGroup(gl_panel.createSequentialGroup()
-								.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-									.addComponent(lblNomDuServeur)
-									.addComponent(lblMotDePasse))
-								.addGap(43)
-								.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-									.addComponent(mdp, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addComponent(nomServeur, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
 						.addGroup(gl_panel.createSequentialGroup()
-							.addGap(68)
-							.addComponent(connexion)
-							.addPreferredGap(ComponentPlacement.RELATED, 54, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(646, Short.MAX_VALUE))
+							.addComponent(lblUserName)
+							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(identifiant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblNomDuServeur)
+								.addComponent(lblMotDePasse))
+							.addGap(43)
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(mdp, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(nomServeur, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+					.addContainerGap(570, Short.MAX_VALUE))
 				.addGroup(gl_panel.createSequentialGroup()
-					.addGap(450)
-					.addComponent(lblBienvenue, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(598))
+					.addGap(474)
+					.addComponent(connexion, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(612, Short.MAX_VALUE))
+				.addGroup(gl_panel.createSequentialGroup()
+					.addGap(459)
+					.addComponent(lblBienvenue, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+					.addGap(589))
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel.createSequentialGroup()
-					.addGap(36)
+					.addGap(112)
 					.addComponent(lblBienvenue)
-					.addGap(111)
+					.addGap(35)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(identifiant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblUserName))
@@ -139,8 +141,8 @@ public class FenetrePrincipale extends JFrame implements Observer {
 						.addComponent(nomServeur, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblNomDuServeur))
 					.addGap(26)
-					.addComponent(connexion)
-					.addContainerGap(256, Short.MAX_VALUE))
+					.addComponent(connexion, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(267, Short.MAX_VALUE))
 		);
 		panel.setLayout(gl_panel);
 		initComponents();
@@ -163,7 +165,10 @@ public class FenetrePrincipale extends JFrame implements Observer {
 	//cette boucle n'est gerer que grace a la classe simulateur qui nous donne la possibilité de la stopper ou non et d'agir sur son temps d'execution
 	@Override
 	public void update(Observable obj, Object arg){	
-		//System.out.println("next");
+		if(arg instanceof Exception)
+		{
+			erreurGenerique(new JFrame(),((Exception)arg).getMessage(),"Erreur",JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	public boolean connexionServeur(String nomServeur)
 	{
@@ -174,7 +179,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
 		}
 		else
 		{
-			erreurConnexionServeur();
+			erreurGenerique(new JFrame(),"Serveur introuvable","Warning connexion",JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
 	}
@@ -202,26 +207,16 @@ public class FenetrePrincipale extends JFrame implements Observer {
 		}
 		else
 		{
-			erreurConnexionClient();
+			erreurGenerique(new JFrame(),"Veuillez renseignez votre nom","Warning connexion",JOptionPane.WARNING_MESSAGE);
 			return connect;
 		}
 	}
-	public void erreurConnexionClient()
+	public void erreurGenerique(JFrame frame,String message,String titre_fenetre,int type_message)
 	{
 		//custom title, warning icon
-		JOptionPane.showMessageDialog(new JFrame(),
-		    "Veuillez renseignez votre nom",
-		    "Connexion warning",
-		    JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(frame,message,titre_fenetre,type_message);
 	}
-	public void erreurConnexionServeur()
-	{
-		//custom title, warning icon
-				JOptionPane.showMessageDialog(new JFrame(),
-				    "Serveur introuvable",
-				    "Connexion warning",
-				    JOptionPane.WARNING_MESSAGE);
-	}
+	
 	public static boolean waitForAnswer(Client client) {
         String success, error;
         do {
@@ -238,4 +233,15 @@ public class FenetrePrincipale extends JFrame implements Observer {
         } while (success == null && error == null);
         return false;
     }
+	public void connecter()
+	{
+		this.setVisible(false);
+		FenetreConnecter fenetre=new FenetreConnecter();
+		fenetre.setVisible(true);
+		
+	}
+	public void deconnecter()
+	{
+		this.setVisible(true);
+	}
 }
