@@ -39,6 +39,10 @@ public class ClientThrowable extends Thread implements Client {
         return message;
     }
 
+    private synchronized void setMessage(Email email) {
+        this.email = email;
+    }
+
     @Override
     public synchronized String getErrorMessage() {
         String message = errorMessage;
@@ -110,7 +114,7 @@ public class ClientThrowable extends Thread implements Client {
                     setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfSucceed()));
                     setSucessMessage(message);
                     if (Action.RETR.equals(todo)) {
-
+                        setMessage(new Email(message));
                     }
                 } catch (UnallowedActionException e) {
                     message = e.toString();

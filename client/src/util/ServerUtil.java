@@ -15,6 +15,8 @@ import java.util.ArrayList;
 public class ServerUtil {
     private static Logger logger = Logger.getLogger(ServerUtil.class.getName());
     private static ServerUtil instance;
+    private static String endLine = "\r\n";
+    private static String endFile = "\r\n.\r\n";
     private Server server;
     private OutputStream out;
     private InputStream in;

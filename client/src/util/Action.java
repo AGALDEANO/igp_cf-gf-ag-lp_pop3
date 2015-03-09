@@ -93,7 +93,7 @@ public enum Action {
             request(args);
             String message = null;
             try {
-                message = response(Action.LIST.equals(this) && (args == null || args.length == 0));
+                message = response((Action.LIST.equals(this) && (args == null || args.length == 0)) || Action.RETR.equals(this));
                 logger.info(String.format("==== %s succeed ====", this.name()));
             } catch (ErrorResponseServerException e) {
                 logger.info(String.format("==== %s failed ====", this.name()));
