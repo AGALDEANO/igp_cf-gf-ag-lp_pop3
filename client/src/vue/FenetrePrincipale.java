@@ -1,7 +1,7 @@
 package vue;
 
-import base.Client;
-import base.ClientObservable;
+import base.client.Client;
+import base.client.ClientObservable;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;

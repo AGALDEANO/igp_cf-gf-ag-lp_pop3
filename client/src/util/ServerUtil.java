@@ -89,4 +89,36 @@ public class ServerUtil {
         }
         return array;
     }
+
+    public byte[] receiveList() throws IOException {
+        ArrayList<Byte> bytes = new ArrayList<Byte>();
+        int i = in.read();
+        logger.debug(String.format("data : %x", (byte) i));
+        int previous = -1;
+        Boolean endList = Boolean.FALSE;
+        int indexLastCRLF = -1;
+        do {
+            while (i != -1 && !(i == 10 && previous == 13)) {
+                bytes.add((byte) i);
+                previous = i;
+                i = in.read();
+                logger.debug(String.format("data : %x", (byte) i));
+            }
+            if (i == 10 && previous == 13) {
+                if (indexLastCRLF > -1 && indexLastCRLF == bytes.size() - 1 && bytes.get(indexLastCRLF) == (byte) '.') {
+                    endList = Boolean.TRUE;
+                } else {
+                    bytes.add((byte) i);
+                    indexLastCRLF = bytes.size();
+                    i = in.read();
+                    previous = -1;
+                }
+            }
+        } while (!endList && i != -1);
+        byte[] array = new byte[bytes.size()];
+        for (int j = 0; j < array.length; j++) {
+            array[j] = bytes.get(j);
+        }
+        return array;
+    }
 }

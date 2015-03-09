@@ -1,5 +1,7 @@
 package base;
 
+import base.client.Client;
+import base.client.ClientThrowable;
 import org.apache.log4j.Logger;
 
 /**
@@ -34,6 +36,8 @@ public class Main {
         client.getMessageDetails(1);
         waitForAnswer(client);
         client.closeConnexion();
+        waitForAnswer(client);
+        client.openConnexion(hostname[0], port[0]);
         waitForAnswer(client);
     }
 

@@ -40,12 +40,12 @@ public enum Action {
         return logger;
     }
 
-    public static String response() throws ErrorResponseServerException {
+    public String response(Boolean isList) throws ErrorResponseServerException {
         byte[] response;
         String[] split;
         String message = "";
         try {
-            response = ServerUtil.getInstance().receive();
+            response = (isList ? ServerUtil.getInstance().receiveList() : ServerUtil.getInstance().receive());
             String str = ServerUtil.bytesToAsciiString(response);
             logger.info("Response : " + str);
             if (str.startsWith(ServerUtil.errorResponse())) {
@@ -93,7 +93,7 @@ public enum Action {
             request(args);
             String message = null;
             try {
-                message = response();
+                message = response(Action.LIST.equals(this) && (args == null || args.length == 0));
                 logger.info(String.format("==== %s succeed ====", this.name()));
             } catch (ErrorResponseServerException e) {
                 logger.info(String.format("==== %s failed ====", this.name()));

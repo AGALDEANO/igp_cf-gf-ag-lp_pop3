@@ -1,7 +1,7 @@
 package controleur;
 
-import base.ClientObservable;
-import base.ClientThrowable;
+import base.client.ClientObservable;
+import base.client.ClientThrowable;
 import vue.FenetrePrincipale;
 
 import java.awt.event.ActionEvent;

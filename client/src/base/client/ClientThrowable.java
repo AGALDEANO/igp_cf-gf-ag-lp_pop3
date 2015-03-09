@@ -1,5 +1,6 @@
-package base;
+package base.client;
 
+import base.Email;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
 import org.apache.log4j.Logger;
@@ -18,7 +19,9 @@ public class ClientThrowable extends Thread implements Client {
     private Boolean quit = Boolean.FALSE;
     private String sucessMessage = null;
     private String errorMessage = null;
+    private Email email = null;
 
+    @Override
     public synchronized String getSucessMessage() {
         String message = sucessMessage;
         sucessMessage = null;
@@ -29,6 +32,14 @@ public class ClientThrowable extends Thread implements Client {
         this.sucessMessage = sucessMessage;
     }
 
+    @Override
+    public synchronized Email getMessage() {
+        Email message = new Email(email);
+        email = null;
+        return message;
+    }
+
+    @Override
     public synchronized String getErrorMessage() {
         String message = errorMessage;
         errorMessage = null;
@@ -43,11 +54,11 @@ public class ClientThrowable extends Thread implements Client {
         return waitingTaskArgs;
     }
 
-    public synchronized void setWaitingTaskArgs(String[] waitingTaskArgs) {
+    private synchronized void setWaitingTaskArgs(String[] waitingTaskArgs) {
         this.waitingTaskArgs = waitingTaskArgs;
     }
 
-
+    @Override
     public synchronized CurrentState getCurrentState() {
         return currentState;
     }
@@ -56,6 +67,7 @@ public class ClientThrowable extends Thread implements Client {
         this.currentState = currentState;
     }
 
+    @Override
     public synchronized int getUnreadMessage() {
         return unreadMessage;
     }
@@ -97,12 +109,16 @@ public class ClientThrowable extends Thread implements Client {
                     logger.info(message);
                     setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfSucceed()));
                     setSucessMessage(message);
+                    if (Action.RETR.equals(todo)) {
+
+                    }
                 } catch (UnallowedActionException e) {
                     message = e.toString();
                     setErrorMessage(message);
                 } catch (ErrorResponseServerException e) {
                     setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfFailed()));
-                    setErrorMessage(e.toString());
+                    message = e.toString();
+                    setErrorMessage(message);
                 } finally {
                     setWaitingTask(null);
                     setWaitingTaskArgs(null);
@@ -121,6 +137,9 @@ public class ClientThrowable extends Thread implements Client {
         setWaitingTask(Action.QUIT);
         String[] args = {};
         setWaitingTaskArgs(args);
+    }
+
+    public void exit() {
         quit = Boolean.TRUE;
     }
 
