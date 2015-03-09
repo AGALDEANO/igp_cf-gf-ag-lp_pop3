@@ -21,24 +21,7 @@ public class Main {
         client.start();
         client.openConnexion(hostname[0], port[0]);
         waitForAnswer(client);
-        client.enterLogin("admin");
-        waitForAnswer(client);
-        client.enterPassword("pw");
-        waitForAnswer(client);
-        client.getStat();
-        waitForAnswer(client);
-        client.getMessage(1);
-        waitForAnswer(client);
-        client.signIn("ffd");
-        waitForAnswer(client);
-        client.getMessageList();
-        waitForAnswer(client);
-        client.getMessageDetails(1);
-        waitForAnswer(client);
-        client.closeConnexion();
-        waitForAnswer(client);
-        client.openConnexion(hostname[0], port[0]);
-        waitForAnswer(client);
+        client.signIn("blabla", "test");
     }
 
     public static void waitForAnswer(Client client) {

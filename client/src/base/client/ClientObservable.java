@@ -54,6 +54,11 @@ public class ClientObservable extends Observable implements Client {
     }
 
     @Override
+    public void signIn(String username, String password) {
+        client.signIn(username, password);
+    }
+
+    @Override
     public void getMessageList() {
         client.getMessageList();
     }

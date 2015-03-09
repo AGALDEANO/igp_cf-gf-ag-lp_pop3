@@ -20,6 +20,8 @@ public interface Client {
 
     void signIn(String username);
 
+    void signIn(String username, String password);
+
     void getMessageList();
 
     void getMessageDetails(int i);

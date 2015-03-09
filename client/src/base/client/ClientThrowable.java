@@ -147,9 +147,15 @@ public class ClientThrowable extends Thread implements Client {
         quit = Boolean.TRUE;
     }
 
+    public void signIn(String username, String password) {
+        setWaitingTask(Action.APOP);
+        String[] args = {username, password};
+        setWaitingTaskArgs(args);
+    }
+
     public void signIn(String username) {
         setWaitingTask(Action.APOP);
-        String[] args = {username};
+        String[] args = {username, ""};
         setWaitingTaskArgs(args);
     }
 
