@@ -9,7 +9,7 @@ import util.CurrentState;
 /**
  * Created by alexandreg on 02/03/2015.
  */
-public class ClientThrowable extends Thread implements Client{
+public class ClientThrowable extends Thread implements Client {
     private static Logger logger = Logger.getLogger(ClientThrowable.class.getName());
     private CurrentState currentState = null;
     private int unreadMessage = 0;
