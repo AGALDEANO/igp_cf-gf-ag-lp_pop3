@@ -1,6 +1,7 @@
 package base;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by alexandreg on 09/03/2015.
@@ -33,5 +34,18 @@ public class Email {
 
     public String getBody() {
         return body;
+    }
+
+    public String headersToString() {
+        String str = "";
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            str += key + headerSeparator + endline;
+        }
+        str += endline;
+        str += body;
+
+        return str;
     }
 }
