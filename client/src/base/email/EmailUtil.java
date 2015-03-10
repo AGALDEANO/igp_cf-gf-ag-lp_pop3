@@ -1,7 +1,8 @@
 package base.email;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -9,25 +10,39 @@ import java.util.ArrayList;
  * Created by alexandreg on 10/03/2015.
  */
 public class EmailUtil {
-    private static String extension = ".mail";
+    private static String extension = ".email";
+    private static String path = "emails";
 
     public static void saveEmail(Email email, String username) throws IOException {
-        File f = new File(username);
-        String filename = username + "/" + email.getId() + extension;
-        if (f.exists() && f.isDirectory()) {
-            File mail = new File(filename);
-            if (mail.exists() && mail.delete() && mail.createNewFile()) {
-                FileOutputStream out = new FileOutputStream(filename);
-                out.write(email.toString().getBytes());
-                out.close();
-            }
-        }
+        String filepath = path + "/" + username + "/" + email.getId() + extension;
+        File file = new File(filepath);
+        file.getParentFile().mkdirs();
+        FileWriter writer = null;
+        writer = new FileWriter(filepath);
+        writer.write(email.toString());
+        writer.close();
     }
 
     private static ArrayList<Email> getEmails(String username) throws IOException {
-        File f = new File(username);
+        String filepath;
+        String datas;
+        int n;
+        ArrayList<Email> emailArrayList = new ArrayList<>();
+        File f = new File(path + "/" + username);
         if (f.exists() && f.isDirectory()) {
-
+            for (String filename : f.list()) {
+                if (filename.endsWith(extension)) {
+                    filepath = path + "/" + username + "/" + filename;
+                    FileInputStream in = new FileInputStream(filepath);
+                    n = in.read();
+                    datas = "";
+                    while (n != -1) {
+                        datas += (char) n;
+                        n = in.read();
+                    }
+                    emailArrayList.add(new Email(datas, Integer.parseInt(filename.substring(0, filename.lastIndexOf(extension)))));
+                }
+            }
         }
         return null;
     }

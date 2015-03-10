@@ -25,7 +25,7 @@ public class ClientThrowable extends Thread implements Client {
     private String errorMessage = null;
     private Email email = null;
     private String username;
-    private Boolean autosave = Boolean.FALSE;
+    private Boolean autosave = Boolean.TRUE;
 
     @Override
     public synchronized String getSucessMessage() {
@@ -40,6 +40,7 @@ public class ClientThrowable extends Thread implements Client {
 
     @Override
     public synchronized Email getMessage() {
+        if (email == null) return null;
         Email message = new Email(email);
         email = null;
         return message;

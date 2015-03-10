@@ -32,6 +32,20 @@ public class Email {
         }
     }
 
+    public Email(String response, long id) {
+        this.id = id;
+        String[] splittedResponse = response.split(endHeader);
+        String[] strHeader = splittedResponse[0].split(endLine);
+        body = splittedResponse[1].split(endFile)[0];
+        if (strHeader.length > 0) {
+            bytes = Integer.parseInt(strHeader[0]);
+            for (int i = 1; i < strHeader.length; i++) {
+                String header = strHeader[i];
+                headers.put(header.split(headerSeparator)[0], header.split(headerSeparator)[1]);
+            }
+        }
+    }
+
     public Email(Email e) {
         id = e.getId();
         bytes = e.getBytes();
