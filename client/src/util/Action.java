@@ -103,7 +103,7 @@ public enum Action {
             return message;
         } else {
             logger.info(String.format("==== %s failed ====", name()));
-            throw new UnallowedActionException("L'action " + name() + " n'est pas autorisée dans l'état " + currentState.name() + " !");
+            throw new UnallowedActionException("L'action " + name() + " n'est pas autorisée dans l'état " + (currentState != null ? currentState.name() : "CLOSED") + " !");
         }
     }
 
