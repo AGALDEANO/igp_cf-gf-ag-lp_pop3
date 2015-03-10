@@ -119,13 +119,16 @@ public class ClientThrowable extends Thread implements Client {
                     }
                 } catch (UnallowedActionException e) {
                     message = e.toString();
+                    logger.error(message);
                     setErrorMessage(message);
                 } catch (ErrorResponseServerException e) {
                     setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfFailed()));
                     message = e.toString();
+                    logger.error(message);
                     setErrorMessage(message);
                 } catch (UnrespondingServerException e) {
                     message = e.toString();
+                    logger.error(message);
                     setErrorMessage(message);
                 } finally {
                     setWaitingTask(null);

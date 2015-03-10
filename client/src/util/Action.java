@@ -107,7 +107,7 @@ public enum Action {
         }
     }
 
-    private void request(String... args) {
+    private void request(String... args) throws UnrespondingServerException {
         try {
             if (this.equals(CONNEXION) && args.length == 2) {
                 ServerUtil.initialize(new Server(args[0], Integer.parseInt(args[1])));

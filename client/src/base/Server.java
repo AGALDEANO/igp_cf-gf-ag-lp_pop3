@@ -1,13 +1,11 @@
 package base;
 
+import exception.UnrespondingServerException;
 import exception.WrongPortServerException;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -22,7 +20,7 @@ public class Server {
     private Socket socket;
     private Boolean apop = Boolean.TRUE;
 
-    public Server(String hostname, int port) {
+    public Server(String hostname, int port) throws UnrespondingServerException {
         if (port >= 0) {
             this.port = port;
 
@@ -64,7 +62,7 @@ public class Server {
         return hostname;
     }
 
-    public void setHostname(String hostname) {
+    public void setHostname(String hostname) throws UnrespondingServerException {
         if (hostname == null) throw new NullPointerException();
         this.hostname = hostname;
         try {
@@ -85,7 +83,7 @@ public class Server {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(int port) throws UnrespondingServerException {
         if (port >= 0) {
             this.port = port;
             try {
@@ -114,7 +112,7 @@ public class Server {
         inetAddress = InetAddress.getByName(hostname);
     }
 
-    private void updateDatagramSocket() throws IOException {
+    private void updateDatagramSocket() throws IOException, UnrespondingServerException {
         if (socket != null) {
             try {
                 socket.close();
@@ -122,6 +120,10 @@ public class Server {
                 logger.error(e.toString());
             }
         }
-        socket = new Socket(inetAddress, port);
+        try {
+            socket = new Socket(inetAddress, port);
+        } catch (ConnectException e) {
+            throw new UnrespondingServerException(e.toString());
+        }
     }
 }
