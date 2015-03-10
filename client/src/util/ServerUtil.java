@@ -1,12 +1,14 @@
 package util;
 
 import base.Server;
+import exception.UnrespondingServerException;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
 /**
@@ -71,20 +73,9 @@ public class ServerUtil {
         send(str.getBytes());
     }
 
-    public byte[] receive() throws IOException {
+    public byte[] receive() throws IOException, UnrespondingServerException {
         ArrayList<Byte> bytes = new ArrayList<Byte>();
-        int i = in.read();
-        logger.debug(String.format("data : %x", (byte) i));
-        int previous = -1;
-        while (i != -1 && !(i == 10 && previous == 13)) {
-            bytes.add((byte) i);
-            previous = i;
-            i = in.read();
-            logger.debug(String.format("data : %x", (byte) i));
-        }
-        if (i == 10 && previous == 13) {
-            bytes.remove(bytes.size() - 1);
-        }
+        bytes = read(bytes, 3);
         byte[] array = new byte[bytes.size()];
         for (int j = 0; j < array.length; j++) {
             array[j] = bytes.get(j);
@@ -92,14 +83,14 @@ public class ServerUtil {
         return array;
     }
 
-    public byte[] receiveList() throws IOException {
-        ArrayList<Byte> bytes = new ArrayList<Byte>();
-        int i = in.read();
-        logger.debug(String.format("data : %x", (byte) i));
-        int previous = -1;
-        Boolean endList = Boolean.FALSE;
-        int indexLastCRLF = -1;
-        do {
+    private ArrayList<Byte> read(ArrayList<Byte> bytes, int n) throws IOException, UnrespondingServerException {
+        if (n < 1) {
+            throw new UnrespondingServerException();
+        }
+        try {
+            int i = in.read();
+            logger.debug(String.format("data : %x", (byte) i));
+            int previous = -1;
             while (i != -1 && !(i == 10 && previous == 13)) {
                 bytes.add((byte) i);
                 previous = i;
@@ -107,16 +98,51 @@ public class ServerUtil {
                 logger.debug(String.format("data : %x", (byte) i));
             }
             if (i == 10 && previous == 13) {
-                if (indexLastCRLF > -1 && indexLastCRLF == bytes.size() - 1 && bytes.get(indexLastCRLF) == (byte) '.') {
-                    endList = Boolean.TRUE;
-                } else {
-                    bytes.add((byte) i);
-                    indexLastCRLF = bytes.size();
-                    i = in.read();
-                    previous = -1;
-                }
+                bytes.remove(bytes.size() - 1);
             }
-        } while (!endList && i != -1);
+            return bytes;
+        } catch (SocketTimeoutException e) {
+            return read(bytes, n - 1);
+        }
+    }
+
+    private ArrayList<Byte> readList(ArrayList<Byte> bytes, int n) throws IOException, UnrespondingServerException {
+        if (n < 1) {
+            throw new UnrespondingServerException();
+        }
+        try {
+            int i = in.read();
+            logger.debug(String.format("data : %x", (byte) i));
+            int previous = -1;
+            Boolean endList = Boolean.FALSE;
+            int indexLastCRLF = -1;
+            do {
+                while (i != -1 && !(i == 10 && previous == 13)) {
+                    bytes.add((byte) i);
+                    previous = i;
+                    i = in.read();
+                    logger.debug(String.format("data : %x", (byte) i));
+                }
+                if (i == 10 && previous == 13) {
+                    if (indexLastCRLF > -1 && indexLastCRLF == bytes.size() - 1 && bytes.get(indexLastCRLF) == (byte) '.') {
+                        endList = Boolean.TRUE;
+                    } else {
+                        bytes.add((byte) i);
+                        indexLastCRLF = bytes.size();
+                        i = in.read();
+                        previous = -1;
+                    }
+                }
+            } while (!endList && i != -1);
+            return bytes;
+        } catch (SocketTimeoutException e) {
+            return readList(bytes, n - 1);
+        }
+    }
+
+    public byte[] receiveList() throws IOException, UnrespondingServerException {
+        ArrayList<Byte> bytes = new ArrayList<Byte>();
+        bytes = readList(bytes, 3);
         byte[] array = new byte[bytes.size()];
         for (int j = 0; j < array.length; j++) {
             array[j] = bytes.get(j);

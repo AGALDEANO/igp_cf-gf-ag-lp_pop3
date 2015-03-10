@@ -4,6 +4,7 @@ import base.Server;
 import exception.BadFormatResponseServerException;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
+import exception.UnrespondingServerException;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ public enum Action {
         return logger;
     }
 
-    public String response(Boolean isList) throws ErrorResponseServerException {
+    public String response(Boolean isList) throws ErrorResponseServerException, UnrespondingServerException {
         byte[] response;
         String[] split;
         String message = "";
@@ -87,7 +88,7 @@ public enum Action {
         return ifFailed;
     }
 
-    public String execute(CurrentState currentState, String... args) throws UnallowedActionException, ErrorResponseServerException {
+    public String execute(CurrentState currentState, String... args) throws UnallowedActionException, ErrorResponseServerException, UnrespondingServerException {
         logger.info(String.format("==== %s started ====", this.name()));
         if (allowed(currentState)) {
             request(args);

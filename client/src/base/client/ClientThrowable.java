@@ -3,6 +3,7 @@ package base.client;
 import base.Email;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
+import exception.UnrespondingServerException;
 import org.apache.log4j.Logger;
 import util.Action;
 import util.CurrentState;
@@ -121,6 +122,9 @@ public class ClientThrowable extends Thread implements Client {
                     setErrorMessage(message);
                 } catch (ErrorResponseServerException e) {
                     setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfFailed()));
+                    message = e.toString();
+                    setErrorMessage(message);
+                } catch (UnrespondingServerException e) {
                     message = e.toString();
                     setErrorMessage(message);
                 } finally {
