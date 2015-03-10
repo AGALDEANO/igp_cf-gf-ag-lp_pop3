@@ -28,7 +28,8 @@ public class Controleur {
         fp.getConnexion().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 String nomServeur = fp.getNomServeur().getText();
-                if (fp.connexionServeur(nomServeur)) {
+                String port = fp.getPort().getText();
+                if (fp.connexionServeur(nomServeur,port)) {
                     fp.connecterServeur();
                 }
             }

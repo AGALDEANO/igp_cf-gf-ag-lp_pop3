@@ -28,6 +28,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
     private GridLayout g;
     private JTextField nomServeur;
     private JButton connexion;
+    private JTextField port;
 
     //-------------
     //constructeur
@@ -47,7 +48,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
         JLabel lblBienvenue = new JLabel("Bienvenue sur le client POP3");
         lblBienvenue.setForeground(new Color(0, 0, 128));
 
-        JLabel lblNomDuServeur = new JLabel("Nom du serveur");
+        JLabel lblNomDuServeur = new JLabel("Nom du serveur:");
         lblNomDuServeur.setForeground(new Color(0, 0, 128));
 
         nomServeur = new JTextField();
@@ -57,44 +58,57 @@ public class FenetrePrincipale extends JFrame implements Observer {
         connexion.setText("Connexion");
         connexion.setFocusPainted(false);
         connexion.setBackground(Color.CYAN);
+        
+        JLabel portLbl = new JLabel("Port:");
+        portLbl.setForeground(new Color(0, 0, 128));
+        
+        port = new JTextField();
+        port.setColumns(10);
         GroupLayout gl_panel = new GroupLayout(panel);
         gl_panel.setHorizontalGroup(
-                gl_panel.createParallelGroup(Alignment.LEADING)
-                        .addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
-                                .addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                                        .addGroup(gl_panel.createSequentialGroup()
-                                                .addContainerGap()
-                                                .addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                                                        .addGroup(gl_panel.createSequentialGroup()
-                                                                .addComponent(lblNomDuServeur)
-                                                                .addPreferredGap(ComponentPlacement.UNRELATED)
-                                                                .addComponent(nomServeur, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                                        .addGroup(gl_panel.createSequentialGroup()
-                                                                .addGap(22)
-                                                                .addComponent(connexion, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE))))
-                                        .addGroup(gl_panel.createSequentialGroup()
-                                                .addGap(459)
-                                                .addComponent(lblBienvenue, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)))
-                                .addGap(589))
+        	gl_panel.createParallelGroup(Alignment.TRAILING)
+        		.addGroup(gl_panel.createSequentialGroup()
+        			.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+        				.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+        					.addGroup(gl_panel.createSequentialGroup()
+        						.addGap(455)
+        						.addComponent(connexion, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE))
+        					.addGroup(gl_panel.createSequentialGroup()
+        						.addGap(459)
+        						.addComponent(lblBienvenue, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)))
+        				.addGroup(gl_panel.createSequentialGroup()
+        					.addContainerGap()
+        					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+        						.addComponent(portLbl, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(lblNomDuServeur, Alignment.TRAILING))
+        					.addGap(18)
+        					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+        						.addComponent(port, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(nomServeur, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+        			.addGap(589))
         );
         gl_panel.setVerticalGroup(
-                gl_panel.createParallelGroup(Alignment.LEADING)
-                        .addGroup(gl_panel.createSequentialGroup()
-                                .addGap(112)
-                                .addComponent(lblBienvenue)
-                                .addGap(50)
-                                .addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-                                        .addComponent(nomServeur, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(lblNomDuServeur))
-                                .addGap(26)
-                                .addComponent(connexion, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(328, Short.MAX_VALUE))
+        	gl_panel.createParallelGroup(Alignment.LEADING)
+        		.addGroup(gl_panel.createSequentialGroup()
+        			.addGap(112)
+        			.addComponent(lblBienvenue)
+        			.addGap(28)
+        			.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(nomServeur, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(lblNomDuServeur))
+        			.addGap(14)
+        			.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(portLbl)
+        				.addComponent(port, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addGap(20)
+        			.addComponent(connexion, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap(322, Short.MAX_VALUE))
         );
         panel.setLayout(gl_panel);
         initComponents();
     }
 
-    public static boolean waitForAnswer(Client client) {
+    public boolean waitForAnswer(Client client) {
         String success, error;
         do {
             success = client.getSucessMessage();
@@ -105,6 +119,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
             }
             if (error != null) {
                 System.out.println(error);
+                erreurGenerique(new JFrame(),error,"Erreur",JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         } while (success == null && error == null);
@@ -126,6 +141,10 @@ public class FenetrePrincipale extends JFrame implements Observer {
     public JTextField getNomServeur() {
         return this.nomServeur;
     }
+    
+    public JTextField getPort() {
+        return this.port;
+    }
 
     private void initComponents() {
         this.setTitle("Client");
@@ -146,10 +165,17 @@ public class FenetrePrincipale extends JFrame implements Observer {
         }
     }
 
-    public boolean connexionServeur(String nomServeur) {
+    public boolean connexionServeur(String nomServeur,String port) {
         boolean connect = false;
         if (!nomServeur.equals("")) {
-            clientObs.openConnexion(nomServeur, clientObs.port);
+        	if(!port.equals(""))
+        	{
+        		clientObs.openConnexion(nomServeur, Integer.valueOf(port));
+        	}
+        	else
+        	{
+        		clientObs.openConnexion(nomServeur, clientObs.port);
+        	}
             connect = waitForAnswer(clientObs);
         }
         if (!connect) {
@@ -164,7 +190,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
     public boolean connexionClient(String username) {
         boolean connect = false;
         if (!username.equals("")) {
-            clientObs.enterLogin(username);
+            clientObs.signIn(username);
             connect = waitForAnswer(clientObs);
         }
         if (!connect) {
@@ -181,7 +207,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
     }
 
     public void connecter() {
-        this.setVisible(false);
+        this.fenetreUser.setVisible(false);
         fenetreConnecter.setVisible(true);
 
     }
