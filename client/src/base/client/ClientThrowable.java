@@ -1,12 +1,15 @@
 package base.client;
 
 import base.email.Email;
+import base.email.EmailUtil;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
 import exception.UnrespondingServerException;
 import org.apache.log4j.Logger;
 import util.Action;
 import util.CurrentState;
+
+import java.io.IOException;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -21,6 +24,8 @@ public class ClientThrowable extends Thread implements Client {
     private String sucessMessage = null;
     private String errorMessage = null;
     private Email email = null;
+    private String username;
+    private Boolean autosave = Boolean.FALSE;
 
     @Override
     public synchronized String getSucessMessage() {
@@ -115,7 +120,13 @@ public class ClientThrowable extends Thread implements Client {
                     setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfSucceed()));
                     setSucessMessage(message);
                     if (Action.RETR.equals(todo)) {
-                        setMessage(new Email(message));
+                        Email received = new Email(message);
+                        setMessage(received);
+                        try {
+                            if (autosave) EmailUtil.saveEmail(received, username);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } catch (UnallowedActionException e) {
                     message = e.toString();
@@ -162,6 +173,7 @@ public class ClientThrowable extends Thread implements Client {
 
     public void signIn(String username) {
         setWaitingTask(Action.APOP);
+        this.username = username;
         String[] args = {username, ""};
         setWaitingTaskArgs(args);
     }
