@@ -2,6 +2,7 @@ package vue;
 
 import base.client.Client;
 import base.client.ClientObservable;
+import base.email.Email;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -196,10 +197,24 @@ public class FenetrePrincipale extends JFrame implements Observer {
     }
     public void recupereMessage(String number_message)
     {
+    	try{
     	int number=Integer.valueOf(number_message);
+    	
     	this.clientObs.getMessage(number);
-    	String response=waitForAnswerString(clientObs);
-    	this.fenetreConnecter.getChampMessage().setText(response);
+    	String erreur=waitForAnswerString(clientObs);
+    	if(erreur!=null)
+    	{
+    		this.erreurGenerique(new JFrame(), erreur, "Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    	else
+    	{
+    		Email email=this.clientObs.getMessage();
+    	this.fenetreConnecter.getChampMessage().setText(email.headersToString()+"\n"+email.bodyToString());
+    	}
+    	}catch(java.lang.NumberFormatException e)
+    	{
+    		this.erreurGenerique(new JFrame(), "Invalid Parameter","Warning", JOptionPane.WARNING_MESSAGE);
+    	}
     }
     //CONNEXION ENTRE LES FENETRE
   //************************************
