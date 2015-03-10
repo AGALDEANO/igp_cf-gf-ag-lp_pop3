@@ -1,6 +1,6 @@
 package base.client;
 
-import base.Email;
+import base.email.Email;
 import util.CurrentState;
 
 import java.util.Observable;

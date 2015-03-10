@@ -1,6 +1,6 @@
 package base.client;
 
-import base.Email;
+import base.email.Email;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
 import exception.UnrespondingServerException;

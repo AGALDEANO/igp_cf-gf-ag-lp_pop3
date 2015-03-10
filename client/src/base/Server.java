@@ -24,7 +24,7 @@ public class Server {
         if (port >= 0) {
             this.port = port;
 
-            if (hostname == null) throw new NullPointerException();
+            if (hostname == null) throw new NullPointerException("Le nom d'hôte spécifié ne peut être nul !");
             this.hostname = hostname;
 
             try {
@@ -47,7 +47,7 @@ public class Server {
                 System.exit(-1);
             }
         } else try {
-            throw new WrongPortServerException();
+            throw new WrongPortServerException("Le port spécifié ne peut être négatif !");
         } catch (WrongPortServerException e) {
             logger.error(e.toString());
         }
@@ -63,7 +63,7 @@ public class Server {
     }
 
     public void setHostname(String hostname) throws UnrespondingServerException {
-        if (hostname == null) throw new NullPointerException();
+        if (hostname == null) throw new NullPointerException("Le nom d'hôte spécifié ne peut être nul !");
         this.hostname = hostname;
         try {
             updateAddress();
@@ -123,7 +123,7 @@ public class Server {
         try {
             socket = new Socket(inetAddress, port);
         } catch (ConnectException e) {
-            throw new UnrespondingServerException(e.toString());
+            throw new UnrespondingServerException("Le serveur s'est déconnecté !");
         }
     }
 }
