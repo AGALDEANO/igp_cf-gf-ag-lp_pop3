@@ -43,6 +43,13 @@ public class Controleur {
 
             }
         });
+        fp.getRecuperer().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                String number_message = fp.getNumberMessage().getText();
+                fp.recupereMessage(number_message);
+
+            }
+        });
     }
 
     //programme principale qui instancie juste le controleur qui va generer tout le reste

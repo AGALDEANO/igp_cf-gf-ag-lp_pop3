@@ -6,7 +6,10 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.*;
 
 public class FenetreConnecter extends JFrame {
-    private JTextField textField;
+    private JTextField numberMessage;
+    private JButton recuperer;
+    private JButton ListMessage;
+    private JTextArea champMessage;
 
     public FenetreConnecter() throws HeadlessException {
         getContentPane().setLayout(new BorderLayout(0, 0));
@@ -27,25 +30,25 @@ public class FenetreConnecter extends JFrame {
         label_1.setForeground(new Color(153, 0, 102));
         label_1.setFont(new Font("Verdana", Font.BOLD, 13));
 
-        textField = new JTextField();
-        textField.setColumns(10);
+        numberMessage = new JTextField();
+        numberMessage.setColumns(10);
 
         JLabel lblNumroDuMessage = new JLabel("Num\u00E9ro du message:");
 
-        JTextArea champMessage = new JTextArea();
+        champMessage = new JTextArea();
         champMessage.setEditable(false);
         champMessage.setRows(2);
         champMessage.setText("Messages:");
 
-        JButton btnListerMesMessages = new JButton();
-        btnListerMesMessages.setText("Lister mes messages");
-        btnListerMesMessages.setFocusPainted(false);
-        btnListerMesMessages.setBackground(Color.CYAN);
+        ListMessage = new JButton();
+        ListMessage.setText("Lister mes messages");
+        ListMessage.setFocusPainted(false);
+        ListMessage.setBackground(Color.CYAN);
 
-        JButton btnRcuprer = new JButton();
-        btnRcuprer.setText("r\u00E9cup\u00E9rer");
-        btnRcuprer.setFocusPainted(false);
-        btnRcuprer.setBackground(Color.CYAN);
+        recuperer = new JButton();
+        recuperer.setText("r\u00E9cup\u00E9rer");
+        recuperer.setFocusPainted(false);
+        recuperer.setBackground(Color.CYAN);
         GroupLayout gl_panel = new GroupLayout(panel);
         gl_panel.setHorizontalGroup(
                 gl_panel.createParallelGroup(Alignment.LEADING)
@@ -53,7 +56,7 @@ public class FenetreConnecter extends JFrame {
                                 .addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
                                         .addGroup(gl_panel.createSequentialGroup()
                                                 .addGap(541)
-                                                .addComponent(btnListerMesMessages, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(ListMessage, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE))
                                         .addGroup(gl_panel.createSequentialGroup()
                                                 .addGap(233)
                                                 .addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
@@ -62,9 +65,9 @@ public class FenetreConnecter extends JFrame {
                                                                 .addGroup(gl_panel.createSequentialGroup()
                                                                         .addComponent(lblNumroDuMessage)
                                                                         .addPreferredGap(ComponentPlacement.RELATED)
-                                                                        .addComponent(textField, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)))
+                                                                        .addComponent(numberMessage, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)))
                                                         .addGroup(gl_panel.createSequentialGroup()
-                                                                .addComponent(btnRcuprer, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(recuperer, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
                                                                 .addGap(23)))
                                                 .addPreferredGap(ComponentPlacement.UNRELATED)
                                                 .addComponent(champMessage, GroupLayout.PREFERRED_SIZE, 385, GroupLayout.PREFERRED_SIZE))
@@ -87,11 +90,11 @@ public class FenetreConnecter extends JFrame {
                                                 .addGap(18)
                                                 .addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
                                                         .addComponent(lblNumroDuMessage)
-                                                        .addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(numberMessage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                                                .addComponent(btnRcuprer)))
+                                                .addComponent(recuperer)))
                                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                                .addComponent(btnListerMesMessages, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ListMessage, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(162, Short.MAX_VALUE))
         );
         panel.setLayout(gl_panel);
@@ -107,5 +110,8 @@ public class FenetreConnecter extends JFrame {
 
         JLabel lblBienvenue = new JLabel("Bienvenue sur le client POP3");
     }
-
+    public JButton getRecuperer(){return this.recuperer;}
+    public JButton getListMessage(){return this.ListMessage;}
+    public JTextField getNumberMessage(){return this.numberMessage;}
+    public JTextArea getChampMessage(){return this.champMessage;}
 }

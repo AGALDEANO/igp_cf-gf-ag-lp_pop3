@@ -119,11 +119,28 @@ public class FenetrePrincipale extends JFrame implements Observer {
             }
             if (error != null) {
                 System.out.println(error);
-                erreurGenerique(new JFrame(),error,"Erreur",JOptionPane.ERROR_MESSAGE);
+                //erreurGenerique(new JFrame(),error,"Erreur",JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         } while (success == null && error == null);
         return false;
+    }
+    public String waitForAnswerString(Client client) {
+        String success, error;
+        do {
+            success = client.getSucessMessage();
+            error = client.getErrorMessage();
+            if (success != null) {
+                System.out.println(success);
+                return success;
+            }
+            if (error != null) {
+                System.out.println(error);
+                //erreurGenerique(new JFrame(),error,"Erreur",JOptionPane.ERROR_MESSAGE);
+                return error;
+            }
+        } while (success == null && error == null);
+        return error;
     }
 
     public JButton getConnexion() {
@@ -144,6 +161,16 @@ public class FenetrePrincipale extends JFrame implements Observer {
     
     public JTextField getPort() {
         return this.port;
+    }
+    
+    public JButton getRecuperer(){
+    	return this.fenetreConnecter.getRecuperer();
+    }
+    public JButton getListMessage(){
+    	return this.fenetreConnecter.getListMessage();
+    }
+    public JTextField getNumberMessage(){
+    	return this.fenetreConnecter.getNumberMessage();
     }
 
     private void initComponents() {
@@ -219,6 +246,13 @@ public class FenetrePrincipale extends JFrame implements Observer {
     public void connecterServeur() {
         this.setVisible(false);
         fenetreUser.setVisible(true);
+    }
+    public void recupereMessage(String number_message)
+    {
+    	int number=Integer.valueOf(number_message);
+    	this.clientObs.getMessage(number);
+    	String response=waitForAnswerString(clientObs);
+    	this.fenetreConnecter.getChampMessage().setText(response);
     }
 }
 
