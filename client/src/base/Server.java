@@ -123,7 +123,7 @@ public class Server {
         try {
             socket = new Socket(inetAddress, port);
         } catch (ConnectException e) {
-            throw new UnrespondingServerException("Le serveur s'est déconnecté !");
+            throw new UnrespondingServerException("Il n'a pas été possible de se connecter au serveur !");
         }
     }
 }
