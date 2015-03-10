@@ -107,42 +107,17 @@ public class FenetrePrincipale extends JFrame implements Observer {
         panel.setLayout(gl_panel);
         initComponents();
     }
+    private void initComponents() {
+        this.setTitle("Client");
+        this.setSize(1200, 600);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLocationRelativeTo(null);
 
-    public boolean waitForAnswer(Client client) {
-        String success, error;
-        do {
-            success = client.getSucessMessage();
-            error = client.getErrorMessage();
-            if (success != null) {
-                System.out.println(success);
-                return true;
-            }
-            if (error != null) {
-                System.out.println(error);
-                //erreurGenerique(new JFrame(),error,"Erreur",JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-        } while (success == null && error == null);
-        return false;
+        this.setJMenuBar(menubar);
+        this.setVisible(true);
     }
-    public String waitForAnswerString(Client client) {
-        String success, error;
-        do {
-            success = client.getSucessMessage();
-            error = client.getErrorMessage();
-            if (success != null) {
-                System.out.println(success);
-                return success;
-            }
-            if (error != null) {
-                System.out.println(error);
-                //erreurGenerique(new JFrame(),error,"Erreur",JOptionPane.ERROR_MESSAGE);
-                return error;
-            }
-        } while (success == null && error == null);
-        return error;
-    }
-
+    //GETTER
+  //************************************
     public JButton getConnexion() {
         return this.connexion;
     }
@@ -166,31 +141,16 @@ public class FenetrePrincipale extends JFrame implements Observer {
     public JButton getRecuperer(){
     	return this.fenetreConnecter.getRecuperer();
     }
-    public JButton getListMessage(){
-    	return this.fenetreConnecter.getListMessage();
-    }
+//    public JButton getListMessage(){
+//    	return this.fenetreConnecter.getListMessage();
+//    }
     public JTextField getNumberMessage(){
     	return this.fenetreConnecter.getNumberMessage();
     }
-
-    private void initComponents() {
-        this.setTitle("Client");
-        this.setSize(1200, 600);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
-
-        this.setJMenuBar(menubar);
-        this.setVisible(true);
+    public JMenuItem getDeconnexion(){
+    	return this.fenetreConnecter.getDeconnexion();
     }
-
-    //le notify de la boucle qui est lancer a partir du modele afin d'actualiser la vue et ensuite de refaire un tour de boucle vers le modele
-    //cette boucle n'est gerer que grace a la classe simulateur qui nous donne la possibilit� de la stopper ou non et d'agir sur son temps d'execution
-    @Override
-    public void update(Observable obj, Object arg) {
-        if (arg instanceof Exception) {
-            erreurGenerique(new JFrame(), ((Exception) arg).getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+  //************************************
 
     public boolean connexionServeur(String nomServeur,String port) {
         boolean connect = false;
@@ -215,24 +175,34 @@ public class FenetrePrincipale extends JFrame implements Observer {
     }
 
     public boolean connexionClient(String username) {
-        boolean connect = false;
+        String connect;
         if (!username.equals("")) {
             clientObs.signIn(username);
-            connect = waitForAnswer(clientObs);
+            connect = waitForAnswerString(clientObs);
         }
-        if (!connect) {
-            erreurGenerique(new JFrame(), "Veuillez renseignez votre nom", "Warning connexion", JOptionPane.WARNING_MESSAGE);
-            return connect;
-        } else {
-            return connect;
+        else
+        {
+        	erreurGenerique(new JFrame(), "Veuillez renseignez votre nom", "Warning connexion", JOptionPane.WARNING_MESSAGE);
+        	return false;
+        }
+        if (connect!=null) {
+        	erreurGenerique(new JFrame(), connect, "Warning connexion", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        else
+        {
+        	return true;
         }
     }
-
-    public void erreurGenerique(JFrame frame, String message, String titre_fenetre, int type_message) {
-        //custom title, warning icon
-        JOptionPane.showMessageDialog(frame, message, titre_fenetre, type_message);
+    public void recupereMessage(String number_message)
+    {
+    	int number=Integer.valueOf(number_message);
+    	this.clientObs.getMessage(number);
+    	String response=waitForAnswerString(clientObs);
+    	this.fenetreConnecter.getChampMessage().setText(response);
     }
-
+    //CONNEXION ENTRE LES FENETRE
+  //************************************
     public void connecter() {
         this.fenetreUser.setVisible(false);
         fenetreConnecter.setVisible(true);
@@ -247,12 +217,59 @@ public class FenetrePrincipale extends JFrame implements Observer {
         this.setVisible(false);
         fenetreUser.setVisible(true);
     }
-    public void recupereMessage(String number_message)
+    public void disconnect()
     {
-    	int number=Integer.valueOf(number_message);
-    	this.clientObs.getMessage(number);
-    	String response=waitForAnswerString(clientObs);
-    	this.fenetreConnecter.getChampMessage().setText(response);
+    	this.clientObs.closeConnexion();
+    	this.fenetreConnecter.setVisible(false);
+    	this.setVisible(true);
+    }
+    //************************************
+    
+    public boolean waitForAnswer(Client client) {
+        String success, error;
+        do {
+            success = client.getSucessMessage();
+            error = client.getErrorMessage();
+            if (success != null) {
+                System.out.println(success);
+                return true;
+            }
+            if (error != null) {
+                System.out.println(error);
+                //erreurGenerique(new JFrame(),error,"Erreur",JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        } while (success == null && error == null);
+        return false;
+    }
+    public String waitForAnswerString(Client client) {
+        String success, error;
+        do {
+            success = client.getSucessMessage();
+            error = client.getErrorMessage();
+            if (success != null) {
+                System.out.println(success);
+                return null;
+            }
+            if (error != null) {
+                System.out.println(error);
+                //erreurGenerique(new JFrame(),error,"Erreur",JOptionPane.ERROR_MESSAGE);
+                return error;
+            }
+        } while (success == null && error == null);
+        return error;
+    }
+    public void erreurGenerique(JFrame frame, String message, String titre_fenetre, int type_message) {
+        //custom title, warning icon
+        JOptionPane.showMessageDialog(frame, message, titre_fenetre, type_message);
+    }
+  //le notify de la boucle qui est lancer a partir du modele afin d'actualiser la vue et ensuite de refaire un tour de boucle vers le modele
+    //cette boucle n'est gerer que grace a la classe simulateur qui nous donne la possibilit� de la stopper ou non et d'agir sur son temps d'execution
+    @Override
+    public void update(Observable obj, Object arg) {
+        if (arg instanceof Exception) {
+            erreurGenerique(new JFrame(), ((Exception) arg).getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
 

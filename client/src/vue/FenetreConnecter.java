@@ -8,8 +8,8 @@ import java.awt.*;
 public class FenetreConnecter extends JFrame {
     private JTextField numberMessage;
     private JButton recuperer;
-    private JButton ListMessage;
     private JTextArea champMessage;
+    private JMenuItem deconnexion;
 
     public FenetreConnecter() throws HeadlessException {
         getContentPane().setLayout(new BorderLayout(0, 0));
@@ -40,62 +40,52 @@ public class FenetreConnecter extends JFrame {
         champMessage.setRows(2);
         champMessage.setText("Messages:");
 
-        ListMessage = new JButton();
-        ListMessage.setText("Lister mes messages");
-        ListMessage.setFocusPainted(false);
-        ListMessage.setBackground(Color.CYAN);
-
         recuperer = new JButton();
         recuperer.setText("r\u00E9cup\u00E9rer");
         recuperer.setFocusPainted(false);
         recuperer.setBackground(Color.CYAN);
         GroupLayout gl_panel = new GroupLayout(panel);
         gl_panel.setHorizontalGroup(
-                gl_panel.createParallelGroup(Alignment.LEADING)
-                        .addGroup(gl_panel.createSequentialGroup()
-                                .addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                                        .addGroup(gl_panel.createSequentialGroup()
-                                                .addGap(541)
-                                                .addComponent(ListMessage, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(gl_panel.createSequentialGroup()
-                                                .addGap(233)
-                                                .addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                                                        .addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                                                                .addComponent(label_1, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
-                                                                .addGroup(gl_panel.createSequentialGroup()
-                                                                        .addComponent(lblNumroDuMessage)
-                                                                        .addPreferredGap(ComponentPlacement.RELATED)
-                                                                        .addComponent(numberMessage, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)))
-                                                        .addGroup(gl_panel.createSequentialGroup()
-                                                                .addComponent(recuperer, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(23)))
-                                                .addPreferredGap(ComponentPlacement.UNRELATED)
-                                                .addComponent(champMessage, GroupLayout.PREFERRED_SIZE, 385, GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(gl_panel.createSequentialGroup()
-                                                .addGap(538)
-                                                .addComponent(lblClientPop)))
-                                .addContainerGap(646, Short.MAX_VALUE))
+        	gl_panel.createParallelGroup(Alignment.LEADING)
+        		.addGroup(gl_panel.createSequentialGroup()
+        			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+        				.addGroup(gl_panel.createSequentialGroup()
+        					.addGap(233)
+        					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+        						.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+        							.addComponent(label_1, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
+        							.addGroup(gl_panel.createSequentialGroup()
+        								.addComponent(lblNumroDuMessage)
+        								.addPreferredGap(ComponentPlacement.RELATED)
+        								.addComponent(numberMessage, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)))
+        						.addGroup(gl_panel.createSequentialGroup()
+        							.addComponent(recuperer, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+        							.addGap(23)))
+        					.addPreferredGap(ComponentPlacement.UNRELATED)
+        					.addComponent(champMessage, GroupLayout.PREFERRED_SIZE, 385, GroupLayout.PREFERRED_SIZE))
+        				.addGroup(gl_panel.createSequentialGroup()
+        					.addGap(538)
+        					.addComponent(lblClientPop)))
+        			.addContainerGap(646, Short.MAX_VALUE))
         );
         gl_panel.setVerticalGroup(
-                gl_panel.createParallelGroup(Alignment.LEADING)
-                        .addGroup(gl_panel.createSequentialGroup()
-                                .addGap(56)
-                                .addComponent(lblClientPop)
-                                .addGap(100)
-                                .addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                                        .addComponent(champMessage, GroupLayout.PREFERRED_SIZE, 180, GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(gl_panel.createSequentialGroup()
-                                                .addGap(27)
-                                                .addComponent(label_1, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18)
-                                                .addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-                                                        .addComponent(lblNumroDuMessage)
-                                                        .addComponent(numberMessage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                                .addPreferredGap(ComponentPlacement.UNRELATED)
-                                                .addComponent(recuperer)))
-                                .addPreferredGap(ComponentPlacement.UNRELATED)
-                                .addComponent(ListMessage, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(162, Short.MAX_VALUE))
+        	gl_panel.createParallelGroup(Alignment.LEADING)
+        		.addGroup(gl_panel.createSequentialGroup()
+        			.addGap(56)
+        			.addComponent(lblClientPop)
+        			.addGap(100)
+        			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+        				.addComponent(champMessage, GroupLayout.PREFERRED_SIZE, 180, GroupLayout.PREFERRED_SIZE)
+        				.addGroup(gl_panel.createSequentialGroup()
+        					.addGap(27)
+        					.addComponent(label_1, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
+        					.addGap(18)
+        					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+        						.addComponent(lblNumroDuMessage)
+        						.addComponent(numberMessage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        					.addPreferredGap(ComponentPlacement.UNRELATED)
+        					.addComponent(recuperer)))
+        			.addContainerGap(201, Short.MAX_VALUE))
         );
         panel.setLayout(gl_panel);
 
@@ -105,13 +95,14 @@ public class FenetreConnecter extends JFrame {
         JMenu mnNewMenu = new JMenu("Menu");
         menuBar.add(mnNewMenu);
 
-        JMenuItem mntmDconnexion = new JMenuItem("D\u00E9connexion");
-        mnNewMenu.add(mntmDconnexion);
+        deconnexion = new JMenuItem("D\u00E9connexion");
+        mnNewMenu.add(deconnexion);
 
         JLabel lblBienvenue = new JLabel("Bienvenue sur le client POP3");
     }
     public JButton getRecuperer(){return this.recuperer;}
-    public JButton getListMessage(){return this.ListMessage;}
+    //public JButton getListMessage(){return this.ListMessage;}
     public JTextField getNumberMessage(){return this.numberMessage;}
     public JTextArea getChampMessage(){return this.champMessage;}
+    public JMenuItem getDeconnexion(){return this.deconnexion;}
 }
