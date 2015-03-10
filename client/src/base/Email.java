@@ -11,15 +11,20 @@ public class Email {
     private static String endHeader = "\r\n\r\n";
     private static String headerSeparator = ": ";
     private static String endFile = "\r\n.\r\n";
-    private HashMap<String, String> headers;
+    private int bytes;
+    private HashMap<String, String> headers = new HashMap<>();
     private String body;
 
     public Email(String response) {
         String[] splittedResponse = response.split(endHeader);
         String[] strHeader = splittedResponse[0].split(endLine);
         body = splittedResponse[1].split(endFile)[0];
-        for (String header : strHeader) {
-            headers.put(header.split(headerSeparator)[0], header.split(headerSeparator)[1]);
+        if (strHeader.length > 0) {
+            bytes = Integer.parseInt(strHeader[0]);
+            for (int i = 1; i < strHeader.length; i++) {
+                String header = strHeader[i];
+                headers.put(header.split(headerSeparator)[0], header.split(headerSeparator)[1]);
+            }
         }
     }
 
