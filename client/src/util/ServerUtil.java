@@ -90,13 +90,13 @@ public class ServerUtil {
         }
         try {
             int i = in.read();
-            logger.debug(String.format("data : %x", (byte) i));
+            logger.trace(String.format("data : %x", (byte) i));
             int size;
             Boolean endLoop = Boolean.FALSE;
             while (i != -1 && !endLoop) {
                 bytes.add((byte) i);
                 i = in.read();
-                logger.debug(String.format("data : %x", (byte) i));
+                logger.trace(String.format("data : %x", (byte) i));
                 size = bytes.size();
                 endLoop = size > 1 &&
                         i == '\n' &&
@@ -120,13 +120,13 @@ public class ServerUtil {
         }
         try {
             int i = in.read();
-            logger.debug(String.format("data : %x", (byte) i));
+            logger.trace(String.format("data : %x", (byte) i));
             int size;
             Boolean endLoop = Boolean.FALSE;
             while (i != -1 && !endLoop) {
                 bytes.add((byte) i);
                 i = in.read();
-                logger.debug(String.format("data : %x", (byte) i));
+                logger.trace(String.format("data : %x", (byte) i));
                 size = bytes.size();
                 endLoop = size > 3 &&
                         i == '\n' &&
