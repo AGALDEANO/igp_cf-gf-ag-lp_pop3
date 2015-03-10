@@ -10,6 +10,7 @@ import util.Action;
 import util.CurrentState;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -117,6 +118,9 @@ public class ClientThrowable extends Thread implements Client {
             if (todo != null && todoArgs != null) {
                 try {
                     message = todo.execute(currentState, todoArgs);
+                    if (Action.APOP.equals(todo)) {
+                        username = todoArgs[0];
+                    }
                     if (Action.RETR.equals(todo)) {
                         Email received = new Email(message);
                         setMessage(received);
@@ -174,7 +178,6 @@ public class ClientThrowable extends Thread implements Client {
 
     public void signIn(String username) {
         setWaitingTask(Action.APOP);
-        this.username = username;
         String[] args = {username, ""};
         setWaitingTaskArgs(args);
     }
@@ -183,6 +186,28 @@ public class ClientThrowable extends Thread implements Client {
         setWaitingTask(Action.LIST);
         String[] args = {};
         setWaitingTaskArgs(args);
+    }
+
+    @Override
+    public ArrayList<Email> getSavedMessages() {
+        if (!CurrentState.TRANSACTION.equals(currentState)) {
+            try {
+                throw new UnallowedActionException();
+            } catch (UnallowedActionException e) {
+                String message = e.toString();
+                logger.error(message);
+                setErrorMessage(message);
+                return null;
+            }
+        }
+        try {
+            return EmailUtil.getEmails(username);
+        } catch (IOException e) {
+            String message = e.toString();
+            logger.error(message);
+            setErrorMessage(message);
+            return null;
+        }
     }
 
     public void getMessageDetails(int i) {

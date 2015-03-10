@@ -3,6 +3,8 @@ package base.client;
 import base.email.Email;
 import util.CurrentState;
 
+import java.util.ArrayList;
+
 public interface Client {
     String getSucessMessage();
 
@@ -23,6 +25,8 @@ public interface Client {
     void signIn(String username, String password);
 
     void getMessageList();
+
+    ArrayList<Email> getSavedMessages();
 
     void getMessageDetails(int i);
 

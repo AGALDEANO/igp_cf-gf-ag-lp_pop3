@@ -23,7 +23,7 @@ public class EmailUtil {
         writer.close();
     }
 
-    private static ArrayList<Email> getEmails(String username) throws IOException {
+    public static ArrayList<Email> getEmails(String username) throws IOException {
         String filepath;
         String datas;
         int n;
@@ -40,10 +40,10 @@ public class EmailUtil {
                         datas += (char) n;
                         n = in.read();
                     }
-                    emailArrayList.add(new Email(datas, Integer.parseInt(filename.substring(0, filename.lastIndexOf(extension)))));
+                    emailArrayList.add(new Email(datas, Long.parseLong(filename.substring(0, filename.lastIndexOf(extension)))));
                 }
             }
         }
-        return null;
+        return emailArrayList;
     }
 }

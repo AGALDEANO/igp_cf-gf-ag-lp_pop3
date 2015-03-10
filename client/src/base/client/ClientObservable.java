@@ -3,6 +3,7 @@ package base.client;
 import base.email.Email;
 import util.CurrentState;
 
+import java.util.ArrayList;
 import java.util.Observable;
 
 public class ClientObservable extends Observable implements Client {
@@ -61,6 +62,11 @@ public class ClientObservable extends Observable implements Client {
     @Override
     public void getMessageList() {
         client.getMessageList();
+    }
+
+    @Override
+    public ArrayList<Email> getSavedMessages() {
+        return client.getSavedMessages();
     }
 
     @Override
