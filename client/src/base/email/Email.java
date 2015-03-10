@@ -34,6 +34,7 @@ public class Email {
 
     public Email(Email e) {
         id = e.getId();
+        bytes = e.getBytes();
         body = e.getBody();
         Object clone = e.getHeaders().clone();
         if (clone instanceof HashMap<?, ?>) {
@@ -42,6 +43,10 @@ public class Email {
         } else {
             headers = new HashMap<String, String>();
         }
+    }
+
+    public int getBytes() {
+        return bytes;
     }
 
     public long getId() {
@@ -71,8 +76,12 @@ public class Email {
         return body;
     }
 
+    public String footerToString() {
+        return endFile;
+    }
+
     @Override
     public String toString() {
-        return headersToString() + endLine + bodyToString();
+        return headersToString() + endLine + bodyToString() + footerToString();
     }
 }
