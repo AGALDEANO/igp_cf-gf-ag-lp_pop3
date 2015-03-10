@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
@@ -90,19 +91,25 @@ public class ServerUtil {
         try {
             int i = in.read();
             logger.debug(String.format("data : %x", (byte) i));
-            int previous = -1;
-            while (i != -1 && !(i == 10 && previous == 13)) {
+            int size;
+            Boolean endLoop = Boolean.FALSE;
+            while (i != -1 && !endLoop) {
                 bytes.add((byte) i);
-                previous = i;
                 i = in.read();
                 logger.debug(String.format("data : %x", (byte) i));
+                size = bytes.size();
+                endLoop = size > 1 &&
+                        i == '\n' &&
+                        bytes.get(size - 1) == '\r';
             }
-            if (i == 10 && previous == 13) {
-                bytes.remove(bytes.size() - 1);
+            if (i != -1) {
+                bytes.add((byte) i);
             }
             return bytes;
         } catch (SocketTimeoutException e) {
             return read(bytes, n - 1);
+        } catch (SocketException e) {
+            throw new UnrespondingServerException();
         }
     }
 
@@ -113,30 +120,28 @@ public class ServerUtil {
         try {
             int i = in.read();
             logger.debug(String.format("data : %x", (byte) i));
-            int previous = -1;
-            Boolean endList = Boolean.FALSE;
-            int indexLastCRLF = -1;
-            do {
-                while (i != -1 && !(i == 10 && previous == 13)) {
-                    bytes.add((byte) i);
-                    previous = i;
-                    i = in.read();
-                    logger.debug(String.format("data : %x", (byte) i));
-                }
-                if (i == 10 && previous == 13) {
-                    if (indexLastCRLF > -1 && indexLastCRLF == bytes.size() - 1 && bytes.get(indexLastCRLF) == (byte) '.') {
-                        endList = Boolean.TRUE;
-                    } else {
-                        bytes.add((byte) i);
-                        indexLastCRLF = bytes.size();
-                        i = in.read();
-                        previous = -1;
-                    }
-                }
-            } while (!endList && i != -1);
+            int size;
+            Boolean endLoop = Boolean.FALSE;
+            while (i != -1 && !endLoop) {
+                bytes.add((byte) i);
+                i = in.read();
+                logger.debug(String.format("data : %x", (byte) i));
+                size = bytes.size();
+                endLoop = size > 3 &&
+                        i == '\n' &&
+                        bytes.get(size - 1) == '\r' &&
+                        bytes.get(size - 2) == '.' &&
+                        bytes.get(size - 3) == '\n' &&
+                        bytes.get(size - 4) == '\r';
+            }
+            if (i != -1) {
+                bytes.add((byte) i);
+            }
             return bytes;
         } catch (SocketTimeoutException e) {
             return readList(bytes, n - 1);
+        } catch (SocketException e) {
+            throw new UnrespondingServerException();
         }
     }
 

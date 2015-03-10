@@ -9,19 +9,31 @@ import org.apache.log4j.Logger;
  */
 public class Main {
     public static String[] hostname = {
-            "localhost"
+            "localhost",
+            "Laura_PC"
     };
     public static int[] port = {
             110
+    };
+    public static String[] user = {
+            "test",
+            "laura",
+            "corinne"
     };
     private static Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
         ClientThrowable client = new ClientThrowable();
         client.start();
-        client.openConnexion(hostname[0], port[0]);
+        client.openConnexion(hostname[1], port[0]);
         waitForAnswer(client);
-        client.signIn("blabla", "test");
+        client.signIn(user[0]);
+        waitForAnswer(client);
+        client.getMessage(1);
+        waitForAnswer(client);
+        client.closeConnexion();
+        waitForAnswer(client);
+        client.exit();
     }
 
     public static void waitForAnswer(Client client) {
