@@ -86,7 +86,7 @@ public class ServerUtil {
 
     private ArrayList<Byte> read(ArrayList<Byte> bytes, int n) throws IOException, UnrespondingServerException {
         if (n < 1) {
-            throw new UnrespondingServerException();
+            throw new UnrespondingServerException("Malgré plusieurs tentatives, le serveur n'a pas répondu.");
         }
         try {
             int i = in.read();
@@ -107,15 +107,16 @@ public class ServerUtil {
             }
             return bytes;
         } catch (SocketTimeoutException e) {
+            logger.warn("Nouvelle tentative...");
             return read(bytes, n - 1);
         } catch (SocketException e) {
-            throw new UnrespondingServerException();
+            throw new UnrespondingServerException("Le serveur s'est déconnecté.");
         }
     }
 
     private ArrayList<Byte> readList(ArrayList<Byte> bytes, int n) throws IOException, UnrespondingServerException {
         if (n < 1) {
-            throw new UnrespondingServerException();
+            throw new UnrespondingServerException("Malgré plusieurs tentatives, le serveur n'a pas répondu.");
         }
         try {
             int i = in.read();
@@ -139,9 +140,10 @@ public class ServerUtil {
             }
             return bytes;
         } catch (SocketTimeoutException e) {
+            logger.warn("Nouvelle tentative...");
             return readList(bytes, n - 1);
         } catch (SocketException e) {
-            throw new UnrespondingServerException();
+            throw new UnrespondingServerException("Le serveur s'est déconnecté.");
         }
     }
 

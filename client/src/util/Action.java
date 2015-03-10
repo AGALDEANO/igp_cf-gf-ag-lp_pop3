@@ -52,7 +52,7 @@ public enum Action {
             if (str.startsWith(ServerUtil.errorResponse())) {
                 split = str.split("\\" + ServerUtil.errorResponse() + ' ', 2);
                 if (split.length > 1) message = split[1];
-                throw new ErrorResponseServerException(message);
+                throw new ErrorResponseServerException("Le serveur a retourné une erreur : " + message);
             } else if (str.startsWith(ServerUtil.successResponse())) {
                 split = str.split("\\" + ServerUtil.successResponse() + ' ', 2);
                 if (split.length > 1) message = split[1];
@@ -60,7 +60,7 @@ public enum Action {
             } else if (str.equals(".")) {
             } else {
                 try {
-                    throw new BadFormatResponseServerException(str);
+                    throw new BadFormatResponseServerException("La réponse du serveur n'a pas pu être interprétée : " + str);
                 } catch (BadFormatResponseServerException e) {
                     logger.error(e.toString());
                     System.exit(-1);
@@ -89,21 +89,21 @@ public enum Action {
     }
 
     public String execute(CurrentState currentState, String... args) throws UnallowedActionException, ErrorResponseServerException, UnrespondingServerException {
-        logger.info(String.format("==== %s started ====", this.name()));
+        logger.info(String.format("==== %s started ====", name()));
         if (allowed(currentState)) {
             request(args);
             String message = null;
             try {
                 message = response((Action.LIST.equals(this) && (args == null || args.length == 0)) || Action.RETR.equals(this));
-                logger.info(String.format("==== %s succeed ====", this.name()));
+                logger.info(String.format("==== %s succeed ====", name()));
             } catch (ErrorResponseServerException e) {
-                logger.info(String.format("==== %s failed ====", this.name()));
+                logger.info(String.format("==== %s failed ====", name()));
                 throw e;
             }
             return message;
         } else {
-            logger.info(String.format("==== %s failed ====", this.name()));
-            throw new UnallowedActionException();
+            logger.info(String.format("==== %s failed ====", name()));
+            throw new UnallowedActionException("L'action " + name() + " n'est pas autorisée dans l'état " + currentState.name() + " !");
         }
     }
 
