@@ -10,7 +10,8 @@ import org.apache.log4j.Logger;
 public class Main {
     public static String[] hostname = {
             "localhost",
-            "Laura_PC"
+            "Laura_PC",
+            "PC_COCO"
     };
     public static int[] port = {
             110
@@ -25,7 +26,7 @@ public class Main {
     public static void main(String[] args) {
         ClientThrowable client = new ClientThrowable();
         client.start();
-        client.openConnexion(hostname[1], port[0]);
+        client.openConnexion(hostname[2], port[0]);
         waitForAnswer(client);
         client.signIn(user[0]);
         waitForAnswer(client);
@@ -41,12 +42,6 @@ public class Main {
         do {
             success = client.getSucessMessage();
             error = client.getErrorMessage();
-            if (success != null) {
-                System.out.println(success);
-            }
-            if (error != null) {
-                System.out.println(error);
-            }
         } while (success == null && error == null);
     }
 }

@@ -116,9 +116,6 @@ public class ClientThrowable extends Thread implements Client {
             if (todo != null && todoArgs != null) {
                 try {
                     message = todo.execute(currentState, todoArgs);
-                    logger.info(message);
-                    setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfSucceed()));
-                    setSucessMessage(message);
                     if (Action.RETR.equals(todo)) {
                         Email received = new Email(message);
                         setMessage(received);
@@ -128,6 +125,9 @@ public class ClientThrowable extends Thread implements Client {
                             e.printStackTrace();
                         }
                     }
+                    logger.debug(message);
+                    setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfSucceed()));
+                    setSucessMessage(message);
                 } catch (UnallowedActionException e) {
                     message = e.toString();
                     logger.error(message);
