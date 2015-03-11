@@ -151,6 +151,9 @@ public class FenetrePrincipale extends JFrame implements Observer {
     public JMenuItem getDeconnexion(){
     	return this.fenetreConnecter.getDeconnexion();
     }
+    public JMenuItem getDeconnexionUser(){
+    	return this.fenetreUser.getDeconnexion();
+    }
   //************************************
 
     public boolean connexionServeur(String nomServeur,String port) {
@@ -236,6 +239,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
     {
     	this.clientObs.closeConnexion();
     	this.fenetreConnecter.setVisible(false);
+    	this.fenetreUser.setVisible(false);
     	this.setVisible(true);
     }
     //************************************

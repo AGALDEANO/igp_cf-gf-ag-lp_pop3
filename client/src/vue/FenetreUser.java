@@ -12,11 +12,15 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 public class FenetreUser extends JFrame
 {
 	private JTextField identifiant;
 	private JButton connexionUser;
+	private JMenuItem deconnexion;
 
 	public FenetreUser() throws HeadlessException
 	{
@@ -86,8 +90,17 @@ public class FenetreUser extends JFrame
 		setResizable(false);
 		this.setLocationRelativeTo(null);
 		setBackground(new Color(51, 102, 102));
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu menu = new JMenu("Menu");
+		menuBar.add(menu);
+		
+		deconnexion = new JMenuItem("D\u00E9connexion");
+		menu.add(deconnexion);
 	}
 	public JTextField getIdentifiant(){return this.identifiant;}
 	public JButton getConnexionUser(){return this.connexionUser;}
-
+	public JMenuItem getDeconnexion(){return this.deconnexion;}
 }

@@ -55,6 +55,11 @@ public class Controleur {
                 fp.disconnect();
             }
         });
+        fp.getDeconnexionUser().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                fp.disconnect();
+            }
+        });
     }
 
     //programme principale qui instancie juste le controleur qui va generer tout le reste
