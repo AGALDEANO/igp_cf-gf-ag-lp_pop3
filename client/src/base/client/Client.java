@@ -28,6 +28,8 @@ public interface Client {
 
     ArrayList<Email> getSavedMessages();
 
+    ArrayList<Email> getSavedMessages(String username);
+
     void getMessageDetails(int i);
 
     void enterLogin(String username);

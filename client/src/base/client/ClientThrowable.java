@@ -200,13 +200,18 @@ public class ClientThrowable extends Thread implements Client {
                 return null;
             }
         }
+        return getSavedMessages(username);
+    }
+
+    @Override
+    public ArrayList<Email> getSavedMessages(String username) {
         try {
             return EmailUtil.getEmails(username);
         } catch (IOException e) {
             String message = e.toString();
             logger.error(message);
             setErrorMessage(message);
-            return null;
+            return new ArrayList<>();
         }
     }
 

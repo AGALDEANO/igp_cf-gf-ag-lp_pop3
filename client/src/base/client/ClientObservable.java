@@ -70,6 +70,11 @@ public class ClientObservable extends Observable implements Client {
     }
 
     @Override
+    public ArrayList<Email> getSavedMessages(String username) {
+        return client.getSavedMessages(username);
+    }
+
+    @Override
     public void getMessageDetails(int i) {
         client.getMessageDetails(i);
     }

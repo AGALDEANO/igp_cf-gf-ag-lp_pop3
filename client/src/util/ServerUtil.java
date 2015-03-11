@@ -128,12 +128,24 @@ public class ServerUtil {
                 i = in.read();
                 logger.trace(String.format("data : %x", (byte) i));
                 size = bytes.size();
-                endLoop = size > 3 &&
-                        i == '\n' &&
-                        bytes.get(size - 1) == '\r' &&
-                        bytes.get(size - 2) == '.' &&
-                        bytes.get(size - 3) == '\n' &&
-                        bytes.get(size - 4) == '\r';
+                if (size > 4) {
+                    if (bytes.get(0) == '-' &&
+                            bytes.get(1) == 'E' &&
+                            bytes.get(2) == 'R' &&
+                            bytes.get(3) == 'R') {
+                        endLoop = i == '\n' &&
+                                bytes.get(size - 1) == '\r';
+                    } else {
+                        endLoop = i == '\n' &&
+                                bytes.get(size - 1) == '\r' &&
+                                bytes.get(size - 2) == '.' &&
+                                bytes.get(size - 3) == '\n' &&
+                                bytes.get(size - 4) == '\r';
+                    }
+                } else {
+                    endLoop = Boolean.FALSE;
+                }
+
             }
             if (i != -1) {
                 bytes.add((byte) i);
