@@ -35,7 +35,7 @@ public class Main {
         waitForAnswer(client);
         client.signIn(user[0]);
         waitForAnswer(client);
-        client.getMessage(3);
+        client.getMessage(4);
         waitForAnswer(client);
         System.out.println(client.getMessage().headersToString());
         client.closeConnexion();

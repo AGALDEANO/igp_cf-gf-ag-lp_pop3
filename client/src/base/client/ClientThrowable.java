@@ -121,6 +121,9 @@ public class ClientThrowable extends Thread implements Client {
                     if (Action.APOP.equals(todo)) {
                         username = todoArgs[0];
                     }
+                    if (Action.QUIT.equals(todo)) {
+                        currentState = null;
+                    }
                     if (Action.RETR.equals(todo)) {
                         Email received = new Email(message);
                         setMessage(received);
@@ -134,16 +137,16 @@ public class ClientThrowable extends Thread implements Client {
                     setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfSucceed()));
                     setSucessMessage(message);
                 } catch (UnallowedActionException e) {
-                    message = e.toString();
+                    message = e.getMessage();
                     logger.error(message);
                     setErrorMessage(message);
                 } catch (ErrorResponseServerException e) {
                     setCurrentState(CurrentState.changeTo(getCurrentState(), todo.getIfFailed()));
-                    message = e.toString();
+                    message = e.getMessage();
                     logger.error(message);
                     setErrorMessage(message);
                 } catch (UnrespondingServerException e) {
-                    message = e.toString();
+                    message = e.getMessage();
                     logger.error(message);
                     setErrorMessage(message);
                 } finally {
