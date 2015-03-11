@@ -212,7 +212,10 @@ public class FenetrePrincipale extends JFrame implements Observer {
     	else
     	{
     		Email email=this.clientObs.getMessage();
-    	this.fenetreConnecter.getChampMessage().setText(email.headersToString()+"\n"+email.bodyToString());
+    		if(email!=null)
+    		{
+    			this.fenetreConnecter.getChampMessage().setText(email.headersToString()+"\n"+email.bodyToString());
+    		}
     	}
     	}catch(java.lang.NumberFormatException e)
     	{
