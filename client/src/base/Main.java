@@ -1,6 +1,7 @@
 package base;
 
 import base.client.Client;
+import base.client.ClientThrowable;
 import base.email.Email;
 import base.email.EmailUtil;
 import org.apache.log4j.Logger;
@@ -28,18 +29,18 @@ public class Main {
     private static Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        /* ClientThrowable client = new ClientThrowable();
+        ClientThrowable client = new ClientThrowable();
         client.start();
         client.openConnexion(hostname[2], port[0]);
         waitForAnswer(client);
         client.signIn(user[0]);
         waitForAnswer(client);
-        client.getMessage(1);
+        client.getMessage(3);
         waitForAnswer(client);
         System.out.println(client.getMessage().headersToString());
         client.closeConnexion();
         waitForAnswer(client);
-        client.exit();*/
+        client.exit();
         try {
             ArrayList<Email> emails = EmailUtil.getEmails("test");
             emails.size();

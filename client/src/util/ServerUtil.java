@@ -61,6 +61,15 @@ public class ServerUtil {
         return null;
     }
 
+    public static String bytesToUTF8String(byte[] data) {
+        try {
+            return new String(data, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e.toString());
+        }
+        return null;
+    }
+
     public Server getServer() {
         return server;
     }
