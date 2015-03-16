@@ -3,6 +3,7 @@ package util;
 import exception.MissingArgumentException;
 import org.apache.log4j.Logger;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -21,18 +22,21 @@ public class Pop3Util {
 
     public static String getRequestAPOP(String username, String password) {
         try {
-            byte[] digestPassword = MessageDigest.getInstance("MD5").digest(password.getBytes());
-            String request = "APOP " + username + " ";
-            for (byte b : digestPassword) {
-                request += String.format("%x", b);
-            }
-            request += endRequest;
-            return request;
-        } catch (NoSuchAlgorithmException e) {
-            logger.error(e.toString());
-        }
-        return null;
-    }
+			byte[] digestPassword = MessageDigest.getInstance("MD5")
+					.digest(password.getBytes("ascii"));
+			StringBuilder request = new StringBuilder("APOP " + username + " ");
+			for (byte b : digestPassword) {
+				request.append(String.format("%x", b));
+			}
+			request.append(endRequest);
+			return request.toString();
+		} catch (NoSuchAlgorithmException e) {
+			logger.error(e.toString());
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e.toString());
+		}
+		return null;
+	}
 
     public static String getRequestUSER(String[] args) throws MissingArgumentException {
         if (args.length > 0) return getRequestUSER(args[0]);

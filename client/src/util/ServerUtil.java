@@ -30,9 +30,9 @@ public class ServerUtil {
             this.out = server.getSocket().getOutputStream();
             this.in = server.getSocket().getInputStream();
         } catch (IOException e) {
-            logger.fatal(e.toString());
-            System.exit(-1);
-        }
+			logger.fatal(e.toString());
+			throw new RuntimeException(e.toString());
+		}
     }
 
 
@@ -80,8 +80,8 @@ public class ServerUtil {
     }
 
     public void send(String str) throws IOException {
-        send(str.getBytes());
-    }
+		send(str.getBytes("ascii"));
+	}
 
     public byte[] receive() throws IOException, UnrespondingServerException {
         ArrayList<Byte> bytes = new ArrayList<Byte>();

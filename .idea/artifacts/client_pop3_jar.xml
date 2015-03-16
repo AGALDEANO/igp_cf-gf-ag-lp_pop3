@@ -1,0 +1,42 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="client_pop3:jar">
+    <output-path>$PROJECT_DIR$/client_pop3_jar</output-path>
+    <root id="archive" name="client.jar">
+      <element id="module-output" name="client" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-api-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-jcl-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-jul-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-web-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-core-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-nosql-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-taglib-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-1.2-api-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-jmx-gui-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-flume-ng-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-iostreams-2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-core-2.2-tests.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-api-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-api-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-jcl-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-jcl-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-jul-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-jul-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-web-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-web-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-core-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-core-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-nosql-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-nosql-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-taglib-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-taglib-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-1.2-api-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-1.2-api-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-jmx-gui-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-jmx-gui-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-flume-ng-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-flume-ng-2.2-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-iostreams-2.2-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/client/src/lib/log4j/log4j-iostreams-2.2-sources.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

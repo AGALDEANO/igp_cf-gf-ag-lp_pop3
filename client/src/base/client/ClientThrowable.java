@@ -11,6 +11,7 @@ import util.CurrentState;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -63,8 +64,10 @@ public class ClientThrowable extends Thread implements Client {
     }
 
     public synchronized String[] getWaitingTaskArgs() {
-        return waitingTaskArgs;
-    }
+		return waitingTaskArgs == null ?
+				null :
+				Arrays.copyOf(waitingTaskArgs, waitingTaskArgs.length);
+	}
 
     private synchronized void setWaitingTaskArgs(String[] waitingTaskArgs) {
         this.waitingTaskArgs = waitingTaskArgs;

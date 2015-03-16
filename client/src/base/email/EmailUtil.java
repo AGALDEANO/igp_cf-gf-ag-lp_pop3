@@ -13,35 +13,57 @@ public class EmailUtil {
     private static String extension = ".email";
     private static String path = "emails";
 
-    public static void saveEmail(Email email, String username) throws IOException {
-        String filepath = path + "/" + username + "/" + email.getId() + extension;
+	public static void saveEmail(Email email, String username)
+			throws IOException {
+		String filepath = path + "/" + username + "/" + email.getId() + extension;
         File file = new File(filepath);
-        file.getParentFile().mkdirs();
-        FileWriter writer = null;
-        writer = new FileWriter(filepath);
-        writer.write(email.toString());
-        writer.close();
-    }
+		if (!file.getParentFile().mkdirs())
+			throw new IOException("Directory hasn't been created.");
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(filepath);
+			writer.write(email.toString());
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (writer != null)
+				writer.close();
+		}
+	}
 
     public static ArrayList<Email> getEmails(String username) throws IOException {
         String filepath;
-        String datas;
-        int n;
+		StringBuilder data;
+		int n;
         ArrayList<Email> emailArrayList = new ArrayList<>();
         File f = new File(path + "/" + username);
-        if (f.exists() && f.isDirectory()) {
-            for (String filename : f.list()) {
+		if (f.exists() && f.isDirectory()) {
+			String[] list = f.list();
+			if (list != null)
+				return emailArrayList;
+			for (String filename : f.list()) {
                 if (filename.endsWith(extension)) {
-                    filepath = path + "/" + username + "/" + filename;
-                    FileInputStream in = new FileInputStream(filepath);
-                    n = in.read();
-                    datas = "";
-                    while (n != -1) {
-                        datas += (char) n;
-                        n = in.read();
-                    }
-                    emailArrayList.add(new Email(datas, Long.parseLong(filename.substring(0, filename.lastIndexOf(extension)))));
-                }
+					data = new StringBuilder();
+					filepath = path + "/" + username + "/" + filename;
+					FileInputStream in = null;
+					try {
+						in = new FileInputStream(filepath);
+						n = in.read();
+						while (n != -1) {
+							data.append((char) n);
+							n = in.read();
+						}
+						emailArrayList.add(new Email(data.toString(),
+								Long.parseLong(filename.substring(0,
+										filename.lastIndexOf(extension)))));
+					} catch (IOException e) {
+						throw e;
+					} finally {
+						if (in != null)
+							in.close();
+					}
+
+				}
             }
         }
         return emailArrayList;

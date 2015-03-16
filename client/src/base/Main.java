@@ -2,27 +2,19 @@ package base;
 
 import base.client.Client;
 import base.client.ClientThrowable;
-import base.email.Email;
-import base.email.EmailUtil;
 import org.apache.log4j.Logger;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by alexandreg on 02/03/2015.
  */
 public class Main {
-    public static String[] hostname = {
-            "localhost",
+	protected final static String[] hostname = { "localhost",
             "Laura_PC",
             "PC_COCO"
     };
-    public static int[] port = {
-            110
+	protected final static int[] port = { 110
     };
-    public static String[] user = {
-            "test",
+	protected final static String[] user = { "test",
             "laura",
             "corinne"
     };
@@ -41,12 +33,6 @@ public class Main {
         client.closeConnexion();
         waitForAnswer(client);
         client.exit();
-        try {
-            ArrayList<Email> emails = EmailUtil.getEmails("test");
-            emails.size();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void waitForAnswer(Client client) {

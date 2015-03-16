@@ -32,20 +32,20 @@ public class Server {
                 updateAddress();
                 logger.info(String.format("IP is : %s", inetAddress.toString()));
             } catch (UnknownHostException e) {
-                logger.error(e.toString());
-                System.exit(-1);
-            }
+				logger.error(e.toString());
+				throw new UnrespondingServerException(e.toString());
+			}
             try {
                 logger.info(String.format("Attempting to connect to %s:%s", inetAddress.toString(), port));
                 updateDatagramSocket();
                 logger.info(String.format("Connected to %s:%s", inetAddress.toString(), port));
             } catch (SocketException e) {
-                logger.fatal(e.toString());
-                System.exit(-1);
-            } catch (IOException e) {
-                logger.fatal(e.toString());
-                System.exit(-1);
-            }
+				logger.fatal(e.toString());
+				throw new RuntimeException(e.toString());
+			} catch (IOException e) {
+				logger.fatal(e.toString());
+				throw new RuntimeException(e.toString());
+			}
         } else try {
             throw new WrongPortServerException("Le port spécifié ne peut être négatif !");
         } catch (WrongPortServerException e) {
