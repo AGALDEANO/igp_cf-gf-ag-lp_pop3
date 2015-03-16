@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Created by alexandreg on 04/03/2015.
@@ -62,9 +63,9 @@ public enum Action {
                 try {
                     throw new BadFormatResponseServerException("La réponse du serveur n'a pas pu être interprétée : " + str);
                 } catch (BadFormatResponseServerException e) {
-                    logger.error(e.toString());
-                    System.exit(-1);
-                }
+					logger.fatal(e.toString());
+					throw new RuntimeException(e.toString());
+				}
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,8 +74,11 @@ public enum Action {
     }
 
     public CurrentState[] getAllowedCurrentStates() {
-        return allowedCurrentStates;
-    }
+		return allowedCurrentStates == null ?
+				null :
+				Arrays.copyOf(allowedCurrentStates,
+						allowedCurrentStates.length);
+	}
 
     public String getRequestName() {
         return requestName;

@@ -30,9 +30,9 @@ public class ServerUtil {
             this.out = server.getSocket().getOutputStream();
             this.in = server.getSocket().getInputStream();
         } catch (IOException e) {
-            logger.fatal(e.toString());
-            System.exit(-1);
-        }
+			logger.fatal(e.toString());
+			throw new RuntimeException(e.toString());
+		}
     }
 
 

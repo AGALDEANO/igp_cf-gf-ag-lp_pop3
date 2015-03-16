@@ -77,14 +77,16 @@ public class Email {
 
     public String headersToString() {
         String str = Integer.toString(bytes) + "\r\n";
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            str += key + headerSeparator + value + endLine;
-        }
+		StringBuffer sb = new StringBuffer(str);
+		for (Map.Entry<String, String> entry : headers.entrySet()) {
+			sb.append(entry.getKey());
+			sb.append(headerSeparator);
+			sb.append(entry.getValue());
+			sb.append(endLine);
+		}
 
-        return str;
-    }
+		return sb.toString();
+	}
 
     public String bodyToString() {
         return body;
