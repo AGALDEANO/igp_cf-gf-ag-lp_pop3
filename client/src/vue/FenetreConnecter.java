@@ -105,4 +105,9 @@ public class FenetreConnecter extends JFrame {
     public JTextField getNumberMessage(){return this.numberMessage;}
     public JTextArea getChampMessage(){return this.champMessage;}
     public JMenuItem getDeconnexion(){return this.deconnexion;}
+    public void reset()
+    {
+    	this.champMessage.setText("Messages:");
+    	this.numberMessage.setText("");
+    }
 }

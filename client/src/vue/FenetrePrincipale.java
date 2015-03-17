@@ -1,6 +1,7 @@
 package vue;
 
 import base.client.Client;
+import base.client.Config;
 import base.email.Email;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import javax.swing.GroupLayout.Alignment;
 import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class FenetrePrincipale extends JFrame implements Observer {
 
@@ -63,28 +65,37 @@ public class FenetrePrincipale extends JFrame implements Observer {
         
         port = new JTextField();
         port.setColumns(10);
+        
+        JCheckBox checkConnexionSecurise = new JCheckBox("");
+        checkConnexionSecurise.setBackground(new Color(51,102,102));
+        
+        JLabel lblConnexionScuris = new JLabel("Connexion s\u00E9curis\u00E9:");
+        lblConnexionScuris.setForeground(new Color(0, 0, 128));
         GroupLayout gl_panel = new GroupLayout(panel);
         gl_panel.setHorizontalGroup(
         	gl_panel.createParallelGroup(Alignment.TRAILING)
         		.addGroup(gl_panel.createSequentialGroup()
         			.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-        				.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-        					.addGroup(gl_panel.createSequentialGroup()
-        						.addGap(455)
-        						.addComponent(connexion, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE))
-        					.addGroup(gl_panel.createSequentialGroup()
-        						.addGap(459)
-        						.addComponent(lblBienvenue, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)))
         				.addGroup(gl_panel.createSequentialGroup()
-        					.addContainerGap()
-        					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-        						.addComponent(portLbl, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(lblNomDuServeur, Alignment.TRAILING))
-        					.addGap(18)
-        					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-        						.addComponent(port, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(nomServeur, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-        			.addGap(589))
+        					.addGap(459)
+        					.addComponent(lblBienvenue, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        				.addGroup(gl_panel.createSequentialGroup()
+        					.addContainerGap(405, Short.MAX_VALUE)
+        					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+        						.addGroup(gl_panel.createSequentialGroup()
+        							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+        								.addComponent(portLbl, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+        								.addComponent(lblConnexionScuris, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE))
+        							.addGap(35)
+        							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+        								.addComponent(checkConnexionSecurise)
+        								.addComponent(port, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
+        								.addComponent(nomServeur, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+        						.addGroup(gl_panel.createSequentialGroup()
+        							.addComponent(lblNomDuServeur)
+        							.addGap(18)
+        							.addComponent(connexion, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)))))
+        			.addGap(599))
         );
         gl_panel.setVerticalGroup(
         	gl_panel.createParallelGroup(Alignment.LEADING)
@@ -97,11 +108,15 @@ public class FenetrePrincipale extends JFrame implements Observer {
         				.addComponent(lblNomDuServeur))
         			.addGap(14)
         			.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-        				.addComponent(portLbl)
-        				.addComponent(port, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-        			.addGap(20)
+        				.addComponent(port, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(portLbl))
+        			.addGap(18)
+        			.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+        				.addComponent(checkConnexionSecurise, GroupLayout.PREFERRED_SIZE, 18, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(lblConnexionScuris))
+        			.addGap(10)
         			.addComponent(connexion, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-        			.addContainerGap(322, Short.MAX_VALUE))
+        			.addContainerGap(302, Short.MAX_VALUE))
         );
         panel.setLayout(gl_panel);
         initComponents();
@@ -163,7 +178,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
 			}
         	else
         	{
-				client.openConnexion(nomServeur, Client.defaultPort);
+				client.openConnexion(nomServeur, Config.getDefaultPort());
 			}
 			connect = waitForAnswer(client);
 		}
@@ -224,6 +239,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
   //************************************
     public void connecter() {
         this.fenetreUser.setVisible(false);
+        this.fenetreConnecter.reset();
         fenetreConnecter.setVisible(true);
 
     }
