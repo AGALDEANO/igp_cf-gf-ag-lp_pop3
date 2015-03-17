@@ -1,6 +1,7 @@
 package vue;
 
 import base.client.Client;
+import base.client.Config;
 import base.email.Email;
 
 import javax.swing.*;
@@ -163,7 +164,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
 			}
         	else
         	{
-				client.openConnexion(nomServeur, Client.defaultPort);
+				client.openConnexion(nomServeur, Config.getDefaultPort());
 			}
 			connect = waitForAnswer(client);
 		}
