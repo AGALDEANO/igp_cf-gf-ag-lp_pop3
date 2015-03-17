@@ -113,9 +113,15 @@ public enum Action {
 
     private void request(String... args) throws UnrespondingServerException {
         try {
-            if (this.equals(CONNEXION) && args.length == 2) {
-                ServerUtil.initialize(new Server(args[0], Integer.parseInt(args[1])));
-            } else {
+			if (this.equals(CONNEXION)) {
+				if (args.length == 2)
+					ServerUtil.initialize(new Server(args[0], Integer.parseInt(args[1])));
+				else if (args.length == 3) {
+					ServerUtil.initialize(
+							new Server(args[0], Integer.parseInt(args[1]),
+									Boolean.parseBoolean(args[2])));
+				}
+			} else {
                 Method method = Pop3Util.class.getMethod("getRequest" + requestName, String[].class);
                 Object[] param = {args};
                 String request = (String) method.invoke(null, param);

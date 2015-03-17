@@ -1,12 +1,10 @@
 package vue;
 
 import base.client.Client;
-import base.client.ClientObservable;
 import base.email.Email;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
@@ -19,8 +17,8 @@ public class FenetrePrincipale extends JFrame implements Observer {
     JMenuBar menubar;
     JMenu menu1;
     //****************************
-    ClientObservable clientObs;
-    private FenetreConnecter fenetreConnecter;
+	private Client client;
+	private FenetreConnecter fenetreConnecter;
     private FenetreUser fenetreUser;
     private JPanel jpbord2;
     private String nom_fichier;
@@ -34,12 +32,12 @@ public class FenetrePrincipale extends JFrame implements Observer {
     //-------------
     //constructeur
     //-------------
-    public FenetrePrincipale(ClientObservable clientObs) {
-        super();
+	public FenetrePrincipale(Client client) {
+		super();
         this.fenetreUser = new FenetreUser();
         this.fenetreConnecter = new FenetreConnecter();
-        this.clientObs = clientObs;
-        setResizable(false);
+		this.client = client;
+		setResizable(false);
         setBackground(new Color(51, 102, 102));
 
         JPanel panel = new JPanel();
@@ -161,14 +159,14 @@ public class FenetrePrincipale extends JFrame implements Observer {
         if (!nomServeur.equals("")) {
         	if(!port.equals(""))
         	{
-        		clientObs.openConnexion(nomServeur, Integer.valueOf(port));
-        	}
+				client.openConnexion(nomServeur, Integer.valueOf(port));
+			}
         	else
         	{
-        		clientObs.openConnexion(nomServeur, clientObs.port);
-        	}
-            connect = waitForAnswer(clientObs);
-        }
+				client.openConnexion(nomServeur, Client.defaultPort);
+			}
+			connect = waitForAnswer(client);
+		}
         if (!connect) {
             erreurGenerique(new JFrame(), "Serveur introuvable", "Warning connexion", JOptionPane.WARNING_MESSAGE);
             return connect;
@@ -181,9 +179,9 @@ public class FenetrePrincipale extends JFrame implements Observer {
     public boolean connexionClient(String username) {
         String connect;
         if (!username.equals("")) {
-            clientObs.signIn(username);
-            connect = waitForAnswerString(clientObs);
-        }
+			client.signIn(username);
+			connect = waitForAnswerString(client);
+		}
         else
         {
         	erreurGenerique(new JFrame(), "Veuillez renseignez votre nom", "Warning connexion", JOptionPane.WARNING_MESSAGE);
@@ -202,17 +200,17 @@ public class FenetrePrincipale extends JFrame implements Observer {
     {
     	try{
     	int number=Integer.valueOf(number_message);
-    	
-    	this.clientObs.getMessage(number);
-    	String erreur=waitForAnswerString(clientObs);
-    	if(erreur!=null)
+
+			this.client.getMessage(number);
+			String erreur = waitForAnswerString(client);
+			if(erreur!=null)
     	{
     		this.erreurGenerique(new JFrame(), erreur, "Error", JOptionPane.ERROR_MESSAGE);
     	}
     	else
     	{
-    		Email email=this.clientObs.getMessage();
-    		if(email!=null)
+			Email email = this.client.getMessage();
+			if(email!=null)
     		{
     			this.fenetreConnecter.getChampMessage().setText(email.headersToString()+"\n"+email.bodyToString());
     		}
@@ -240,8 +238,8 @@ public class FenetrePrincipale extends JFrame implements Observer {
     }
     public void disconnect()
     {
-    	this.clientObs.closeConnexion();
-    	this.fenetreConnecter.setVisible(false);
+		this.client.closeConnexion();
+		this.fenetreConnecter.setVisible(false);
     	this.fenetreUser.setVisible(false);
     	this.setVisible(true);
     }

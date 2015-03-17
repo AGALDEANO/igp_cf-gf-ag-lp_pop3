@@ -1,7 +1,6 @@
 package controleur;
 
-import base.client.ClientObservable;
-import base.client.ClientThrowable;
+import base.client.Client;
 import vue.FenetrePrincipale;
 
 import java.awt.event.ActionEvent;
@@ -11,19 +10,16 @@ import java.awt.event.ActionListener;
 //afin d'avoir un acces a ces 2 classe en direct
 //ainsi qu'un simulateur qui va nous permettre d'avoir le temps d'execution ainsi que les fontions pause et play
 public class Controleur {
-    ClientThrowable client;
-    ClientObservable clientObs;
-    FenetrePrincipale fp;
+	Client client;
+	FenetrePrincipale fp;
 
     //-------------
     //constructeur
     //-------------
     public Controleur() {
-        client = new ClientThrowable();
-        clientObs = new ClientObservable(client);
-        fp = new FenetrePrincipale(clientObs);
-        clientObs.addObserver(fp);
-        client.start();
+		client = new Client();
+		fp = new FenetrePrincipale(client);
+		client.start();
         //evenement pour l'evenement du bouton connexion
         fp.getConnexion().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
