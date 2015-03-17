@@ -18,7 +18,7 @@ import java.util.Arrays;
 /**
  * Created by alexandreg on 02/03/2015.
  */
-public class Client extends Thread {
+public class Client {
 	private static Logger logger = Logger.getLogger(Client.class.getName());
 	private CurrentState currentState = null;
     private int unreadMessage = 0;
@@ -30,33 +30,33 @@ public class Client extends Thread {
     private Boolean autosave = Boolean.TRUE;
 	private String timestamp = "";
 
-	public synchronized String getTimestamp() {
+	public String getTimestamp() {
 		return timestamp;
 	}
 
-	private synchronized void setTimestamp(String timestamp) {
+	private void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
 
-	public synchronized String getSucessMessage() {
+	public String getSucessMessage() {
 		String message = response.sucessMessage;
 		response.sucessMessage = null;
 		return message;
     }
 
-	private synchronized void setSucessMessage(String sucessMessage) {
+	private void setSucessMessage(String sucessMessage) {
 		response.sucessMessage = sucessMessage;
 	}
 
-	public synchronized String getUsername() {
+	public String getUsername() {
 		return username;
 	}
 
-	private synchronized void setUsername(String username) {
+	private void setUsername(String username) {
 		this.username = username;
 	}
 
-    public synchronized Email getMessage() {
+	public Email getMessage() {
 		if (response.email == null)
 			return null;
 		Email message = new Email(response.email);
@@ -64,72 +64,61 @@ public class Client extends Thread {
 		return message;
     }
 
-    private synchronized void setMessage(Email email) {
+	private void setMessage(Email email) {
 		this.response.email = email;
 	}
 
-    public synchronized String getErrorMessage() {
+	public String getErrorMessage() {
 		String message = response.errorMessage;
 		response.errorMessage = null;
 		return message;
     }
 
-    private synchronized void setErrorMessage(String errorMessage) {
+	private void setErrorMessage(String errorMessage) {
 		this.response.errorMessage = errorMessage;
 	}
 
-    public synchronized String[] getWaitingTaskArgs() {
+	public String[] getWaitingTaskArgs() {
 		return waitingTaskArgs == null ?
 				null :
 				Arrays.copyOf(waitingTaskArgs, waitingTaskArgs.length);
 	}
 
-    private synchronized void setWaitingTaskArgs(String[] waitingTaskArgs) {
-        this.waitingTaskArgs = waitingTaskArgs;
+	private void setWaitingTaskArgs(String[] waitingTaskArgs) {
+		this.waitingTaskArgs = waitingTaskArgs;
     }
 
-    public synchronized CurrentState getCurrentState() {
-        return currentState;
+	public CurrentState getCurrentState() {
+		return currentState;
     }
 
-    private synchronized void setCurrentState(CurrentState currentState) {
-        this.currentState = currentState;
+	private void setCurrentState(CurrentState currentState) {
+		this.currentState = currentState;
     }
 
-    public synchronized int getUnreadMessage() {
-        return unreadMessage;
+	public int getUnreadMessage() {
+		return unreadMessage;
     }
 
-    private synchronized void setUnreadMessage(int unreadMessage) {
-        this.unreadMessage = unreadMessage;
+	private void setUnreadMessage(int unreadMessage) {
+		this.unreadMessage = unreadMessage;
     }
 
-    private synchronized Action getWaitingTask() {
-        return waitingTask;
+	private Action getWaitingTask() {
+		return waitingTask;
     }
 
-    private synchronized void setWaitingTask(Action waitingTask) {
-        this.waitingTask = waitingTask;
+	private void setWaitingTask(Action waitingTask) {
+		this.waitingTask = waitingTask;
     }
 
-    /**
-     * If this thread was constructed using a separate
-     * <code>Runnable</code> run object, then that
-     * <code>Runnable</code> object's <code>run</code> method is called;
-     * otherwise, this method does nothing and returns.
-     * <p/>
-     * Subclasses of <code>Thread</code> should override this method.
-     *
-     * @see #start()
-     * @see #stop()
-     */
-    @Override
-    public void run() {
+	public void run() {
         Action todo;
         String[] todoArgs;
         String message;
-        while (!(quit && getWaitingTask() == null && getWaitingTaskArgs() == null)) {
-            todo = getWaitingTask();
+		if (!(quit && getWaitingTask() == null
+				&& getWaitingTaskArgs() == null)) {
+			todo = getWaitingTask();
             todoArgs = getWaitingTaskArgs();
             if (todo != null && todoArgs != null) {
                 try {
@@ -187,6 +176,7 @@ public class Client extends Thread {
 		setWaitingTask(Action.CONNEXION);
 		String[] args = { hostname, Integer.toString(port) };
 		setWaitingTaskArgs(args);
+		run();
 	}
 
 	public void openConnexion(String hostname, int port, Boolean ssl) {
@@ -194,35 +184,41 @@ public class Client extends Thread {
 		String[] args = { hostname, Integer.toString(port),
 				Boolean.toString(ssl) };
 		setWaitingTaskArgs(args);
+		run();
 	}
 
     public void closeConnexion() {
         setWaitingTask(Action.QUIT);
         String[] args = {};
         setWaitingTaskArgs(args);
-    }
+		run();
+	}
 
     public void exit() {
         quit = Boolean.TRUE;
-    }
+		run();
+	}
 
     public void signIn(String username, String password) {
         setWaitingTask(Action.APOP);
         String[] args = {username, password};
         setWaitingTaskArgs(args);
-    }
+		run();
+	}
 
     public void signIn(String username) {
         setWaitingTask(Action.APOP);
         String[] args = {username, ""};
         setWaitingTaskArgs(args);
-    }
+		run();
+	}
 
     public void getMessageList() {
         setWaitingTask(Action.LIST);
         String[] args = {};
         setWaitingTaskArgs(args);
-    }
+		run();
+	}
 
     public ArrayList<Email> getSavedMessages() {
         if (!CurrentState.TRANSACTION.equals(currentState)) {
@@ -253,29 +249,34 @@ public class Client extends Thread {
         setWaitingTask(Action.LIST);
         String[] args = {Integer.toString(i)};
         setWaitingTaskArgs(args);
-    }
+		run();
+	}
 
     public void enterLogin(String username) {
         setWaitingTask(Action.USER);
         String[] args = {username};
         setWaitingTaskArgs(args);
-    }
+		run();
+	}
 
     public void enterPassword(String password) {
         setWaitingTask(Action.PASS);
         String[] args = {password};
         setWaitingTaskArgs(args);
-    }
+		run();
+	}
 
     public void getMessage(int num) {
         setWaitingTask(Action.RETR);
         String[] args = {Integer.toString(num)};
         setWaitingTaskArgs(args);
-    }
+		run();
+	}
 
     public void getStat() {
         setWaitingTask(Action.STAT);
         String[] args = {};
         setWaitingTaskArgs(args);
-    }
+		run();
+	}
 }

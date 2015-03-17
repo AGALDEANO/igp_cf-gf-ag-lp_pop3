@@ -23,16 +23,11 @@ public class Main {
 
     public static void main(String[] args) {
 		Client client = new Client();
-		client.start();
         client.openConnexion(hostname[2], port[0]);
-        waitForAnswer(client);
         client.signIn(user[0]);
-        waitForAnswer(client);
         client.getMessage(4);
-        waitForAnswer(client);
         System.out.println(client.getMessage().headersToString());
         client.closeConnexion();
-        waitForAnswer(client);
         client.exit();
         try {
             ArrayList<Email> emails = EmailUtil.getEmails("test");
@@ -40,13 +35,5 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void waitForAnswer(Client client) {
-        String success, error;
-        do {
-            success = client.getSucessMessage();
-            error = client.getErrorMessage();
-        } while (success == null && error == null);
     }
 }

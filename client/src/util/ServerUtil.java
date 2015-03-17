@@ -194,7 +194,9 @@ public class ServerUtil {
 				return splitTS[0];
 			} else if (splitTS.length == 2 && server.getHostname()
 					.equals(splitTS[1])) {
-				server.setTimestamp(splitTS[0]);
+				splitTS = splitTS[0].split(".");
+				server.setTimestamp(
+						(splitTS.length == 2 ? splitTS[1] : splitTS[0]));
 				return splitTS[0];
 			} else {
 				throw new BadFormatResponseServerException();
