@@ -184,16 +184,18 @@ public class ServerUtil {
 		return array;
 	}
 
-	public void setTimeStamp(String message)
+	public String computeTimeStamp(String message)
 			throws BadFormatResponseServerException {
 		try {
 			String ts = message.split("<")[1].split(">")[0];
 			String[] splitTS = message.split("@");
 			if (splitTS.length == 1) {
 				server.setTimestamp(splitTS[0]);
+				return splitTS[0];
 			} else if (splitTS.length == 2 && server.getHostname()
 					.equals(splitTS[1])) {
 				server.setTimestamp(splitTS[0]);
+				return splitTS[0];
 			} else {
 				throw new BadFormatResponseServerException();
 			}

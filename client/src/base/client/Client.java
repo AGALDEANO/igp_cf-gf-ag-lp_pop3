@@ -2,12 +2,14 @@ package base.client;
 
 import base.email.Email;
 import base.email.EmailUtil;
+import exception.BadFormatResponseServerException;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
 import exception.UnrespondingServerException;
 import org.apache.log4j.Logger;
 import util.Action;
 import util.CurrentState;
+import util.ServerUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,49 +19,64 @@ import java.util.Arrays;
  * Created by alexandreg on 02/03/2015.
  */
 public class Client extends Thread {
-	public static final int defaultPort = 110;
 	private static Logger logger = Logger.getLogger(Client.class.getName());
 	private CurrentState currentState = null;
     private int unreadMessage = 0;
     private Action waitingTask = null;
     private String[] waitingTaskArgs = null;
     private Boolean quit = Boolean.FALSE;
-    private String sucessMessage = null;
-    private String errorMessage = null;
-    private Email email = null;
-    private String username;
+	private Response response = new Response();
+	private String username;
     private Boolean autosave = Boolean.TRUE;
+	private String timestamp = "";
 
-    public synchronized String getSucessMessage() {
-        String message = sucessMessage;
-        sucessMessage = null;
-        return message;
+	public synchronized String getTimestamp() {
+		return timestamp;
+	}
+
+	private synchronized void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public synchronized String getSucessMessage() {
+		String message = response.sucessMessage;
+		response.sucessMessage = null;
+		return message;
     }
 
-    private synchronized void setSucessMessage(String sucessMessage) {
-        this.sucessMessage = sucessMessage;
-    }
+	private synchronized void setSucessMessage(String sucessMessage) {
+		response.sucessMessage = sucessMessage;
+	}
+
+	public synchronized String getUsername() {
+		return username;
+	}
+
+	private synchronized void setUsername(String username) {
+		this.username = username;
+	}
 
     public synchronized Email getMessage() {
-        if (email == null) return null;
-        Email message = new Email(email);
-        email = null;
-        return message;
+		if (response.email == null)
+			return null;
+		Email message = new Email(response.email);
+		response.email = null;
+		return message;
     }
 
     private synchronized void setMessage(Email email) {
-        this.email = email;
-    }
+		this.response.email = email;
+	}
 
     public synchronized String getErrorMessage() {
-        String message = errorMessage;
-        errorMessage = null;
-        return message;
+		String message = response.errorMessage;
+		response.errorMessage = null;
+		return message;
     }
 
     private synchronized void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+		this.response.errorMessage = errorMessage;
+	}
 
     public synchronized String[] getWaitingTaskArgs() {
 		return waitingTaskArgs == null ?
@@ -117,9 +134,19 @@ public class Client extends Thread {
             if (todo != null && todoArgs != null) {
                 try {
                     message = todo.execute(currentState, todoArgs);
-                    if (Action.APOP.equals(todo)) {
-                        username = todoArgs[0];
-                    }
+					if (Action.CONNEXION.equals(todo)) {
+						try {
+							setTimestamp(ServerUtil.getInstance()
+									.computeTimeStamp(message));
+						} catch (BadFormatResponseServerException e) {
+							message = e.getMessage();
+							logger.error(message);
+							setTimestamp("");
+						}
+					}
+					if (Action.APOP.equals(todo)) {
+						setUsername(todoArgs[0]);
+					}
                     if (Action.QUIT.equals(todo)) {
                         currentState = null;
                     }
@@ -156,11 +183,18 @@ public class Client extends Thread {
         }
     }
 
-    public void openConnexion(String hostname, int port) {
-        setWaitingTask(Action.CONNEXION);
-        String[] args = {hostname, Integer.toString(port)};
-        setWaitingTaskArgs(args);
-    }
+	public void openConnexion(String hostname, int port) {
+		setWaitingTask(Action.CONNEXION);
+		String[] args = { hostname, Integer.toString(port) };
+		setWaitingTaskArgs(args);
+	}
+
+	public void openConnexion(String hostname, int port, Boolean ssl) {
+		setWaitingTask(Action.CONNEXION);
+		String[] args = { hostname, Integer.toString(port),
+				Boolean.toString(ssl) };
+		setWaitingTaskArgs(args);
+	}
 
     public void closeConnexion() {
         setWaitingTask(Action.QUIT);

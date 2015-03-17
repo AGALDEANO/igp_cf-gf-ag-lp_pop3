@@ -76,10 +76,6 @@ public class Server {
 		return securedSocket;
 	}
 
-	public void setSecuredSocket(Boolean securedSocket) {
-		this.securedSocket = securedSocket;
-	}
-
 	public String getTimestamp() {
 		return timestamp;
 	}
