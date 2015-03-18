@@ -30,10 +30,10 @@ public class Pop3Util {
 	}
 
 	public static String getRequestAPOP(String username, String password,
-			String date) {
+			String timestamp) {
 		try {
 			byte[] digestPassword = MessageDigest.getInstance("MD5")
-					.digest((password + date).getBytes("ascii"));
+					.digest((password + timestamp).getBytes("ascii"));
 			StringBuilder request = new StringBuilder("APOP " + username + " ");
 			for (byte b : digestPassword) {
 				request.append(String.format("%x", b));

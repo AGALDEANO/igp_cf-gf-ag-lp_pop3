@@ -11,7 +11,7 @@ public class Config {
 	private static int defaultSSLPort = 995;
 	private static Boolean autosave = Boolean.TRUE;
 	private static Boolean ssl = Boolean.FALSE;
-	private static Boolean apop = Boolean.FALSE;
+	private static Boolean apop = Boolean.TRUE;
 	private static Logger logger = Logger.getLogger(Config.class.getName());
 
 	public static int getDefaultPort() {

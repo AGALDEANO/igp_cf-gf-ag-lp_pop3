@@ -5,6 +5,7 @@ import exception.UnrespondingServerException;
 import exception.WrongPortServerException;
 import org.apache.log4j.Logger;
 
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.*;
@@ -19,7 +20,7 @@ public class Server {
 	private String hostname;
 	private int port = 110;
 	private int timeout = 2000;
-	private Socket socket;
+	private SSLSocket socket;
 	private Boolean apop = Boolean.TRUE;
 	private String timestamp = "";
 
@@ -150,11 +151,14 @@ public class Server {
 			}
 		}
 		try {
-			if (Config.getSsl())
-				socket = SSLSocketFactory.getDefault()
+			if (Config.getSsl()) {
+				socket = (SSLSocket) SSLSocketFactory.getDefault()
 						.createSocket(inetAddress, port);
+				socket.setEnabledCipherSuites(
+						socket.getSupportedCipherSuites());
+			}
 			else
-				socket = new Socket(inetAddress, port);
+				socket = (SSLSocket) new Socket(inetAddress, port);
 		} catch (ConnectException e) {
 			throw new UnrespondingServerException(
 					"Il n'a pas été possible de se connecter au serveur !");

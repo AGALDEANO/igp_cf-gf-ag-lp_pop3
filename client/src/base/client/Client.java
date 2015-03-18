@@ -186,8 +186,8 @@ public class Client {
 
     public void signIn(String username, String password) {
         setWaitingTask(Action.APOP);
-        String[] args = {username, password};
-        setWaitingTaskArgs(args);
+		String[] args = { username, password, timestamp };
+		setWaitingTaskArgs(args);
 		run();
 	}
 

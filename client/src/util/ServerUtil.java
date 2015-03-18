@@ -185,7 +185,7 @@ public class ServerUtil {
 
 	public String computeTimeStamp(String message) {
 		String[] split = message.split(" ");
-		return split[split.length - 1];
+		return split[split.length - 1].replaceFirst("\r\n", "");
 	}
 
 	public int getDefaultPort() {
