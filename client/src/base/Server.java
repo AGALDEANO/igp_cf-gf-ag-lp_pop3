@@ -9,6 +9,8 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -154,8 +156,15 @@ public class Server {
 			if (Config.getSsl()) {
 				socket = (SSLSocket) SSLSocketFactory.getDefault()
 						.createSocket(inetAddress, port);
-				socket.setEnabledCipherSuites(
-						socket.getSupportedCipherSuites());
+				String[] supported = socket.getSupportedCipherSuites();
+				List<String> list = new ArrayList<String>();
+
+				for (int i = 0; i < supported.length; i++) {
+					if (supported[i].indexOf("_anon_") > 0) {
+						list.add(supported[i]);
+					}
+				}
+				socket.setEnabledCipherSuites(list.toArray(new String[0]));
 			}
 			else
 				socket = (SSLSocket) new Socket(inetAddress, port);
