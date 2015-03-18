@@ -1,35 +1,40 @@
 package vue;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import base.client.Client;
 import base.client.Config;
 import base.email.Email;
-
-import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class FenetrePrincipale extends JFrame implements Observer {
 
     private static final long serialVersionUID = 1L;
-    JPanel jpprincipal;
-    JPanel jpbord1;
-    JMenuBar menubar;
-    JMenu menu1;
     //****************************
 	private Client client;
 	private FenetreConnecter fenetreConnecter;
     private FenetreUser fenetreUser;
-    private JPanel jpbord2;
-    private String nom_fichier;
-    private String chemin_fichier;
-    private JLabel nomDuFichier;
-    private GridLayout g;
     private JTextField nomServeur;
     private JButton connexion;
     private JTextField port;
+    private JCheckBox checkConnexionSecurise;
 
     //-------------
     //constructeur
@@ -66,7 +71,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
         port = new JTextField();
         port.setColumns(10);
         
-        JCheckBox checkConnexionSecurise = new JCheckBox("");
+        checkConnexionSecurise = new JCheckBox("");
         checkConnexionSecurise.setBackground(new Color(51,102,102));
         
         JLabel lblConnexionScuris = new JLabel("Connexion s\u00E9curis\u00E9:");
@@ -80,13 +85,16 @@ public class FenetrePrincipale extends JFrame implements Observer {
         					.addGap(459)
         					.addComponent(lblBienvenue, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         				.addGroup(gl_panel.createSequentialGroup()
-        					.addContainerGap(405, Short.MAX_VALUE)
+        					.addContainerGap(389, Short.MAX_VALUE)
         					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
         						.addGroup(gl_panel.createSequentialGroup()
         							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-        								.addComponent(portLbl, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-        								.addComponent(lblConnexionScuris, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE))
-        							.addGap(35)
+        								.addGroup(gl_panel.createSequentialGroup()
+        									.addComponent(portLbl, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+        									.addGap(35))
+        								.addGroup(gl_panel.createSequentialGroup()
+        									.addComponent(lblConnexionScuris, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
+        									.addPreferredGap(ComponentPlacement.UNRELATED)))
         							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
         								.addComponent(checkConnexionSecurise)
         								.addComponent(port, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
@@ -116,7 +124,7 @@ public class FenetrePrincipale extends JFrame implements Observer {
         				.addComponent(lblConnexionScuris))
         			.addGap(10)
         			.addComponent(connexion, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-        			.addContainerGap(302, Short.MAX_VALUE))
+        			.addContainerGap(296, Short.MAX_VALUE))
         );
         panel.setLayout(gl_panel);
         initComponents();
@@ -126,8 +134,6 @@ public class FenetrePrincipale extends JFrame implements Observer {
         this.setSize(1200, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
-
-        this.setJMenuBar(menubar);
         this.setVisible(true);
     }
     //GETTER
@@ -174,11 +180,11 @@ public class FenetrePrincipale extends JFrame implements Observer {
         if (!nomServeur.equals("")) {
         	if(!port.equals(""))
         	{
-				client.openConnexion(nomServeur, Integer.valueOf(port));
+        		client.openConnexion(nomServeur, Integer.valueOf(port),this.checkConnexionSecurise.isSelected());
 			}
         	else
         	{
-				client.openConnexion(nomServeur, Config.getDefaultPort());
+				client.openConnexion(nomServeur, Config.getDefaultPort(),this.checkConnexionSecurise.isSelected());
 			}
 			connect = waitForAnswer(client);
 		}

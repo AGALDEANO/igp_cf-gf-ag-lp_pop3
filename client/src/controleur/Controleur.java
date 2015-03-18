@@ -6,6 +6,9 @@ import vue.FenetrePrincipale;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 //dans cette classe le controleur va contenir le modele et la vue
 //afin d'avoir un acces a ces 2 classe en direct
 //ainsi qu'un simulateur qui va nous permettre d'avoir le temps d'execution ainsi que les fontions pause et play
