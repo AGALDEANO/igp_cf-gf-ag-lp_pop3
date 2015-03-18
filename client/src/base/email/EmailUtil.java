@@ -10,13 +10,14 @@ import java.util.ArrayList;
  * Created by alexandreg on 10/03/2015.
  */
 public class EmailUtil {
-    private static String extension = ".email";
-    private static String path = "emails";
+	private static String extension = ".email";
+	private static String path = "emails";
 
 	public static void saveEmail(Email email, String username)
 			throws IOException {
-		String filepath = path + "/" + username + "/" + email.getId() + extension;
-        File file = new File(filepath);
+		String filepath =
+				path + "/" + username + "/" + email.getId() + extension;
+		File file = new File(filepath);
 		if (!file.getParentFile().mkdirs())
 			throw new IOException("Directory hasn't been created.");
 		FileWriter writer = null;
@@ -31,18 +32,19 @@ public class EmailUtil {
 		}
 	}
 
-    public static ArrayList<Email> getEmails(String username) throws IOException {
-        String filepath;
+	public static ArrayList<Email> getEmails(String username)
+			throws IOException {
+		String filepath;
 		StringBuilder data;
 		int n;
-        ArrayList<Email> emailArrayList = new ArrayList<>();
-        File f = new File(path + "/" + username);
+		ArrayList<Email> emailArrayList = new ArrayList<>();
+		File f = new File(path + "/" + username);
 		if (f.exists() && f.isDirectory()) {
 			String[] list = f.list();
 			if (list != null)
 				return emailArrayList;
 			for (String filename : f.list()) {
-                if (filename.endsWith(extension)) {
+				if (filename.endsWith(extension)) {
 					data = new StringBuilder();
 					filepath = path + "/" + username + "/" + filename;
 					FileInputStream in = null;
@@ -61,11 +63,12 @@ public class EmailUtil {
 					} finally {
 						if (in != null)
 							in.close();
+						return emailArrayList;
 					}
 
 				}
-            }
-        }
-        return emailArrayList;
-    }
+			}
+		}
+		return emailArrayList;
+	}
 }

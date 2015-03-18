@@ -18,8 +18,6 @@ import java.util.ArrayList;
 public class ServerUtil {
 	private static Logger logger = Logger.getLogger(ServerUtil.class.getName());
 	private static ServerUtil instance;
-	private static String endLine = "\r\n";
-	private static String endFile = "\r\n.\r\n";
 	private Server server;
 	private OutputStream out;
 	private InputStream in;
@@ -186,9 +184,5 @@ public class ServerUtil {
 	public String computeTimeStamp(String message) {
 		String[] split = message.split(" ");
 		return split[split.length - 1].replaceFirst("\r\n", "");
-	}
-
-	public int getDefaultPort() {
-		return (server.getSecuredSocket() ? 995 : 110);
 	}
 }

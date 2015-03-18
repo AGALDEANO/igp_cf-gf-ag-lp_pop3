@@ -20,11 +20,10 @@ public class Server {
 	private String hostname;
 	private int port = 110;
 	private int timeout = 2000;
-	private SSLSocket socket;
+	private Socket socket;
+	private SSLSocket securedSocket;
 	private Boolean apop = Boolean.TRUE;
 	private String timestamp = "";
-
-	private Boolean securedSocket = Boolean.FALSE;
 
 	public Server(String hostname, int port)
 			throws UnrespondingServerException {
@@ -66,10 +65,6 @@ public class Server {
 				logger.error(e.toString());
 			}
 
-	}
-
-	public Boolean getSecuredSocket() {
-		return securedSocket;
 	}
 
 	public String getTimestamp() {
@@ -126,7 +121,7 @@ public class Server {
 	}
 
 	public Socket getSocket() {
-		return socket;
+		return (Config.getSsl() ? securedSocket : socket);
 	}
 
 	public Boolean getApop() {
@@ -152,13 +147,12 @@ public class Server {
 		}
 		try {
 			if (Config.getSsl()) {
-				socket = (SSLSocket) SSLSocketFactory.getDefault()
+				securedSocket = (SSLSocket) SSLSocketFactory.getDefault()
 						.createSocket(inetAddress, port);
-				socket.setEnabledCipherSuites(
-						socket.getSupportedCipherSuites());
-			}
-			else
-				socket = (SSLSocket) new Socket(inetAddress, port);
+				securedSocket.setEnabledCipherSuites(
+						securedSocket.getSupportedCipherSuites());
+			} else
+				socket = new Socket(inetAddress, port);
 		} catch (ConnectException e) {
 			throw new UnrespondingServerException(
 					"Il n'a pas été possible de se connecter au serveur !");
