@@ -27,7 +27,6 @@ public class Client {
     private Boolean quit = Boolean.FALSE;
 	private Response response = new Response();
 	private String username;
-    private Boolean autosave = Boolean.TRUE;
 	private String timestamp = "";
 
 	public String getTimestamp() {
@@ -123,7 +122,7 @@ public class Client {
             if (todo != null && todoArgs != null) {
                 try {
                     message = todo.execute(currentState, todoArgs);
-					if (Action.CONNEXION.equals(todo)) {
+					if (Action.CONNEXION.equals(todo) && Config.getApop()) {
 						try {
 							setTimestamp(ServerUtil.getInstance()
 									.computeTimeStamp(message));
@@ -143,8 +142,9 @@ public class Client {
                         Email received = new Email(message);
                         setMessage(received);
                         try {
-                            if (autosave) EmailUtil.saveEmail(received, username);
-                        } catch (IOException e) {
+							if (Config.getAutosave())
+								EmailUtil.saveEmail(received, username);
+						} catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
@@ -175,14 +175,6 @@ public class Client {
 	public void openConnexion(String hostname, int port) {
 		setWaitingTask(Action.CONNEXION);
 		String[] args = { hostname, Integer.toString(port) };
-		setWaitingTaskArgs(args);
-		run();
-	}
-
-	public void openConnexion(String hostname, int port, Boolean ssl) {
-		setWaitingTask(Action.CONNEXION);
-		String[] args = { hostname, Integer.toString(port),
-				Boolean.toString(ssl) };
 		setWaitingTaskArgs(args);
 		run();
 	}

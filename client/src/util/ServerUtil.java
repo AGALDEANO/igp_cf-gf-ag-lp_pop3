@@ -201,6 +201,8 @@ public class ServerUtil {
 			} else {
 				throw new BadFormatResponseServerException();
 			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new BadFormatResponseServerException();
 		} catch (NullPointerException e) {
 			throw new BadFormatResponseServerException();
 		}

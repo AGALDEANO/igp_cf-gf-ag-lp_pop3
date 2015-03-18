@@ -118,8 +118,7 @@ public enum Action {
 					ServerUtil.initialize(new Server(args[0], Integer.parseInt(args[1])));
 				else if (args.length == 3) {
 					ServerUtil.initialize(
-							new Server(args[0], Integer.parseInt(args[1]),
-									Boolean.parseBoolean(args[2])));
+							new Server(args[0], Integer.parseInt(args[1])));
 				}
 			} else {
                 Method method = Pop3Util.class.getMethod("getRequest" + requestName, String[].class);

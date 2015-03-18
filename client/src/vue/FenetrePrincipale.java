@@ -1,15 +1,24 @@
 package vue;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.Observable;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
 import base.client.Client;
 import base.client.Config;
 import base.email.Email;
-
-import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 
 public class FenetrePrincipale extends JFrame {
 
@@ -75,17 +84,33 @@ public class FenetrePrincipale extends JFrame {
         					.addContainerGap(389, Short.MAX_VALUE)
         					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
         						.addGroup(gl_panel.createSequentialGroup()
-        							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-        								.addGroup(gl_panel.createSequentialGroup()
-        									.addComponent(portLbl, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-        									.addGap(35))
-        								.addGroup(gl_panel.createSequentialGroup()
-        									.addComponent(lblConnexionScuris, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
-        									.addPreferredGap(ComponentPlacement.UNRELATED)))
-        							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-        								.addComponent(checkConnexionSecurise)
-        								.addComponent(port, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
-        								.addComponent(nomServeur, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+										.addGroup(gl_panel.createParallelGroup(
+												Alignment.TRAILING).addGroup(
+												gl_panel.createSequentialGroup()
+														.addComponent(portLbl,
+																GroupLayout.PREFERRED_SIZE,
+																45,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(35)).addGroup(
+												gl_panel.createSequentialGroup()
+														.addComponent(
+																lblConnexionScuris,
+																GroupLayout.PREFERRED_SIZE,
+																124,
+																GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(
+																ComponentPlacement.UNRELATED)))
+										.addGroup(gl_panel.createParallelGroup(
+												Alignment.LEADING).addComponent(
+												checkConnexionSecurise)
+												.addComponent(port,
+														GroupLayout.PREFERRED_SIZE,
+														36,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(nomServeur,
+														GroupLayout.PREFERRED_SIZE,
+														GroupLayout.DEFAULT_SIZE,
+														GroupLayout.PREFERRED_SIZE)))
         						.addGroup(gl_panel.createSequentialGroup()
         							.addComponent(lblNomDuServeur)
         							.addGap(18)
