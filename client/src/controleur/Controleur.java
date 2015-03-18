@@ -35,7 +35,8 @@ public class Controleur {
         fp.getConnexionUser().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 String username = fp.getIdentifiant().getText();
-                if (fp.connexionClient(username)) {
+                String password =fp.getPassword().getText();
+                if (fp.connexionClient(username,password)) {
                     fp.connecter();
                 }
 

@@ -15,13 +15,14 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPasswordField;
 
 public class FenetreUser extends JFrame
 {
 	private JTextField identifiant;
 	private JButton connexionUser;
 	private JMenuItem deconnexion;
-	private JTextField password;
+	private JPasswordField password;
 
 	public FenetreUser() throws HeadlessException
 	{
@@ -53,29 +54,27 @@ public class FenetreUser extends JFrame
 		JLabel lblMotDePasse = new JLabel("Mot de passe:");
 		lblMotDePasse.setForeground(new Color(0, 0, 128));
 		
-		password = new JTextField();
-		password.setColumns(10);
+		password = new JPasswordField();
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.TRAILING)
+			gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel.createSequentialGroup()
 					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblMotDePasse)
-							.addGap(10)
-							.addComponent(password, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-							.addGroup(gl_panel.createSequentialGroup()
-								.addContainerGap()
-								.addComponent(lblUtilisateur)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(identifiant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addGroup(gl_panel.createSequentialGroup()
-								.addGap(459)
-								.addComponent(label_1, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))))
+							.addGap(459)
+							.addComponent(label_1, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGap(433)
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblUtilisateur, Alignment.TRAILING)
+								.addComponent(lblMotDePasse, Alignment.TRAILING))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(password)
+								.addComponent(identifiant))
+							.addGap(14)))
 					.addGap(589))
-				.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
+				.addGroup(gl_panel.createSequentialGroup()
 					.addGap(479)
 					.addComponent(connexionUser, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(607, Short.MAX_VALUE))
@@ -87,14 +86,12 @@ public class FenetreUser extends JFrame
 					.addComponent(label_1)
 					.addGap(50)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(identifiant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUtilisateur))
+						.addComponent(lblUtilisateur)
+						.addComponent(identifiant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(13)
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(password, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addGap(3)
-							.addComponent(lblMotDePasse)))
+					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblMotDePasse)
+						.addComponent(password, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addComponent(connexionUser, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(309, Short.MAX_VALUE))

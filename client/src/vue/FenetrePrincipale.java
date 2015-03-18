@@ -216,10 +216,17 @@ public class FenetrePrincipale extends JFrame {
         }
     }
 
-    public boolean connexionClient(String username) {
+    public boolean connexionClient(String username,String password) {
         String connect;
         if (!username.equals("")) {
-			client.signIn(username);
+			if(!password.equals(""))
+			{
+				client.signIn(username,password);
+			}
+			else
+			{
+				client.signIn(username);
+			}
 			connect = waitForAnswerString(client);
 		}
         else
