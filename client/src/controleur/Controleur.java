@@ -22,7 +22,6 @@ public class Controleur {
     public Controleur() {
 		client = new Client();
 		fp = new FenetrePrincipale(client);
-		client.start();
         //evenement pour l'evenement du bouton connexion
         fp.getConnexion().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
