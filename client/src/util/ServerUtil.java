@@ -1,7 +1,6 @@
 package util;
 
 import base.Server;
-import exception.BadFormatResponseServerException;
 import exception.UnrespondingServerException;
 import org.apache.log4j.Logger;
 
@@ -184,28 +183,9 @@ public class ServerUtil {
 		return array;
 	}
 
-	public String computeTimeStamp(String message)
-			throws BadFormatResponseServerException {
-		try {
-			String ts = message.split("<")[1].split(">")[0];
-			String[] splitTS = message.split("@");
-			if (splitTS.length == 1) {
-				server.setTimestamp(splitTS[0]);
-				return splitTS[0];
-			} else if (splitTS.length == 2 && server.getHostname()
-					.equals(splitTS[1])) {
-				splitTS = splitTS[0].split(".");
-				server.setTimestamp(
-						(splitTS.length == 2 ? splitTS[1] : splitTS[0]));
-				return splitTS[0];
-			} else {
-				throw new BadFormatResponseServerException();
-			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new BadFormatResponseServerException();
-		} catch (NullPointerException e) {
-			throw new BadFormatResponseServerException();
-		}
+	public String computeTimeStamp(String message) {
+		String[] split = message.split(" ");
+		return split[split.length - 1];
 	}
 
 	public int getDefaultPort() {
