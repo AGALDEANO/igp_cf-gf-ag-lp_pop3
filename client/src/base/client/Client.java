@@ -2,7 +2,6 @@ package base.client;
 
 import base.email.Email;
 import base.email.EmailUtil;
-import exception.BadFormatResponseServerException;
 import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
 import exception.UnrespondingServerException;
@@ -123,14 +122,8 @@ public class Client {
                 try {
                     message = todo.execute(currentState, todoArgs);
 					if (Action.CONNEXION.equals(todo) && Config.getApop()) {
-						try {
 							setTimestamp(ServerUtil.getInstance()
 									.computeTimeStamp(message));
-						} catch (BadFormatResponseServerException e) {
-							message = e.getMessage();
-							logger.error(message);
-							setTimestamp("");
-						}
 					}
 					if (Action.APOP.equals(todo)) {
 						setUsername(todoArgs[0]);
