@@ -117,4 +117,7 @@ public class FenetreUser extends JFrame
 	public JTextField getPassword(){return this.password;}
 	public JButton getConnexionUser(){return this.connexionUser;}
 	public JMenuItem getDeconnexion(){return this.deconnexion;}
+	public void resetPassword(){
+		this.password.setText("");
+	}
 }

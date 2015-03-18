@@ -282,6 +282,7 @@ public class FenetrePrincipale extends JFrame {
 
     public void connecterServeur() {
         this.setVisible(false);
+        this.fenetreUser.resetPassword();
         fenetreUser.setVisible(true);
     }
     public void disconnect()
