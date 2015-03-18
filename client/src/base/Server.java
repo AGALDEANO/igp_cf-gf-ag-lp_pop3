@@ -1,5 +1,6 @@
 package base;
 
+import base.client.Config;
 import exception.UnrespondingServerException;
 import exception.WrongPortServerException;
 import org.apache.log4j.Logger;
@@ -26,12 +27,6 @@ public class Server {
 
 	public Server(String hostname, int port)
 			throws UnrespondingServerException {
-		this(hostname, port, Boolean.FALSE);
-	}
-
-	public Server(String hostname, int port, Boolean ssl)
-			throws UnrespondingServerException {
-		securedSocket = ssl;
 		if (port >= 0) {
 			this.port = port;
 
@@ -155,7 +150,7 @@ public class Server {
 			}
 		}
 		try {
-			if (securedSocket)
+			if (Config.getSsl())
 				socket = SSLSocketFactory.getDefault()
 						.createSocket(inetAddress, port);
 			else
