@@ -1,30 +1,17 @@
 package vue;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.util.Observable;
-import java.util.Observer;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import base.client.Client;
 import base.client.Config;
 import base.email.Email;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
-public class FenetrePrincipale extends JFrame implements Observer {
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
+
+public class FenetrePrincipale extends JFrame {
 
     private static final long serialVersionUID = 1L;
     //****************************
@@ -173,18 +160,25 @@ public class FenetrePrincipale extends JFrame implements Observer {
     public JMenuItem getDeconnexionUser(){
     	return this.fenetreUser.getDeconnexion();
     }
+    public JTextField getPassword()
+    {
+    	return this.fenetreUser.getPassword();
+    }
   //************************************
 
     public boolean connexionServeur(String nomServeur,String port) {
         boolean connect = false;
-        if (!nomServeur.equals("")) {
+		Config.setSsl(checkConnexionSecurise.isSelected());
+		if (!nomServeur.equals("")) {
         	if(!port.equals(""))
         	{
-        		client.openConnexion(nomServeur, Integer.valueOf(port),this.checkConnexionSecurise.isSelected());
+				client.openConnexion(nomServeur, Integer.valueOf(port));
 			}
         	else
         	{
-				client.openConnexion(nomServeur, Config.getDefaultPort(),this.checkConnexionSecurise.isSelected());
+				client.openConnexion(nomServeur, Config.getSsl() ?
+						Config.getDefaultSSLPort() :
+						Config.getDefaultPort());
 			}
 			connect = waitForAnswer(client);
 		}
@@ -307,7 +301,6 @@ public class FenetrePrincipale extends JFrame implements Observer {
     }
   //le notify de la boucle qui est lancer a partir du modele afin d'actualiser la vue et ensuite de refaire un tour de boucle vers le modele
     //cette boucle n'est gerer que grace a la classe simulateur qui nous donne la possibilit� de la stopper ou non et d'agir sur son temps d'execution
-    @Override
     public void update(Observable obj, Object arg) {
         if (arg instanceof Exception) {
             erreurGenerique(new JFrame(), ((Exception) arg).getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);

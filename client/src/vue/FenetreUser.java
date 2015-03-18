@@ -21,6 +21,7 @@ public class FenetreUser extends JFrame
 	private JTextField identifiant;
 	private JButton connexionUser;
 	private JMenuItem deconnexion;
+	private JTextField password;
 
 	public FenetreUser() throws HeadlessException
 	{
@@ -48,30 +49,39 @@ public class FenetreUser extends JFrame
 		
 		JLabel label_1 = new JLabel("Bienvenue sur le client POP3");
 		label_1.setForeground(new Color(0, 0, 128));
+		
+		JLabel lblMotDePasse = new JLabel("Mot de passe:");
+		lblMotDePasse.setForeground(new Color(0, 0, 128));
+		
+		password = new JTextField();
+		password.setColumns(10);
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.TRAILING)
-				.addGap(0, 1194, Short.MAX_VALUE)
 				.addGroup(gl_panel.createSequentialGroup()
 					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel.createSequentialGroup()
 							.addContainerGap()
-							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_panel.createSequentialGroup()
-									.addComponent(lblUtilisateur)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(identifiant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addGroup(gl_panel.createSequentialGroup()
-									.addGap(22)
-									.addComponent(connexionUser, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE))))
-						.addGroup(gl_panel.createSequentialGroup()
-							.addGap(459)
-							.addComponent(label_1, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)))
+							.addComponent(lblMotDePasse)
+							.addGap(10)
+							.addComponent(password, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+							.addGroup(gl_panel.createSequentialGroup()
+								.addContainerGap()
+								.addComponent(lblUtilisateur)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(identifiant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addGroup(gl_panel.createSequentialGroup()
+								.addGap(459)
+								.addComponent(label_1, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))))
 					.addGap(589))
+				.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
+					.addGap(479)
+					.addComponent(connexionUser, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(607, Short.MAX_VALUE))
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 572, Short.MAX_VALUE)
 				.addGroup(gl_panel.createSequentialGroup()
 					.addGap(112)
 					.addComponent(label_1)
@@ -79,9 +89,15 @@ public class FenetreUser extends JFrame
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(identifiant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblUtilisateur))
-					.addGap(26)
+					.addGap(13)
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addComponent(password, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGap(3)
+							.addComponent(lblMotDePasse)))
+					.addGap(18)
 					.addComponent(connexionUser, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(328, Short.MAX_VALUE))
+					.addContainerGap(309, Short.MAX_VALUE))
 		);
 		panel.setLayout(gl_panel);
 		this.setTitle("Client");
@@ -101,6 +117,7 @@ public class FenetreUser extends JFrame
 		menu.add(deconnexion);
 	}
 	public JTextField getIdentifiant(){return this.identifiant;}
+	public JTextField getPassword(){return this.password;}
 	public JButton getConnexionUser(){return this.connexionUser;}
 	public JMenuItem getDeconnexion(){return this.deconnexion;}
 }
