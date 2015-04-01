@@ -1,6 +1,6 @@
 package controleur;
 
-import base.client.Client;
+import base.client.impl.Pop3Client;
 import vue.FenetrePrincipale;
 
 import java.awt.event.ActionEvent;
@@ -10,15 +10,15 @@ import java.awt.event.ActionListener;
 //afin d'avoir un acces a ces 2 classe en direct
 //ainsi qu'un simulateur qui va nous permettre d'avoir le temps d'execution ainsi que les fontions pause et play
 public class Controleur {
-	Client client;
+	Pop3Client pop3Client;
 	FenetrePrincipale fp;
 
 	//-------------
 	//constructeur
 	//-------------
 	public Controleur() {
-		client = new Client();
-		fp = new FenetrePrincipale(client);
+		pop3Client = new Pop3Client();
+		fp = new FenetrePrincipale(pop3Client);
 		//evenement pour l'evenement du bouton connexion
 		fp.getConnexion().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {

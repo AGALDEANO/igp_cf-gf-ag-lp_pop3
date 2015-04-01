@@ -1,4 +1,4 @@
-package util;
+package util.pop3;
 
 import base.Server;
 import exception.BadFormatResponseServerException;
@@ -6,6 +6,7 @@ import exception.ErrorResponseServerException;
 import exception.UnallowedActionException;
 import exception.UnrespondingServerException;
 import org.apache.log4j.Logger;
+import util.ServerUtil;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -15,31 +16,31 @@ import java.util.Arrays;
 /**
  * Created by alexandreg on 04/03/2015.
  */
-public enum Action {
-	CONNEXION("CONNEXION", CurrentState.AUTHORIZATION, null),
-	APOP("APOP", CurrentState.TRANSACTION, CurrentState.AUTHORIZATION,
-			CurrentState.AUTHORIZATION),
-	USER("USER", CurrentState.USER_OK, CurrentState.AUTHORIZATION,
-			CurrentState.AUTHORIZATION),
-	PASS("PASS", CurrentState.TRANSACTION, CurrentState.AUTHORIZATION,
-			CurrentState.USER_OK),
-	RETR("RETR", CurrentState.TRANSACTION, CurrentState.TRANSACTION,
-			CurrentState.TRANSACTION),
-	STAT("STAT", CurrentState.TRANSACTION, CurrentState.TRANSACTION,
-			CurrentState.TRANSACTION),
-	LIST("LIST", CurrentState.TRANSACTION, CurrentState.TRANSACTION,
-			CurrentState.TRANSACTION),
-	QUIT("QUIT", null, null, CurrentState.AUTHORIZATION,
-			CurrentState.TRANSACTION, CurrentState.USER_OK);
-	private static Logger logger = Logger.getLogger(Action.class.getName());
-	private CurrentState[] allowedCurrentStates;
+public enum Pop3Action {
+	CONNEXION("CONNEXION", Pop3State.AUTHORIZATION, null),
+	APOP("APOP", Pop3State.TRANSACTION, Pop3State.AUTHORIZATION,
+			Pop3State.AUTHORIZATION),
+	USER("USER", Pop3State.USER_OK, Pop3State.AUTHORIZATION,
+			Pop3State.AUTHORIZATION),
+	PASS("PASS", Pop3State.TRANSACTION, Pop3State.AUTHORIZATION,
+			Pop3State.USER_OK),
+	RETR("RETR", Pop3State.TRANSACTION, Pop3State.TRANSACTION,
+			Pop3State.TRANSACTION),
+	STAT("STAT", Pop3State.TRANSACTION, Pop3State.TRANSACTION,
+			Pop3State.TRANSACTION),
+	LIST("LIST", Pop3State.TRANSACTION, Pop3State.TRANSACTION,
+			Pop3State.TRANSACTION),
+	QUIT("QUIT", null, null, Pop3State.AUTHORIZATION,
+			Pop3State.TRANSACTION, Pop3State.USER_OK);
+	private static Logger logger = Logger.getLogger(Pop3Action.class.getName());
+	private Pop3State[] allowedPop3States;
 	private String requestName;
-	private CurrentState ifSucceed;
-	private CurrentState ifFailed;
+	private Pop3State ifSucceed;
+	private Pop3State ifFailed;
 
-	private Action(String requestName, CurrentState ifSucceed,
-			CurrentState ifFailed, CurrentState... allowedCurrentStates) {
-		this.allowedCurrentStates = allowedCurrentStates;
+	private Pop3Action(String requestName, Pop3State ifSucceed,
+					   Pop3State ifFailed, Pop3State... allowedPop3States) {
+		this.allowedPop3States = allowedPop3States;
 		this.requestName = requestName;
 		this.ifSucceed = ifSucceed;
 		this.ifFailed = ifFailed;
@@ -89,35 +90,35 @@ public enum Action {
 		return message;
 	}
 
-	public CurrentState[] getAllowedCurrentStates() {
-		return allowedCurrentStates == null ?
+	public Pop3State[] getAllowedPop3States() {
+		return allowedPop3States == null ?
 				null :
-				Arrays.copyOf(allowedCurrentStates,
-						allowedCurrentStates.length);
+				Arrays.copyOf(allowedPop3States,
+						allowedPop3States.length);
 	}
 
 	public String getRequestName() {
 		return requestName;
 	}
 
-	public CurrentState getIfSucceed() {
+	public Pop3State getIfSucceed() {
 		return ifSucceed;
 	}
 
-	public CurrentState getIfFailed() {
+	public Pop3State getIfFailed() {
 		return ifFailed;
 	}
 
-	public String execute(CurrentState currentState, String... args)
+	public String execute(Pop3State pop3State, String... args)
 			throws UnallowedActionException, ErrorResponseServerException,
 			UnrespondingServerException {
 		logger.info(String.format("==== %s started ====", name()));
-		if (allowed(currentState)) {
+		if (allowed(pop3State)) {
 			request(args);
 			String message = null;
 			try {
-				message = response((Action.LIST.equals(this) && (args == null
-						|| args.length == 0)) || Action.RETR.equals(this));
+				message = response((Pop3Action.LIST.equals(this) && (args == null
+						|| args.length == 0)) || Pop3Action.RETR.equals(this));
 				logger.info(String.format("==== %s succeed ====", name()));
 			} catch (ErrorResponseServerException e) {
 				logger.info(String.format("==== %s failed ====", name()));
@@ -128,8 +129,8 @@ public enum Action {
 			logger.info(String.format("==== %s failed ====", name()));
 			throw new UnallowedActionException(
 					"L'action " + name() + " n'est pas autorisée dans l'état "
-							+ (currentState != null ?
-							currentState.name() :
+							+ (pop3State != null ?
+							pop3State.name() :
 							"CLOSED") + " !");
 		}
 	}
@@ -164,12 +165,12 @@ public enum Action {
 		}
 	}
 
-	private Boolean allowed(CurrentState currentState) {
-		if ((allowedCurrentStates == null || allowedCurrentStates.length == 0)
-				&& currentState == null)
+	private Boolean allowed(Pop3State pop3State) {
+		if ((allowedPop3States == null || allowedPop3States.length == 0)
+				&& pop3State == null)
 			return Boolean.TRUE;
-		for (CurrentState st : allowedCurrentStates) {
-			if (st != null && st.equals(currentState))
+		for (Pop3State st : allowedPop3States) {
+			if (st != null && st.equals(pop3State))
 				return Boolean.TRUE;
 		}
 		return Boolean.FALSE;

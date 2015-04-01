@@ -1,7 +1,7 @@
 package vue;
 
-import base.client.Client;
 import base.client.Config;
+import base.client.impl.Pop3Client;
 import base.email.Email;
 
 import javax.swing.*;
@@ -14,7 +14,7 @@ public class FenetrePrincipale extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	//****************************
-	private Client client;
+	private Pop3Client pop3Client;
 	private FenetreConnecter fenetreConnecter;
 	private FenetreUser fenetreUser;
 	private JTextField nomServeur;
@@ -25,11 +25,11 @@ public class FenetrePrincipale extends JFrame {
 	//-------------
 	//constructeur
 	//-------------
-	public FenetrePrincipale(Client client) {
+	public FenetrePrincipale(Pop3Client pop3Client) {
 		super();
 		this.fenetreUser = new FenetreUser();
 		this.fenetreConnecter = new FenetreConnecter();
-		this.client = client;
+		this.pop3Client = pop3Client;
 		setResizable(false);
 		setBackground(new Color(51, 102, 102));
 
@@ -220,13 +220,13 @@ public class FenetrePrincipale extends JFrame {
 		Config.setSsl(checkConnexionSecurise.isSelected());
 		if (!nomServeur.equals("")) {
 			if (!port.equals("")) {
-				client.openConnexion(nomServeur, Integer.parseInt(port));
+				pop3Client.openConnexion(nomServeur, Integer.parseInt(port));
 			} else {
-				client.openConnexion(nomServeur, Config.getSsl() ?
+				pop3Client.openConnexion(nomServeur, Config.getSsl() ?
 						Config.getDefaultSSLPort() :
 						Config.getDefaultPort());
 			}
-			connect = waitForAnswer(client);
+			connect = waitForAnswer(pop3Client);
 		}
 		if (!connect) {
 			erreurGenerique(new JFrame(), "Serveur introuvable",
@@ -242,11 +242,11 @@ public class FenetrePrincipale extends JFrame {
 		String connect;
 		if (!username.equals("")) {
 			if (!password.equals("")) {
-				client.signIn(username, password);
+				pop3Client.signIn(username, password);
 			} else {
-				client.signIn(username);
+				pop3Client.signIn(username);
 			}
-			connect = waitForAnswerString(client);
+			connect = waitForAnswerString(pop3Client);
 		} else {
 			erreurGenerique(new JFrame(), "Veuillez renseignez votre nom",
 					"Warning connexion", JOptionPane.WARNING_MESSAGE);
@@ -265,13 +265,13 @@ public class FenetrePrincipale extends JFrame {
 		try {
 			int number = Integer.parseInt(number_message);
 
-			this.client.getMessage(number);
-			String erreur = waitForAnswerString(client);
+			this.pop3Client.getMessage(number);
+			String erreur = waitForAnswerString(pop3Client);
 			if (erreur != null) {
 				this.erreurGenerique(new JFrame(), erreur, "Error",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
-				Email email = this.client.getMessage();
+				Email email = this.pop3Client.getMessage();
 				if (email != null) {
 					this.fenetreConnecter.getChampMessage().setText(
 							email.headersToString() + "\n" + email
@@ -304,18 +304,18 @@ public class FenetrePrincipale extends JFrame {
 	}
 
 	public void disconnect() {
-		this.client.closeConnexion();
+		this.pop3Client.closeConnexion();
 		this.fenetreConnecter.setVisible(false);
 		this.fenetreUser.setVisible(false);
 		this.setVisible(true);
 	}
 	//************************************
 
-	public boolean waitForAnswer(Client client) {
+	public boolean waitForAnswer(Pop3Client pop3Client) {
 		String success, error;
 		do {
-			success = client.getSucessMessage();
-			error = client.getErrorMessage();
+			success = pop3Client.getSucessMessage();
+			error = pop3Client.getErrorMessage();
 			if (success != null) {
 				System.out.println(success);
 				return true;
@@ -329,11 +329,11 @@ public class FenetrePrincipale extends JFrame {
 		return false;
 	}
 
-	public String waitForAnswerString(Client client) {
+	public String waitForAnswerString(Pop3Client pop3Client) {
 		String success, error;
 		do {
-			success = client.getSucessMessage();
-			error = client.getErrorMessage();
+			success = pop3Client.getSucessMessage();
+			error = pop3Client.getErrorMessage();
 			if (success != null) {
 				System.out.println(success);
 				return null;

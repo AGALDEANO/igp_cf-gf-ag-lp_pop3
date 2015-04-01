@@ -1,13 +1,10 @@
 package base;
 
-import base.client.Client;
 import base.client.Config;
-import base.email.Email;
-import base.email.EmailUtil;
+import base.client.impl.Pop3Client;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -20,19 +17,13 @@ public class Main {
 	private static Logger logger = Logger.getLogger(Main.class.getName());
 
 	public static void main(String[] args) throws IOException {
-		Client client = new Client();
+		Pop3Client pop3Client = new Pop3Client();
 		Config.setSsl(Boolean.TRUE);
-		client.openConnexion(hostname[3], port[1]);
-		client.signIn(user[0], user[0]);
+		pop3Client.openConnexion(hostname[3], port[1]);
+		pop3Client.signIn(user[0], user[0]);
 
-		client.getMessage(1);
-		client.closeConnexion();
-		client.exit();
-		try {
-			ArrayList<Email> emails = EmailUtil.getEmails("test");
-			emails.size();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		pop3Client.getMessage(1);
+		pop3Client.closeConnexion();
+		pop3Client.exit();
 	}
 }
