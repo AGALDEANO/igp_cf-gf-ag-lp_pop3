@@ -48,44 +48,44 @@ public class SmtpUtil {
         return null;
     }
 
-    public static String getRequestUSER(String[] args)
+    public static String getRequestEHLO(String[] args)
             throws MissingArgumentException {
         if (args.length > 0)
-            return getRequestUSER(args[0]);
+            return getRequestEHLO(args[0]);
         else
             throw new MissingArgumentException();
     }
 
-    public static String getRequestUSER(String username) {
-        String request = "USER " + username;
+    public static String getRequestEHLO(String identifiant) {
+        String request = "EHLO " + identifiant;
         request += endRequest;
         return request;
     }
 
-    public static String getRequestPASS(String[] args)
+    public static String getRequestMAILFROM(String[] args)
             throws MissingArgumentException {
         if (args.length > 0)
-            return getRequestPASS(args[0]);
+            return getRequestMAILFROM(args[0]);
         else
             throw new MissingArgumentException();
     }
 
-    public static String getRequestPASS(String password) {
-        String request = "PASS " + password;
+    public static String getRequestMAILFROM(String emailAddress) {
+        String request = "MAIL FROM: <" + emailAddress + '>';
         request += endRequest;
         return request;
     }
 
-    public static String getRequestRETR(String[] args)
+    public static String getRequestRCPT(String[] args)
             throws MissingArgumentException {
         if (args.length > 0)
-            return getRequestRETR(Integer.parseInt(args[0]));
+            return getRequestRCPT(args[0]);
         else
             throw new MissingArgumentException();
     }
 
-    public static String getRequestRETR(int numeroMessage) {
-        String request = "RETR " + numeroMessage;
+    public static String getRequestRCPT(String emailAddress) {
+        String request = "RCPT TO: <" + emailAddress + '>';
         request += endRequest;
         return request;
     }
@@ -101,21 +101,13 @@ public class SmtpUtil {
         return request;
     }
 
-    public static String getRequestLIST(String[] args)
+    public static String getRequestDATA(String[] args)
             throws MissingArgumentException {
-        return (args.length == 0 ?
-                getRequestLIST() :
-                getRequestLIST(Integer.parseInt(args[0])));
+        return getRequestDATA();
     }
 
-    public static String getRequestLIST() {
-        String request = "LIST";
-        request += endRequest;
-        return request;
-    }
-
-    public static String getRequestLIST(int i) {
-        String request = "LIST " + i;
+    public static String getRequestDATA() {
+        String request = "DATA";
         request += endRequest;
         return request;
     }

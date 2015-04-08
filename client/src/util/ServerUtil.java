@@ -170,7 +170,7 @@ public class ServerUtil {
 		}
 	}
 
-	public byte[] receiveList()
+	public byte[] receiveMultiline()
 			throws IOException, UnrespondingServerException {
 		ArrayList<Byte> bytes = new ArrayList<Byte>();
 		bytes = readMultiline(bytes, 3);

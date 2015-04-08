@@ -18,8 +18,16 @@ import java.util.Arrays;
  * Created by alexandreg on 04/03/2015.
  */
 public enum SmtpAction {
+    CONNEXION("CONNEXION", SmtpState.STARTEMAIL, null, SmtpState.START),
+    EHLO("EHLO", SmtpState.STARTEMAIL, null, SmtpState.START),
+    MAILFROM("MAILFROM", SmtpState.FROMSET, SmtpState.STARTEMAIL, SmtpState.STARTEMAIL),
+    RCPT("RCPT", SmtpState.FROMSET, SmtpState.FROMSET, SmtpState.FROMSET),
+    LASTRCPT("RCPT", SmtpState.TOSET, SmtpState.FROMSET, SmtpState.FROMSET),
+    DATA("DATA", SmtpState.EMAILSEND, SmtpState.TOSET, SmtpState.TOSET),
+    SENDEMAIL("SENDEMAIL", null, SmtpState.EMAILSEND, SmtpState.EMAILSEND),
     QUIT("QUIT", null, null, SmtpState.START,
             SmtpState.STARTEMAIL, SmtpState.FROMSET, SmtpState.TOSET, SmtpState.EMAILSEND);
+
     private static Logger logger = Logger.getLogger(SmtpAction.class.getName());
     private SmtpState[] allowedSmtpStates;
     private String requestName;
@@ -39,6 +47,10 @@ public enum SmtpAction {
         return logger;
     }
 
+    public String response() throws ErrorResponseServerException, UnrespondingServerException {
+        return response(false);
+    }
+
     public String response(Boolean isList)
             throws ErrorResponseServerException, UnrespondingServerException {
         byte[] response;
@@ -46,7 +58,7 @@ public enum SmtpAction {
         String message = "";
         try {
             response = (isList ?
-                    ServerUtil.getInstance().receiveList() :
+                    ServerUtil.getInstance().receiveMultiline() :
                     ServerUtil.getInstance().receive());
             String str = ServerUtil.bytesToAsciiString(response);
             logger.info("Response : " + str);
@@ -105,8 +117,7 @@ public enum SmtpAction {
             request(args);
             String message = null;
             try {
-                message = response((SmtpAction.LIST.equals(this) && (args == null
-                        || args.length == 0)) || util.pop3.Pop3Action.RETR.equals(this));
+                message = response();
                 logger.info(String.format("==== %s succeed ====", name()));
             } catch (ErrorResponseServerException e) {
                 logger.info(String.format("==== %s failed ====", name()));
@@ -134,7 +145,7 @@ public enum SmtpAction {
                             new Server(args[0], Integer.parseInt(args[1])));
                 }
             } else {
-                Method method = Pop3Util.class
+                Method method = SmtpUtil.class
                         .getMethod("getRequest" + requestName, String[].class);
                 Object[] param = {args};
                 String request = (String) method.invoke(null, param);

@@ -58,7 +58,7 @@ public enum Pop3Action {
 		String message = "";
 		try {
 			response = (isList ?
-					ServerUtil.getInstance().receiveList() :
+					ServerUtil.getInstance().receiveMultiline() :
 					ServerUtil.getInstance().receive());
 			String str = ServerUtil.bytesToAsciiString(response);
 			logger.info("Response : " + str);
