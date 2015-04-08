@@ -34,7 +34,7 @@ public enum SmtpAction {
     private SmtpState ifSucceed;
     private SmtpState ifFailed;
 
-    private SmtpAction(String requestName, SmtpState ifSucceed,
+    SmtpAction(String requestName, SmtpState ifSucceed,
                        SmtpState ifFailed, SmtpState... allowedSmtpStates) {
         this.allowedSmtpStates = allowedSmtpStates;
         this.requestName = requestName;
@@ -144,6 +144,8 @@ public enum SmtpAction {
                     ServerUtil.initialize(
                             new Server(args[0], Integer.parseInt(args[1])));
                 }
+            } else if (this.equals(SENDEMAIL)) {
+                ServerUtil.getInstance().send(args[0]);
             } else {
                 Method method = SmtpUtil.class
                         .getMethod("getRequest" + requestName, String[].class);

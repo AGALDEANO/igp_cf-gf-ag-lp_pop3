@@ -12,7 +12,6 @@ public class Email {
 	private static String endHeader = "\r\n\r\n";
 	private static String headerSeparator = ": ";
 	private static String endFile = "\r\n.\r\n";
-
 	private long id;
 	private int bytes;
 	private HashMap<String, String> headers = new HashMap<>();
@@ -32,7 +31,6 @@ public class Email {
 			}
 		}
 	}
-
 	public Email(String response, long id) {
 		this.id = id;
 		String[] splittedResponse = response.split(endHeader);
@@ -59,6 +57,22 @@ public class Email {
 		} else {
 			headers = new HashMap<String, String>();
 		}
+	}
+
+	public static String getEndLine() {
+		return endLine;
+	}
+
+	public static String getEndHeader() {
+		return endHeader;
+	}
+
+	public static String getHeaderSeparator() {
+		return headerSeparator;
+	}
+
+	public static String getEndFile() {
+		return endFile;
 	}
 
 	public int getBytes() {

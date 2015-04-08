@@ -134,7 +134,7 @@ public class Pop3Client extends Client {
 						setMessage(received);
 						try {
 							if (Config.getAutosave())
-								EmailUtil.saveEmail(received, username);
+								EmailUtil.saveReceivedEmail(received, username);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -221,7 +221,7 @@ public class Pop3Client extends Client {
 
 	public ArrayList<Email> getSavedMessages(String username) {
 		try {
-			return EmailUtil.getEmails(username);
+			return EmailUtil.getReceivedEmails(username);
 		} catch (IOException e) {
 			String message = e.toString();
 			logger.error(message);
