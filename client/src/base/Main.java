@@ -1,7 +1,9 @@
 package base;
 
-import base.client.Config;
-import base.client.impl.Pop3Client;
+import base.client.Port;
+import base.client.impl.SmtpClient;
+import base.email.EmailHeader;
+import base.email.Header;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -17,14 +19,18 @@ public class Main {
     private static Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws IOException {
-        Pop3Client pop3Client = new Pop3Client();
+        /*Pop3Client pop3Client = new Pop3Client();
         Config.setSsl(Boolean.TRUE);
         pop3Client.openConnexion(hostname[3], port[1]);
         pop3Client.signIn(user[0], user[0]);
 
         pop3Client.getMessage(1);
         pop3Client.closeConnexion();
-        pop3Client.exit();
+        pop3Client.exit();*/
+        SmtpClient smtpClient = new SmtpClient();
+        smtpClient.openConnexion("host", Port.SMTP.getValue());
+        EmailHeader emailHeader = new EmailHeader(Header.FROM, "test@test.fr");
+        System.out.println(emailHeader.toString());
         String body = "";
         body = body
                 .replaceAll("\r\n", "\n")

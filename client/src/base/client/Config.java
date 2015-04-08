@@ -7,20 +7,10 @@ import org.apache.log4j.Logger;
  *         17/03/2015
  */
 public class Config {
-	private static int defaultPort = 110;
-	private static int defaultSSLPort = 995;
 	private static Boolean autosave = Boolean.TRUE;
 	private static Boolean ssl = Boolean.FALSE;
 	private static Boolean apop = Boolean.TRUE;
 	private static Logger logger = Logger.getLogger(Config.class.getName());
-
-	public static int getDefaultPort() {
-		return defaultPort;
-	}
-
-	public static int getDefaultSSLPort() {
-		return defaultSSLPort;
-	}
 
 	public static Boolean getAutosave() {
 		return autosave;
