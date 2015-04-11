@@ -1,7 +1,7 @@
-package controleur;
+package controleur.pop3;
 
 import base.client.impl.Pop3Client;
-import vue.FenetrePrincipale;
+import vue.pop3.FenetrePrincipale;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,14 +9,14 @@ import java.awt.event.ActionListener;
 //dans cette classe le controleur va contenir le modele et la vue
 //afin d'avoir un acces a ces 2 classe en direct
 //ainsi qu'un simulateur qui va nous permettre d'avoir le temps d'execution ainsi que les fontions pause et play
-public class Controleur {
+public class ControleurPop3 {
 	Pop3Client pop3Client;
 	FenetrePrincipale fp;
 
 	//-------------
 	//constructeur
 	//-------------
-	public Controleur() {
+	public ControleurPop3() {
 		pop3Client = new Pop3Client();
 		fp = new FenetrePrincipale(pop3Client);
 		//evenement pour l'evenement du bouton connexion
@@ -60,6 +60,6 @@ public class Controleur {
 
 	//programme principale qui instancie juste le controleur qui va generer tout le reste
 	public static void main(String[] args) {
-		new Controleur();
+		new ControleurPop3();
 	}
 }

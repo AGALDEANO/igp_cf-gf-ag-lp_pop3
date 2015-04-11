@@ -1,4 +1,4 @@
-package vue;
+package vue.pop3;
 
 import base.client.Config;
 import base.client.impl.Pop3Client;
@@ -7,6 +7,8 @@ import base.email.Email;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+
+
 import java.awt.*;
 import java.util.Observable;
 

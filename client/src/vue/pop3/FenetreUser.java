@@ -1,4 +1,4 @@
-package vue;
+package vue.pop3;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
