@@ -256,9 +256,7 @@ public class SmtpClient extends Client {
         run();
     }
 
-    // TODO : =============>
-
-    public void data() {
+    private void data() {
         setWaitingTask(SmtpAction.DATA);
         String[] args = {};
         setWaitingTaskArgs(args);

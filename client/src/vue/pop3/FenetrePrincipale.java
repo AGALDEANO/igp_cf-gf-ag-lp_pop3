@@ -1,16 +1,24 @@
 package vue.pop3;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.Observable;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
 import base.client.Config;
 import base.client.impl.Pop3Client;
 import base.email.Email;
-
-import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
-
-import java.awt.*;
-import java.util.Observable;
 
 public class FenetrePrincipale extends JFrame {
 
