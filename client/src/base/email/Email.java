@@ -22,10 +22,10 @@ public class Email {
         String[] strHeader = splittedResponse[0].split(endLine);
         body = splittedResponse[1].split(endFile)[0];
         if (strHeader.length > 0) {
-            bytes = Integer.parseInt(strHeader[0]);
-            for (int i = 1; i < strHeader.length; i++) {
-                String header = strHeader[i];
+            bytes = strHeader.length;
+            for (String header : strHeader) {
                 EmailHeader eh = getHeaderFromString(header);
+                if (Header.MESSAGE_ID.equals(eh.getHeader())) id = Long.parseLong(eh.getValue(), 16);
                 if (eh != null) headers.add(eh);
             }
         }
