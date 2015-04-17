@@ -4,6 +4,8 @@ import base.client.Port;
 import base.client.impl.SmtpClient;
 import base.email.EmailHeader;
 import base.email.Header;
+import exception.ErrorResponseServerException;
+import exception.UnrespondingServerException;
 
 import java.io.IOException;
 
@@ -14,15 +16,21 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         SmtpClient smtpClient = new SmtpClient();
-        smtpClient.openConnexion("localhost", Port.SMTP.getValue());
-        smtpClient.sendEmail("test body",
-                new EmailHeader(Header.FROM, "test@test.fr"),
-                new EmailHeader(Header.TO, "testDest@test.fr"),
-                new EmailHeader(Header.TO, "testDest2@test.fr"),
-                new EmailHeader(Header.CC, "testDest3@test.fr"),
-                new EmailHeader(Header.BCC, "testDest4@test.fr"),
-                new EmailHeader(Header.BCC, "testDest5@test.fr"),
-                new EmailHeader(Header.SUBJECT, "Sujet"));
+        try {
+            smtpClient.openConnexion("localhost", Port.SMTP.getValue());
+            smtpClient.sendEmail("test body",
+                    new EmailHeader(Header.FROM, "test@test.fr"),
+                    new EmailHeader(Header.TO, "testDest@test.fr"),
+                    new EmailHeader(Header.TO, "testDest2@test.fr"),
+                    new EmailHeader(Header.CC, "testDest3@test.fr"),
+                    new EmailHeader(Header.BCC, "testDest4@test.fr"),
+                    new EmailHeader(Header.BCC, "testDest5@test.fr"),
+                    new EmailHeader(Header.SUBJECT, "Sujet"));
+        } catch (ErrorResponseServerException e) {
+            e.printStackTrace();
+        } catch (UnrespondingServerException e) {
+            e.printStackTrace();
+        }
 
     }
 }

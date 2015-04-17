@@ -1,6 +1,7 @@
 package base.client.impl;
 
 import base.client.Client;
+import base.client.Config;
 import base.email.Email;
 import base.email.EmailHeader;
 import base.email.EmailUtil;
@@ -100,7 +101,7 @@ public class SmtpClient extends Client {
         this.waitingTask = waitingTask;
     }
 
-    private void run() {
+    private void run() throws ErrorResponseServerException, UnrespondingServerException {
         SmtpAction todo;
         String[] todoArgs;
         String message;
@@ -114,15 +115,15 @@ public class SmtpClient extends Client {
                     if (SmtpAction.QUIT.equals(todo)) {
                         smtpState = null;
                     }
-                    /*if (SmtpAction.SENDEMAIL.equals(todo)) {
-                        Email received = new Email(waitingTaskArgs[0]);
+                    if (SmtpAction.SENDEMAIL.equals(todo)) {
+                        Email sent = new Email(waitingTaskArgs[0]);
                         try {
                             if (Config.getAutosave())
-                                EmailUtil.saveSentEmail(received, username);
+                                EmailUtil.saveSentEmail(sent, username);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }*/
+                    }
                     logger.debug(message);
                     setSmtpState(SmtpState
                             .changeTo(getSmtpState(), todo.getIfSucceed()));
@@ -137,10 +138,12 @@ public class SmtpClient extends Client {
                     message = e.getMessage();
                     logger.error(message);
                     setErrorMessage(message);
+                    throw e;
                 } catch (UnrespondingServerException e) {
                     message = e.getMessage();
                     logger.error(message);
                     setErrorMessage(message);
+                    throw e;
                 } finally {
                     setWaitingTask(null);
                     setWaitingTaskArgs(null);
@@ -150,7 +153,7 @@ public class SmtpClient extends Client {
     }
 
 
-    public void sendEmail(String body, EmailHeader... headers) {
+    public void sendEmail(String body, EmailHeader... headers) throws ErrorResponseServerException, UnrespondingServerException {
         body = body.replaceAll("\r\n", "\n")
                 .replaceAll("\n", "\r\n")
                 .replaceAll("\r\n.\r\n", "\r\n.\n");
@@ -209,7 +212,7 @@ public class SmtpClient extends Client {
     }
 
 
-    private void sendEmailAction(String body, EmailHeader... headers) {
+    private void sendEmailAction(String body, EmailHeader... headers) throws ErrorResponseServerException, UnrespondingServerException {
         setWaitingTask(SmtpAction.SENDEMAIL);
         String[] args = {EmailUtil.emailBodyHeadersToString(body, headers)};
         setWaitingTaskArgs(args);
@@ -217,54 +220,54 @@ public class SmtpClient extends Client {
     }
 
 
-    public void openConnexion(String hostname, int port) {
+    public void openConnexion(String hostname, int port) throws ErrorResponseServerException, UnrespondingServerException {
         setWaitingTask(SmtpAction.CONNEXION);
         String[] args = {hostname, Integer.toString(port)};
         setWaitingTaskArgs(args);
         run();
     }
 
-    private void closeConnexion() {
+    private void closeConnexion() throws ErrorResponseServerException, UnrespondingServerException {
         setWaitingTask(SmtpAction.QUIT);
         String[] args = {};
         setWaitingTaskArgs(args);
         run();
     }
 
-    private void exit() {
+    private void exit() throws ErrorResponseServerException, UnrespondingServerException {
         quit = Boolean.TRUE;
         run();
     }
 
-    private void ehlo(String username) {
+    private void ehlo(String username) throws ErrorResponseServerException, UnrespondingServerException {
         setWaitingTask(SmtpAction.EHLO);
         String[] args = {username};
         setWaitingTaskArgs(args);
         run();
     }
 
-    private void mailfrom(String username) {
+    private void mailfrom(String username) throws ErrorResponseServerException, UnrespondingServerException {
         setWaitingTask(SmtpAction.MAILFROM);
         String[] args = {username};
         setWaitingTaskArgs(args);
         run();
     }
 
-    private void rcpt(String username) {
+    private void rcpt(String username) throws ErrorResponseServerException, UnrespondingServerException {
         setWaitingTask(SmtpAction.RCPT);
         String[] args = {username};
         setWaitingTaskArgs(args);
         run();
     }
 
-    private void lastRcpt(String username) {
+    private void lastRcpt(String username) throws ErrorResponseServerException, UnrespondingServerException {
         setWaitingTask(SmtpAction.LASTRCPT);
         String[] args = {username};
         setWaitingTaskArgs(args);
         run();
     }
 
-    private void data() {
+    private void data() throws ErrorResponseServerException, UnrespondingServerException {
         setWaitingTask(SmtpAction.DATA);
         String[] args = {};
         setWaitingTaskArgs(args);
