@@ -32,10 +32,14 @@ public class Main {
         EmailHeader emailHeader = new EmailHeader(
                 Header.FROM, "test@test.fr");
         System.out.println(emailHeader.toString());
-        String body = "test body\n\r\n\r";
+        String body = "test body";
         smtpClient.sendEmail(body,
                 new EmailHeader(Header.FROM, "test@test.fr"),
                 new EmailHeader(Header.TO, "testDest@test.fr"),
+                new EmailHeader(Header.TO, "testDest2@test.fr"),
+                new EmailHeader(Header.CC, "testDest3@test.fr"),
+                new EmailHeader(Header.BCC, "testDest4@test.fr"),
+                new EmailHeader(Header.BCC, "testDest5@test.fr"),
                 new EmailHeader(Header.SUBJECT, "Sujet"));
 
     }

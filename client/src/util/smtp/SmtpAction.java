@@ -40,7 +40,6 @@ public enum SmtpAction {
         this.requestName = requestName;
         this.ifSucceed = ifSucceed;
         this.ifFailed = ifFailed;
-
     }
 
     public static Logger getLogger() {
@@ -55,14 +54,6 @@ public enum SmtpAction {
         try {
             response = ServerUtil.getInstance().receive();
             String str = ServerUtil.bytesToAsciiString(response);
-            if (SmtpState.START.equals(currentState)) {
-                response = ServerUtil.getInstance().receive();
-                str += ServerUtil.bytesToAsciiString(response);
-                response = ServerUtil.getInstance().receive();
-                str += ServerUtil.bytesToAsciiString(response);
-                response = ServerUtil.getInstance().receive();
-                str += ServerUtil.bytesToAsciiString(response);
-            }
             logger.info("Response : " + str);
             if (SmtpUtil.isAErrorResponse(currentState, str)) {
                 message = str;

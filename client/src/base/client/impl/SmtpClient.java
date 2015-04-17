@@ -13,9 +13,8 @@ import util.smtp.SmtpAction;
 import util.smtp.SmtpState;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author Alexandre
@@ -159,13 +158,18 @@ public class SmtpClient extends Client {
         boolean setTo = false;
         LinkedList<String> tos = new LinkedList<>();
         String value;
+        HashMap<Header, EmailHeader> emailHeaders = new HashMap<>();
         for (EmailHeader header : headers) {
-            if (Header.FROM.equals(header.getHeader())) {
+            Header h = header.getHeader();
+            if (emailHeaders.containsKey(h)) emailHeaders.put(h,
+                    new EmailHeader(h, emailHeaders.get(h).getValue() + ", " + header.getValue()));
+            else emailHeaders.put(h, header);
+            if (Header.FROM.equals(h)) {
                 if (from != "") throw new RuntimeException("Multiple FROM");
                 value = header.getValue();
                 if (EmailUtil.validEmailAddress(value)) from = value;
             }
-            if (Header.TO.equals(header.getHeader()) || Header.CC.equals(header.getHeader()) || Header.BCC.equals(header.getHeader())) {
+            if (Header.TO.equals(h) || Header.CC.equals(h) || Header.BCC.equals(h)) {
                 tos.addLast(header.getValue());
             }
         }
@@ -197,7 +201,9 @@ public class SmtpClient extends Client {
 
         data();
 
-        sendEmailAction(body, headers);
+        emailHeaders.put(Header.DATE, new EmailHeader(Header.DATE, new SimpleDateFormat("MM/dd/yyyy - hh:mm:ss a").format(new Date())));
+        emailHeaders.put(Header.MESSAGE_ID, new EmailHeader(Header.MESSAGE_ID, Long.toHexString(new Date().getTime())));
+        sendEmailAction(body, emailHeaders.values().toArray(headers));
         closeConnexion();
         exit();
     }
