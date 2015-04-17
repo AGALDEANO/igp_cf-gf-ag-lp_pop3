@@ -18,7 +18,7 @@ import java.util.Arrays;
  * Created by alexandreg on 04/03/2015.
  */
 public enum SmtpAction {
-    CONNEXION("CONNEXION", SmtpState.STARTEMAIL, null, SmtpState.START),
+    CONNEXION("CONNEXION", SmtpState.START, null),
     EHLO("EHLO", SmtpState.STARTEMAIL, null, SmtpState.START),
     MAILFROM("MAILFROM", SmtpState.FROMSET, SmtpState.STARTEMAIL, SmtpState.STARTEMAIL),
     RCPT("RCPT", SmtpState.FROMSET, SmtpState.FROMSET, SmtpState.FROMSET),
@@ -47,31 +47,29 @@ public enum SmtpAction {
         return logger;
     }
 
-    public String response() throws ErrorResponseServerException, UnrespondingServerException {
-        return response(false);
-    }
-
-    public String response(Boolean isList)
+    public String response(SmtpState currentState)
             throws ErrorResponseServerException, UnrespondingServerException {
         byte[] response;
         String[] split;
         String message = "";
         try {
-            response = (isList ?
-                    ServerUtil.getInstance().receiveMultiline() :
-                    ServerUtil.getInstance().receive());
+            response = ServerUtil.getInstance().receive();
             String str = ServerUtil.bytesToAsciiString(response);
+            if (SmtpState.START.equals(currentState)) {
+                response = ServerUtil.getInstance().receive();
+                str += ServerUtil.bytesToAsciiString(response);
+                response = ServerUtil.getInstance().receive();
+                str += ServerUtil.bytesToAsciiString(response);
+                response = ServerUtil.getInstance().receive();
+                str += ServerUtil.bytesToAsciiString(response);
+            }
             logger.info("Response : " + str);
-            if (str.startsWith(ServerUtil.errorResponse())) {
-                split = str.split("\\" + ServerUtil.errorResponse() + ' ', 2);
-                if (split.length > 1)
-                    message = split[1];
+            if (SmtpUtil.isAErrorResponse(currentState, str)) {
+                message = str;
                 throw new ErrorResponseServerException(
                         "Le serveur a retourné une erreur : " + message);
-            } else if (str.startsWith(ServerUtil.successResponse())) {
-                split = str.split("\\" + ServerUtil.successResponse() + ' ', 2);
-                if (split.length > 1)
-                    message = split[1];
+            } else if (SmtpUtil.isASuccessResponse(currentState, str)) {
+                message = str;
                 return message;
             } else if (str.equals(".")) {
             } else {
@@ -117,7 +115,7 @@ public enum SmtpAction {
             request(args);
             String message = null;
             try {
-                message = response();
+                message = response(smtpState);
                 logger.info(String.format("==== %s succeed ====", name()));
             } catch (ErrorResponseServerException e) {
                 logger.info(String.format("==== %s failed ====", name()));

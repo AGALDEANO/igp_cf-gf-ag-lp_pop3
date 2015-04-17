@@ -6,11 +6,11 @@ package base.email;
  */
 public enum Header {
     // TODO : Obtenir les bons headers
-    OBJECT("OBJECT"),
-    FROM("OBJECT"),
+    SUBJECT("Subject"),
+    FROM("From"),
     CC("OBJECT"),
     CCI("OBJECT"),
-    TO("TO");
+    TO("To");
     private String label;
 
     Header(String label) {

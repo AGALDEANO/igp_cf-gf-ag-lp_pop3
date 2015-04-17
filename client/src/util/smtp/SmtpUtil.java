@@ -74,4 +74,32 @@ public class SmtpUtil {
         request += endRequest;
         return request;
     }
+
+    public static Boolean isASuccessResponse(SmtpState smtpState, String response) {
+        Integer code = getIntegerPrefix(response);
+        if (code == null) return Boolean.FALSE;
+        if (smtpState == null) return code == 220;
+        if (SmtpState.START.equals(smtpState)) return code == 250;
+        if (SmtpState.STARTEMAIL.equals(smtpState)) return code == 250;
+        if (SmtpState.FROMSET.equals(smtpState)) return code == 250 || code == 550;
+        if (SmtpState.TOSET.equals(smtpState)) return code == 354;
+        if (SmtpState.EMAILSEND.equals(smtpState)) return code == 250;
+        return Boolean.FALSE;
+    }
+
+    public static Boolean isAErrorResponse(SmtpState smtpState, String response) {
+        Integer code = getIntegerPrefix(response);
+        if (code == null) return Boolean.FALSE;
+        return !isASuccessResponse(smtpState, response);
+    }
+
+    private static Integer getIntegerPrefix(String str) {
+        try {
+            String code = str.substring(0, 3);
+            return Integer.parseInt(code);
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
 }

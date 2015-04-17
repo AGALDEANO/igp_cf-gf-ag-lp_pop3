@@ -31,6 +31,16 @@ public class Email {
 			}
 		}
 	}
+
+	public Email(String body, EmailHeader... emailHeaders) {
+		this.body = body.replaceAll("\r\n", "\n")
+				.replaceAll("\n", "\r\n")
+				.replaceAll("\r\n.\r\n", "\r\n.\n");
+		for (EmailHeader emailHeader : emailHeaders) {
+			this.headers.put(emailHeader.getHeader().getLabel(), emailHeader.getValue());
+		}
+	}
+
 	public Email(String response, long id) {
 		this.id = id;
 		String[] splittedResponse = response.split(endHeader);

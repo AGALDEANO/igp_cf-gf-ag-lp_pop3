@@ -102,7 +102,7 @@ public class SmtpClient extends Client {
         this.waitingTask = waitingTask;
     }
 
-    public void run() {
+    private void run() {
         SmtpAction todo;
         String[] todoArgs;
         String message;
@@ -153,6 +153,9 @@ public class SmtpClient extends Client {
 
 
     public void sendEmail(String body, EmailHeader... headers) {
+        body = body.replaceAll("\r\n", "\n")
+                .replaceAll("\n", "\r\n")
+                .replaceAll("\r\n.\r\n", "\r\n.\n");
         String from = "";
         boolean setTo = false;
         LinkedList<String> tos = new LinkedList<>();
