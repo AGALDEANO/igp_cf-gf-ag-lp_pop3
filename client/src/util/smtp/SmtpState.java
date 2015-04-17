@@ -10,7 +10,8 @@ public enum SmtpState {
     STARTEMAIL(START),
     FROMSET(STARTEMAIL),
     TOSET(FROMSET),
-    EMAILSEND(TOSET);
+    EMAILSEND(TOSET),
+    QUITTING(EMAILSEND);
     private SmtpState[] previous;
 
     private SmtpState(SmtpState... previous) {

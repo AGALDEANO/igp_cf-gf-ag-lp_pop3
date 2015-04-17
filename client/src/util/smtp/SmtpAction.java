@@ -24,8 +24,8 @@ public enum SmtpAction {
     RCPT("RCPT", SmtpState.FROMSET, SmtpState.FROMSET, SmtpState.FROMSET),
     LASTRCPT("RCPT", SmtpState.TOSET, SmtpState.FROMSET, SmtpState.FROMSET),
     DATA("DATA", SmtpState.EMAILSEND, SmtpState.TOSET, SmtpState.TOSET),
-    SENDEMAIL("SENDEMAIL", null, SmtpState.EMAILSEND, SmtpState.EMAILSEND),
-    QUIT("QUIT", null, null, SmtpState.START,
+    SENDEMAIL("SENDEMAIL", SmtpState.QUITTING, SmtpState.EMAILSEND, SmtpState.EMAILSEND),
+    QUIT("QUIT", null, null, SmtpState.QUITTING, SmtpState.START,
             SmtpState.STARTEMAIL, SmtpState.FROMSET, SmtpState.TOSET, SmtpState.EMAILSEND);
 
     private static Logger logger = Logger.getLogger(SmtpAction.class.getName());
@@ -142,8 +142,6 @@ public enum SmtpAction {
                     ServerUtil.initialize(
                             new Server(args[0], Integer.parseInt(args[1])));
                 }
-            } else if (this.equals(SENDEMAIL)) {
-                ServerUtil.getInstance().send(args[0]);
             } else {
                 Method method = SmtpUtil.class
                         .getMethod("getRequest" + requestName, String[].class);

@@ -1,7 +1,6 @@
 package base.client.impl;
 
 import base.client.Client;
-import base.client.Config;
 import base.email.Email;
 import base.email.EmailHeader;
 import base.email.EmailUtil;
@@ -116,7 +115,7 @@ public class SmtpClient extends Client {
                     if (SmtpAction.QUIT.equals(todo)) {
                         smtpState = null;
                     }
-                    if (SmtpAction.SENDEMAIL.equals(todo)) {
+                    /*if (SmtpAction.SENDEMAIL.equals(todo)) {
                         Email received = new Email(waitingTaskArgs[0]);
                         try {
                             if (Config.getAutosave())
@@ -124,7 +123,7 @@ public class SmtpClient extends Client {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
+                    }*/
                     logger.debug(message);
                     setSmtpState(SmtpState
                             .changeTo(getSmtpState(), todo.getIfSucceed()));
@@ -166,7 +165,7 @@ public class SmtpClient extends Client {
                 value = header.getValue();
                 if (EmailUtil.validEmailAddress(value)) from = value;
             }
-            if (Header.TO.equals(header.getHeader()) || Header.CC.equals(header.getHeader()) || Header.CCI.equals(header.getHeader())) {
+            if (Header.TO.equals(header.getHeader()) || Header.CC.equals(header.getHeader()) || Header.BCC.equals(header.getHeader())) {
                 tos.addLast(header.getValue());
             }
         }

@@ -149,6 +149,7 @@ public class EmailUtil {
 		StringBuilder str = new StringBuilder("");
 		for (EmailHeader header : headers) {
 			str.append(header.toString());
+			str.append(Email.getEndLine());
 		}
 		str.append(Email.getEndLine());
 		return str.toString();

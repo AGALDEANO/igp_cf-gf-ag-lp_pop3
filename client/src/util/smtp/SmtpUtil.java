@@ -75,6 +75,17 @@ public class SmtpUtil {
         return request;
     }
 
+    public static String getRequestSENDEMAIL(String[] args)
+            throws MissingArgumentException {
+        if (args.length != 1) throw new MissingArgumentException();
+        return getRequestSENDEMAIL(args[0]);
+    }
+
+    public static String getRequestSENDEMAIL(String email) {
+        String request = email;
+        return request;
+    }
+
     public static Boolean isASuccessResponse(SmtpState smtpState, String response) {
         Integer code = getIntegerPrefix(response);
         if (code == null) return Boolean.FALSE;
@@ -84,6 +95,7 @@ public class SmtpUtil {
         if (SmtpState.FROMSET.equals(smtpState)) return code == 250 || code == 550;
         if (SmtpState.TOSET.equals(smtpState)) return code == 354;
         if (SmtpState.EMAILSEND.equals(smtpState)) return code == 250;
+        if (SmtpState.QUITTING.equals(smtpState)) return code == 221;
         return Boolean.FALSE;
     }
 

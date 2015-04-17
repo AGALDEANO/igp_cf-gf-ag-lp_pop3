@@ -45,6 +45,6 @@ public class EmailHeader {
      */
     @Override
     public String toString() {
-        return header.getLabel() + Email.getHeaderSeparator() + value + Email.getEndFile();
+        return header.getLabel() + Email.getHeaderSeparator() + value;
     }
 }

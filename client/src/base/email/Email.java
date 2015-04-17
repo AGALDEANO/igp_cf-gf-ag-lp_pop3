@@ -1,128 +1,135 @@
 package base.email;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by alexandreg on 09/03/2015.
  */
 public class Email {
-	private static String endLine = "\r\n";
-	private static String endHeader = "\r\n\r\n";
-	private static String headerSeparator = ": ";
-	private static String endFile = "\r\n.\r\n";
-	private long id;
-	private int bytes;
-	private HashMap<String, String> headers = new HashMap<>();
-	private String body;
+    private static String endLine = "\r\n";
+    private static String endHeader = "\r\n\r\n";
+    private static String headerSeparator = ": ";
+    private static String endFile = "\r\n.\r\n";
+    private long id;
+    private int bytes;
+    private ArrayList<EmailHeader> headers = new ArrayList<>();
+    private String body;
 
-	public Email(String response) {
-		id = new Date().getTime();
-		String[] splittedResponse = response.split(endHeader);
-		String[] strHeader = splittedResponse[0].split(endLine);
-		body = splittedResponse[1].split(endFile)[0];
-		if (strHeader.length > 0) {
-			bytes = Integer.parseInt(strHeader[0]);
-			for (int i = 1; i < strHeader.length; i++) {
-				String header = strHeader[i];
-				headers.put(header.split(headerSeparator)[0],
-						header.split(headerSeparator)[1]);
-			}
-		}
-	}
+    public Email(String response) {
+        id = new Date().getTime();
+        String[] splittedResponse = response.split(endHeader);
+        String[] strHeader = splittedResponse[0].split(endLine);
+        body = splittedResponse[1].split(endFile)[0];
+        if (strHeader.length > 0) {
+            bytes = Integer.parseInt(strHeader[0]);
+            for (int i = 1; i < strHeader.length; i++) {
+                String header = strHeader[i];
+                EmailHeader eh = getHeaderFromString(header);
+                if (eh != null) headers.add(eh);
+            }
+        }
+    }
 
-	public Email(String body, EmailHeader... emailHeaders) {
-		this.body = body.replaceAll("\r\n", "\n")
-				.replaceAll("\n", "\r\n")
-				.replaceAll("\r\n.\r\n", "\r\n.\n");
-		for (EmailHeader emailHeader : emailHeaders) {
-			this.headers.put(emailHeader.getHeader().getLabel(), emailHeader.getValue());
-		}
-	}
+    public Email(String body, EmailHeader... emailHeaders) {
+        this.body = body.replaceAll("\r\n", "\n")
+                .replaceAll("\n", "\r\n")
+                .replaceAll("\r\n.\r\n", "\r\n.\n");
+        for (EmailHeader emailHeader : emailHeaders) {
+            this.headers.add(emailHeader);
+        }
+    }
 
-	public Email(String response, long id) {
-		this.id = id;
-		String[] splittedResponse = response.split(endHeader);
-		String[] strHeader = splittedResponse[0].split(endLine);
-		body = splittedResponse[1].split(endFile)[0];
-		if (strHeader.length > 0) {
-			bytes = Integer.parseInt(strHeader[0]);
-			for (int i = 1; i < strHeader.length; i++) {
-				String header = strHeader[i];
-				headers.put(header.split(headerSeparator)[0],
-						header.split(headerSeparator)[1]);
-			}
-		}
-	}
+    public Email(String response, long id) {
+        this.id = id;
+        String[] splittedResponse = response.split(endHeader);
+        String[] strHeader = splittedResponse[0].split(endLine);
+        body = splittedResponse[1].split(endFile)[0];
+        if (strHeader.length > 0) {
+            bytes = Integer.parseInt(strHeader[0]);
+            for (int i = 1; i < strHeader.length; i++) {
+                String header = strHeader[i];
+                Header h = null;
+                EmailHeader eh = getHeaderFromString(header);
+                if (eh != null) headers.add(eh);
+            }
+        }
+    }
 
-	public Email(Email e) {
-		id = e.getId();
-		bytes = e.getBytes();
-		body = e.getBody();
-		Object clone = e.getHeaders().clone();
-		if (clone instanceof HashMap<?, ?>) {
-			HashMap hashMap = (HashMap) clone;
-			headers = hashMap;
-		} else {
-			headers = new HashMap<String, String>();
-		}
-	}
+    public Email(Email e) {
+        id = e.getId();
+        bytes = e.getBytes();
+        body = e.getBody();
+        headers = (ArrayList<EmailHeader>) e.getHeaders().clone();
+    }
 
-	public static String getEndLine() {
-		return endLine;
-	}
+    public static String getEndLine() {
+        return endLine;
+    }
 
-	public static String getEndHeader() {
-		return endHeader;
-	}
+    public static String getEndHeader() {
+        return endHeader;
+    }
 
-	public static String getHeaderSeparator() {
-		return headerSeparator;
-	}
+    public static String getHeaderSeparator() {
+        return headerSeparator;
+    }
 
-	public static String getEndFile() {
-		return endFile;
-	}
+    public static String getEndFile() {
+        return endFile;
+    }
 
-	public int getBytes() {
-		return bytes;
-	}
+    public int getBytes() {
+        return bytes;
+    }
 
-	public long getId() {
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public HashMap<String, String> getHeaders() {
-		return headers;
-	}
+    public ArrayList<EmailHeader> getHeaders() {
+        return headers;
+    }
 
-	public String getBody() {
-		return body;
-	}
+    public String getBody() {
+        return body;
+    }
 
-	public String headersToString() {
-		String str = Integer.toString(bytes) + "\r\n";
-		StringBuffer sb = new StringBuffer(str);
-		for (Map.Entry<String, String> entry : headers.entrySet()) {
-			sb.append(entry.getKey());
-			sb.append(headerSeparator);
-			sb.append(entry.getValue());
-			sb.append(endLine);
-		}
+    public String headersToString() {
+        String str = Integer.toString(bytes) + "\r\n";
+        StringBuffer sb = new StringBuffer(str);
+        for (EmailHeader emailHeader : headers) {
+            sb.append(emailHeader.getHeader().getLabel());
+            sb.append(headerSeparator);
+            sb.append(emailHeader.getValue());
+            sb.append(endLine);
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	public String bodyToString() {
-		return body;
-	}
+    public String bodyToString() {
+        return body;
+    }
 
-	public String footerToString() {
-		return endFile;
-	}
+    public String footerToString() {
+        return endFile;
+    }
 
-	@Override public String toString() {
-		return headersToString() + endLine + bodyToString() + footerToString();
-	}
+    @Override
+    public String toString() {
+        return headersToString() + endLine + bodyToString() + footerToString();
+    }
+
+    private EmailHeader getHeaderFromString(String str) {
+        Header h = null;
+        String hstr = str.split(headerSeparator)[0];
+        for (Header header : Header.values())
+            if (header.getLabel().equals(hstr)) {
+                h = header;
+                break;
+            }
+        return new EmailHeader(h,
+                str.split(headerSeparator)[1]);
+    }
 }

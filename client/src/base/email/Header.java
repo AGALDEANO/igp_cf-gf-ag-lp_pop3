@@ -6,11 +6,22 @@ package base.email;
  */
 public enum Header {
     // TODO : Obtenir les bons headers
-    SUBJECT("Subject"),
     FROM("From"),
-    CC("OBJECT"),
-    CCI("OBJECT"),
-    TO("To");
+    TO("To"),
+    SUBJECT("Subject"),
+    DATE("Date"),
+    MESSAGE_ID("Message-ID"),
+    BCC("Bcc"),
+    CC("Cc"),
+    CONTENT_TYPE("Content-Type"),
+    IN_REPLY_TO("In-Reply-To"),
+    PRECEDENCE("Precedence"),
+    RECEIVED("Received"),
+    REFERENCES("References"),
+    REPLY_TO("Reply-To"),
+    SENDER("Sender"),
+    RETURN_PATH("Return-Path"),
+    ERROR_TO("Error-To");
     private String label;
 
     Header(String label) {
