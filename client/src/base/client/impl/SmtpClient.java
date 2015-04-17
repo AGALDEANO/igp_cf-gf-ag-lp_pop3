@@ -36,7 +36,7 @@ public class SmtpClient extends Client {
         response.sucessMessage = sucessMessage;
     }
 
-    public String getUsername() {
+    private String getUsername() {
         return username;
     }
 
@@ -66,7 +66,7 @@ public class SmtpClient extends Client {
         this.response.errorMessage = errorMessage;
     }
 
-    public String[] getWaitingTaskArgs() {
+    private String[] getWaitingTaskArgs() {
         return waitingTaskArgs == null ?
                 null :
                 Arrays.copyOf(waitingTaskArgs, waitingTaskArgs.length);
@@ -76,7 +76,7 @@ public class SmtpClient extends Client {
         this.waitingTaskArgs = waitingTaskArgs;
     }
 
-    public SmtpState getSmtpState() {
+    private SmtpState getSmtpState() {
         return smtpState;
     }
 
@@ -84,7 +84,7 @@ public class SmtpClient extends Client {
         this.smtpState = smtpState;
     }
 
-    public int getUnreadMessage() {
+    private int getUnreadMessage() {
         return unreadMessage;
     }
 
@@ -271,7 +271,7 @@ public class SmtpClient extends Client {
         run();
     }
 
-    public ArrayList<Email> getSavedMessages(String username) {
+    private ArrayList<Email> getSavedMessages(String username) {
         try {
             return EmailUtil.getSentEmails(username);
         } catch (IOException e) {
