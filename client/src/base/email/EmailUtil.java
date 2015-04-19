@@ -146,10 +146,12 @@ public class EmailUtil {
 	}
 
 	public static String emailHeadersToString(EmailHeader... headers) {
-		StringBuilder str = new StringBuilder("");
+		StringBuilder str = new StringBuilder();
 		for (EmailHeader header : headers) {
-			str.append(header.toString());
-			str.append(Email.getEndLine());
+			if (header != null) {
+				str.append(header.toString());
+				str.append(Email.getEndLine());
+			}
 		}
 		str.append(Email.getEndLine());
 		return str.toString();

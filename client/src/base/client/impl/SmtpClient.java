@@ -117,6 +117,9 @@ public class SmtpClient extends Client {
                     }
                     if (SmtpAction.SENDEMAIL.equals(todo)) {
                         Email sent = new Email(waitingTaskArgs[0]);
+                        for (EmailHeader header : sent.getHeaders()) {
+                            if (Header.FROM.equals(header.getHeader())) username = header.getValue();
+                        }
                         try {
                             if (Config.getAutosave())
                                 EmailUtil.saveSentEmail(sent, username);
@@ -186,13 +189,10 @@ public class SmtpClient extends Client {
         while (tos.size() > 1) {
             last = tos.getLast();
             if (EmailUtil.validEmailAddress(last)) {
-                try {
-                    rcpt(last);
-                    nbTos++;
-                } catch (ErrorResponseServerException e) {
+                rcpt(last);
+                if (response.getSucessMessage() != null && response.getSucessMessage().contains("553"))
                     invalidTos.add(last);
-                    if (!e.getMessage().contains("553")) throw e;
-                }
+                else nbTos++;
             }
             tos.removeLast();
         }
@@ -200,13 +200,10 @@ public class SmtpClient extends Client {
         if (tos.size() == 1) {
             last = tos.getLast();
             if (EmailUtil.validEmailAddress(last)) {
-                try {
-                    lastRcpt(last);
-                    nbTos++;
-                } catch (ErrorResponseServerException e) {
+                lastRcpt(last);
+                if (response.getSucessMessage() != null && response.getSucessMessage().contains("553"))
                     invalidTos.add(last);
-                    if (!e.getMessage().contains("553")) throw e;
-                }
+                else nbTos++;
             }
             tos.removeLast();
         }
@@ -271,7 +268,7 @@ public class SmtpClient extends Client {
     }
 
     private ArrayList<String> processHeaderValue(String value) {
-        value.replaceAll(" ", "");
+        value = value.replaceAll(" ", "");
         String[] split = value.split(";");
         ArrayList<String> strings = new ArrayList<>();
         for (String string : split) {
