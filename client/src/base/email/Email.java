@@ -25,8 +25,11 @@ public class Email {
             bytes = strHeader.length;
             for (String header : strHeader) {
                 EmailHeader eh = getHeaderFromString(header);
-                if (Header.MESSAGE_ID.equals(eh.getHeader())) id = Long.parseLong(eh.getValue(), 16);
-                if (eh != null) headers.add(eh);
+                if (eh != null) {
+                    headers.add(eh);
+                    if (Header.MESSAGE_ID.equals(eh.getHeader())) id = Long.parseLong(eh.getValue(), 16);
+                }
+
             }
         }
     }
@@ -123,6 +126,7 @@ public class Email {
 
     private EmailHeader getHeaderFromString(String str) {
         Header h = null;
+        if (str.split(headerSeparator).length == 1) return null;
         String hstr = str.split(headerSeparator)[0];
         for (Header header : Header.values())
             if (header.getLabel().equals(hstr)) {

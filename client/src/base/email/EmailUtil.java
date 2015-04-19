@@ -51,7 +51,7 @@ public class EmailUtil {
 		String filepath =
 				path + "/" + username + "/" + outbox + "/" + email.getId() + extension;
 		File file = new File(filepath);
-		if (!file.getParentFile().mkdirs())
+		if (!file.getParentFile().exists() && !file.getParentFile().mkdirs())
 			throw new IOException("Directory hasn't been created.");
 		FileWriter writer = null;
 		try {

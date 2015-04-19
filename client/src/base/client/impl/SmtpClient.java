@@ -153,7 +153,7 @@ public class SmtpClient extends Client {
     }
 
 
-    public void sendEmail(String body, EmailHeader... headers) throws ErrorResponseServerException, UnrespondingServerException {
+    private void sendEmail(String body, EmailHeader... headers) throws ErrorResponseServerException, UnrespondingServerException {
         body = body.replaceAll("\r\n", "\n")
                 .replaceAll("\n", "\r\n")
                 .replaceAll("\r\n.\r\n", "\r\n.\n");
@@ -236,8 +236,48 @@ public class SmtpClient extends Client {
     }
 
     public void sendEmail(String body, ArrayList<EmailHeader> headers) throws ErrorResponseServerException, UnrespondingServerException {
+        ArrayList<String>[] tos = new ArrayList[3];
+        tos[0] = new ArrayList<>();
+        tos[1] = new ArrayList<>();
+        tos[2] = new ArrayList<>();
+        EmailHeader header;
+        for (int i = 0; i < headers.size(); i++) {
+            header = headers.get(i);
+            if (Header.TO.equals(header.getHeader())) {
+                tos[0].addAll(processHeaderValue(header.getValue()));
+                headers.remove(i);
+                i--;
+            } else if (Header.CC.equals(header.getHeader())) {
+                tos[1].addAll(processHeaderValue(header.getValue()));
+                headers.remove(i);
+                i--;
+            } else if (Header.BCC.equals(header.getHeader())) {
+                tos[2].addAll(processHeaderValue(header.getValue()));
+                headers.remove(i);
+                i--;
+            }
+        }
+        for (String to : tos[0]) {
+            headers.add(new EmailHeader(Header.TO, to));
+        }
+        for (String cc : tos[1]) {
+            headers.add(new EmailHeader(Header.CC, cc));
+        }
+        for (String bcc : tos[2]) {
+            headers.add(new EmailHeader(Header.BCC, bcc));
+        }
         EmailHeader[] a = new EmailHeader[headers.size()];
         sendEmail(body, headers.toArray(a));
+    }
+
+    private ArrayList<String> processHeaderValue(String value) {
+        value.replaceAll(" ", "");
+        String[] split = value.split(";");
+        ArrayList<String> strings = new ArrayList<>();
+        for (String string : split) {
+            strings.add(string);
+        }
+        return strings;
     }
 
 

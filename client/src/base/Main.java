@@ -8,6 +8,7 @@ import exception.ErrorResponseServerException;
 import exception.UnrespondingServerException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -26,12 +27,12 @@ public class Main {
                     new EmailHeader(Header.BCC, "testDest4@test.fr"),
                     new EmailHeader(Header.BCC, "testDest5@test.fr"),
                     new EmailHeader(Header.SUBJECT, "Sujet"));*/
-
-            smtpClient.sendEmail("Salut !",
-                    new EmailHeader(Header.FROM, "ALEXANDRE"),
-                    new EmailHeader(Header.TO, "LAURA"),
-                    new EmailHeader(Header.TO, "testDest2@test.fr"),
-                    new EmailHeader(Header.SUBJECT, "Test"));
+            ArrayList<EmailHeader> emailHeaders = new ArrayList<>();
+            emailHeaders.add(new EmailHeader(Header.FROM, "ALEXANDRE"));
+            emailHeaders.add(new EmailHeader(Header.TO, "LAURA"));
+            emailHeaders.add(new EmailHeader(Header.TO, "testDest2@test.fr"));
+            emailHeaders.add(new EmailHeader(Header.SUBJECT, "Test"));
+            smtpClient.sendEmail("Salut !", emailHeaders);
         } catch (ErrorResponseServerException e) {
             e.printStackTrace();
         } catch (UnrespondingServerException e) {
