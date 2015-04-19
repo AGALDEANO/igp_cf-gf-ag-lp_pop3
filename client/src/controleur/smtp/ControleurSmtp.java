@@ -3,6 +3,8 @@ package controleur.smtp;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -33,10 +35,22 @@ public class ControleurSmtp {
 		});
 		fp.getConnexion().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				String port = fp.getPort().getText();
-				String nomServeur=fp.getNomServeur().getText();
-				if (fp.ouvertureConnexion(nomServeur, Integer.valueOf(port))){
-					fp.connecterServeur();
+				int port=0;
+				try
+				{
+				port = Integer.valueOf(fp.getPort().getText());
+				}
+				catch
+				(NumberFormatException e)
+				{
+					fp.erreurGenerique(new JFrame(), "Veuillez renseigner un nombre dans le champ port","Warning", JOptionPane.WARNING_MESSAGE);
+				}
+				if(port!=0)
+				{
+					String nomServeur=fp.getNomServeur().getText();
+					if (fp.ouvertureConnexion(nomServeur, port)){
+						fp.connecterServeur();
+					}
 				}
 			}
 		});
