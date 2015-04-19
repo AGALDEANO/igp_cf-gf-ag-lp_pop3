@@ -235,6 +235,11 @@ public class SmtpClient extends Client {
         }
     }
 
+    public void sendEmail(String body, ArrayList<EmailHeader> headers) throws ErrorResponseServerException, UnrespondingServerException {
+        EmailHeader[] a = new EmailHeader[headers.size()];
+        sendEmail(body, headers.toArray(a));
+    }
+
 
     private void sendEmailAction(String body, EmailHeader... headers) throws ErrorResponseServerException, UnrespondingServerException {
         setWaitingTask(SmtpAction.SENDEMAIL);
