@@ -56,7 +56,7 @@ public class FenetrePrincipale extends JFrame {
 
 		JLabel lblBienvenue = new JLabel("Bienvenue sur le client SMTP");
 		lblBienvenue.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblBienvenue.setForeground(new Color(204, 0, 51));
+		lblBienvenue.setForeground(new Color(0, 0, 0));
 		
 		envoie = new JButton();
 		envoie.setText("Envoyer");
@@ -103,8 +103,8 @@ public class FenetrePrincipale extends JFrame {
 						.addComponent(lblObjet)
 						.addComponent(lblCci, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblCc, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblFrom, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblDestinataire))
+						.addComponent(lblDestinataire)
+						.addComponent(lblFrom, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addComponent(message, GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
