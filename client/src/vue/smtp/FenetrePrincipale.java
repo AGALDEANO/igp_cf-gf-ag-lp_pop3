@@ -36,6 +36,9 @@ public class FenetrePrincipale extends JFrame {
 	private JTextField txtFrom;
 	private JTextArea message;
 	private FenetreConnexion fenetreConnexion;
+	private JLabel lblCc;
+	private JLabel lblDestinataire;
+	private JLabel lblFrom;
 
 	//-------------
 	//constructeur
@@ -53,7 +56,7 @@ public class FenetrePrincipale extends JFrame {
 
 		JLabel lblBienvenue = new JLabel("Bienvenue sur le client SMTP");
 		lblBienvenue.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblBienvenue.setForeground(new Color(255, 153, 0));
+		lblBienvenue.setForeground(new Color(204, 0, 51));
 		
 		envoie = new JButton();
 		envoie.setText("Envoyer");
@@ -61,65 +64,88 @@ public class FenetrePrincipale extends JFrame {
 		envoie.setBackground(Color.CYAN);
 		
 		txtA = new JTextField();
-		txtA.setText("Destinataire");
 		txtA.setColumns(10);
 		
 		txtObjet = new JTextField();
-		txtObjet.setText("Objet");
 		txtObjet.setColumns(10);
 		
 		txtCc = new JTextField();
-		txtCc.setText("CC");
 		txtCc.setColumns(10);
 		
 		txtCci = new JTextField();
-		txtCci.setText("CCi");
 		txtCci.setColumns(10);
 		
 		txtFrom = new JTextField();
-		txtFrom.setText("From");
 		txtFrom.setColumns(10);
 		
 		message = new JTextArea();
 		message.setText("Message:");
+		
+		JLabel lblObjet = new JLabel("Objet:");
+		
+		JLabel lblCci = new JLabel("CCi:");
+		
+		lblCc = new JLabel("CC:");
+		
+		lblDestinataire = new JLabel("Destinataire:");
+		
+		lblFrom = new JLabel("From:");
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
+			gl_panel.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panel.createSequentialGroup()
 					.addGap(522)
 					.addComponent(envoie, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(564, Short.MAX_VALUE))
-				.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
-					.addGap(327)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addGap(240)
 					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-						.addComponent(message, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
-						.addComponent(txtA, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
-						.addComponent(txtObjet, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
-						.addComponent(txtFrom, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
-						.addGroup(Alignment.LEADING, gl_panel.createParallelGroup(Alignment.TRAILING, false)
+						.addComponent(lblObjet)
+						.addComponent(lblCci, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblCc, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblFrom, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblDestinataire))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addComponent(message, GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+						.addComponent(txtA, GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+						.addComponent(txtObjet, GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+						.addComponent(txtFrom, GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+						.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
 							.addComponent(txtCc, Alignment.LEADING)
 							.addComponent(txtCci, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE))
 						.addGroup(gl_panel.createSequentialGroup()
 							.addGap(105)
-							.addComponent(lblBienvenue, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(lblBienvenue, GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
 							.addGap(140)))
 					.addGap(361))
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
+				.addGroup(gl_panel.createSequentialGroup()
 					.addGap(53)
-					.addComponent(lblBienvenue)
-					.addGap(18)
-					.addComponent(txtFrom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(txtA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(14)
-					.addComponent(txtCc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(txtCci, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(txtObjet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+						.addComponent(lblObjet)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addComponent(lblBienvenue)
+							.addGap(18)
+							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(txtFrom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblFrom))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(txtA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblDestinataire))
+							.addGap(14)
+							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(txtCc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblCc))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(txtCci, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblCci))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(txtObjet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addGap(18)
 					.addComponent(message, GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -173,24 +199,24 @@ public class FenetrePrincipale extends JFrame {
 	        	ArrayList<EmailHeader> headers=new ArrayList<EmailHeader>();
 	        	headers.add(new EmailHeader(Header.FROM, this.txtFrom.getText()));
 	        	headers.add(new EmailHeader(Header.TO,this.txtA.getText()));
-	        	if(!this.txtObjet.getText().equals("")&&!this.txtObjet.getText().equals("Objet"))
+	        	if(!this.txtObjet.getText().equals(""))
 	        	{
 	        		headers.add(new EmailHeader(Header.SUBJECT, this.txtObjet.getText()));
 	        	}
-	        	if(!this.txtCc.getText().equals("")&&!this.txtCc.getText().equals("CC"))
+	        	if(!this.txtCc.getText().equals(""))
 	        	{
 	        		headers.add(new EmailHeader(Header.CC, this.txtCc.getText()));
 	        	}
-	        	if(!this.txtCci.getText().equals("")&&!this.txtCci.getText().equals("CCi"))
+	        	if(!this.txtCci.getText().equals(""))
 	        	{
 	        		headers.add(new EmailHeader(Header.BCC, this.txtCci.getText()));
 	        	}
 				smtpClient.sendEmail(body,headers);
 			} catch (ErrorResponseServerException e) {
-				// TODO Auto-generated catch block
+				this.erreurGenerique(new JFrame(), e.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} catch (UnrespondingServerException e) {
-				// TODO Auto-generated catch block
+				this.erreurGenerique(new JFrame(), e.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
 	        if(waitForAnswer(smtpClient))
@@ -218,10 +244,10 @@ public class FenetrePrincipale extends JFrame {
 		try {
 			smtpClient.openConnexion(host,port);
 		} catch (ErrorResponseServerException e) {
-			// TODO Auto-generated catch block
+			this.erreurGenerique(new JFrame(), e.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		} catch (UnrespondingServerException e) {
-			// TODO Auto-generated catch block
+			this.erreurGenerique(new JFrame(), e.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 		return waitForAnswer(smtpClient);
@@ -296,6 +322,5 @@ public class FenetrePrincipale extends JFrame {
 		this.txtObjet.setText("");
 		fenetreConnexion();
 	}
-	
 }
 
