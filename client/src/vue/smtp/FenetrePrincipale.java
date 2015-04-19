@@ -56,7 +56,7 @@ public class FenetrePrincipale extends JFrame {
 
 		JLabel lblBienvenue = new JLabel("Bienvenue sur le client SMTP");
 		lblBienvenue.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblBienvenue.setForeground(new Color(204, 0, 51));
+		lblBienvenue.setForeground(new Color(0, 0, 0));
 		
 		envoie = new JButton();
 		envoie.setText("Envoyer");
