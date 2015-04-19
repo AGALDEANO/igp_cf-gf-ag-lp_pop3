@@ -220,7 +220,7 @@ public class SmtpClient extends Client {
         int s = invalidTos.size();
         if (s != 0) {
             StringBuilder stringBuilder = new StringBuilder(
-                    "Le message n'a pas pu être distribué au" + (s == 1 ? "" : "x")
+                    "Le message n'a pas pu Ãªtre distribuÃ© au" + (s == 1 ? "" : "x")
                             + " destinataire" + (s == 1 ? "" : "s")
                             + " suivant" + (s == 1 ? "" : "s") + " :\n");
             for (String invalidTo : invalidTos) {
