@@ -27,12 +27,17 @@ public class ControleurSmtp {
 		//evenement pour l'evenement du bouton envoie
 		fp.getEnvoie().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				fp.ouvertureConnexion(hostname[3], 25);
+				//fp.ouvertureConnexion(hostname[3], 25);
 				fp.sendMail();
-//				String port = fp.getPort().getText();
-//				if (fp.connexionServeur(nomServeur, port)) {
-//					fp.connecterServeur();
-//				}
+			}
+		});
+		fp.getConnexion().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				String port = fp.getPort().getText();
+				String nomServeur=fp.getNomServeur().getText();
+				if (fp.ouvertureConnexion(nomServeur, Integer.valueOf(port))){
+					fp.connecterServeur();
+				}
 			}
 		});
 	}

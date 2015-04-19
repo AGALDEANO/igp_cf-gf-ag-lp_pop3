@@ -3,6 +3,7 @@ package vue.smtp;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
 import java.util.Observable;
 
 import javax.swing.GroupLayout;
@@ -16,11 +17,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import exception.ErrorResponseServerException;
-import exception.UnrespondingServerException;
 import base.client.impl.SmtpClient;
 import base.email.EmailHeader;
 import base.email.Header;
+import exception.ErrorResponseServerException;
+import exception.UnrespondingServerException;
 
 public class FenetrePrincipale extends JFrame {
 
@@ -34,12 +35,14 @@ public class FenetrePrincipale extends JFrame {
 	private JTextField txtCci;
 	private JTextField txtFrom;
 	private JTextArea message;
+	private FenetreConnexion fenetreConnexion;
 
 	//-------------
 	//constructeur
 	//-------------
 	public FenetrePrincipale(SmtpClient smtpClient) {
 		super();
+		this.fenetreConnexion=new FenetreConnexion();
 		this.smtpClient = smtpClient;
 		setResizable(false);
 		setBackground(new Color(51, 102, 102));
@@ -125,6 +128,7 @@ public class FenetrePrincipale extends JFrame {
 		);
 		panel.setLayout(gl_panel);
 		initComponents();
+		fenetreConnexion();
 	}
 
 	private void initComponents() {
@@ -137,6 +141,9 @@ public class FenetrePrincipale extends JFrame {
 
 	//GETTER
 	//************************************
+	public JButton getConnexion() {return this.fenetreConnexion.getConnexion();}
+	public JTextField getPort(){return this.fenetreConnexion.getPort();}
+	public JTextField getNomServeur(){return this.fenetreConnexion.getNomServeur();}
 	public JButton getEnvoie(){return this.envoie;}
 	public JTextField getFrom(){return this.txtFrom;}
 	public JTextField getTo(){return this.txtA;}
@@ -163,9 +170,22 @@ public class FenetrePrincipale extends JFrame {
 	                .replaceAll("\n", "\r\n")
 	                .replaceAll("\r\n.\r\n", "\r\n.\n");
 	        try {
-				smtpClient.sendEmail(body, new EmailHeader(Header.FROM, this.txtFrom.getText()),new EmailHeader(Header.TO,this.txtA.getText())
-				,new EmailHeader(Header.CC, this.txtCc.getText()),new EmailHeader(Header.BCC, this.txtCci.getText()),
-				new EmailHeader(Header.SUBJECT, this.txtObjet.getText()));
+	        	ArrayList<EmailHeader> headers=new ArrayList<EmailHeader>();
+	        	headers.add(new EmailHeader(Header.FROM, this.txtFrom.getText()));
+	        	headers.add(new EmailHeader(Header.TO,this.txtA.getText()));
+	        	if(!this.txtObjet.getText().equals("")&&!this.txtObjet.getText().equals("Objet"))
+	        	{
+	        		headers.add(new EmailHeader(Header.SUBJECT, this.txtObjet.getText()));
+	        	}
+	        	if(!this.txtCc.getText().equals("")&&!this.txtCc.getText().equals("CC"))
+	        	{
+	        		headers.add(new EmailHeader(Header.CC, this.txtCc.getText()));
+	        	}
+	        	if(!this.txtCci.getText().equals("")&&!this.txtCci.getText().equals("CCi"))
+	        	{
+	        		headers.add(new EmailHeader(Header.BCC, this.txtCci.getText()));
+	        	}
+				smtpClient.sendEmail(body,headers);
 			} catch (ErrorResponseServerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -192,7 +212,7 @@ public class FenetrePrincipale extends JFrame {
 		}
 		return "";
 	}
-	public void ouvertureConnexion(String host,int port)
+	public boolean ouvertureConnexion(String host,int port)
 	{
 		try {
 			smtpClient.openConnexion(host,port);
@@ -203,7 +223,7 @@ public class FenetrePrincipale extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		waitForAnswer(smtpClient);
+		return waitForAnswer(smtpClient);
 	}
 	public boolean waitForAnswer(SmtpClient smtpClient) {
 		String success, error;
@@ -256,5 +276,17 @@ public class FenetrePrincipale extends JFrame {
 					"Erreur", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
+	public void connecterServeur() {
+		this.setVisible(true);
+		this.fenetreConnexion.setVisible(false);
+	}
+	public void fenetreConnexion()
+	{
+		this.setVisible(false);
+		this.fenetreConnexion.setVisible(true);
+	}
+
+	
 }
 
