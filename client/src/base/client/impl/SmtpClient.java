@@ -272,7 +272,7 @@ public class SmtpClient extends Client {
         String[] split = value.split(";");
         ArrayList<String> strings = new ArrayList<>();
         for (String string : split) {
-            strings.add(string);
+            if (!"".equals(string)) strings.add(string);
         }
         return strings;
     }
