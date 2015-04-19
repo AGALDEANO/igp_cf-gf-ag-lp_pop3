@@ -193,7 +193,8 @@ public class FenetrePrincipale extends JFrame {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	        waitForAnswer(smtpClient);
+	        if(waitForAnswer(smtpClient))
+	        	{reset();}
 		}
 		else
 		{
@@ -286,7 +287,15 @@ public class FenetrePrincipale extends JFrame {
 		this.setVisible(false);
 		this.fenetreConnexion.setVisible(true);
 	}
-
+	public void reset()
+	{
+		this.txtA.setText("");
+		this.txtCc.setText("");
+		this.txtCci.setText("");
+		this.txtFrom.setText("");
+		this.txtObjet.setText("");
+		fenetreConnexion();
+	}
 	
 }
 
