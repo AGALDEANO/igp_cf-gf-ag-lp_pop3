@@ -190,14 +190,6 @@ public class FenetrePrincipale extends JFrame {
 		{
 			return "Destinataire";
 		}
-		if(this.txtCc.getText().equals("") || this.txtFrom.getText().equals("CC"))
-		{
-			return "CC";
-		}
-		if(this.txtFrom.getText().equals("") || this.txtFrom.getText().equals("CCi"))
-		{
-			return "CCi";
-		}
 		return "";
 	}
 	public void ouvertureConnexion(String host,int port)
