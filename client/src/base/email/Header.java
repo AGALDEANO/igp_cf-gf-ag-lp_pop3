@@ -5,7 +5,6 @@ package base.email;
  *         08/04/2015
  */
 public enum Header {
-    // TODO : Obtenir les bons headers
     FROM("From"),
     TO("To"),
     SUBJECT("Subject"),

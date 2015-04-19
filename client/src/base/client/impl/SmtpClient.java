@@ -158,7 +158,7 @@ public class SmtpClient extends Client {
                 .replaceAll("\n", "\r\n")
                 .replaceAll("\r\n.\r\n", "\r\n.\n");
         String from = "";
-        boolean setTo = false;
+        ArrayList<String> invalidTos = new ArrayList<>();
         LinkedList<String> tos = new LinkedList<>();
         String value;
         HashMap<Header, EmailHeader> emailHeaders = new HashMap<>();
@@ -181,12 +181,18 @@ public class SmtpClient extends Client {
 
         ehlo(from);
         mailfrom(from);
+        int nbTos = 0;
         String last;
         while (tos.size() > 1) {
             last = tos.getLast();
             if (EmailUtil.validEmailAddress(last)) {
-                setTo = true;
-                rcpt(last);
+                try {
+                    rcpt(last);
+                    nbTos++;
+                } catch (ErrorResponseServerException e) {
+                    invalidTos.add(last);
+                    if (!e.getMessage().contains("553")) throw e;
+                }
             }
             tos.removeLast();
         }
@@ -194,13 +200,18 @@ public class SmtpClient extends Client {
         if (tos.size() == 1) {
             last = tos.getLast();
             if (EmailUtil.validEmailAddress(last)) {
-                setTo = true;
-                lastRcpt(last);
+                try {
+                    lastRcpt(last);
+                    nbTos++;
+                } catch (ErrorResponseServerException e) {
+                    invalidTos.add(last);
+                    if (!e.getMessage().contains("553")) throw e;
+                }
             }
             tos.removeLast();
         }
 
-        if (setTo == false) throw new RuntimeException("No to set");
+        if (nbTos == 0) throw new RuntimeException("No to set");
 
         data();
 
@@ -209,6 +220,19 @@ public class SmtpClient extends Client {
         sendEmailAction(body, emailHeaders.values().toArray(headers));
         closeConnexion();
         exit();
+        int s = invalidTos.size();
+        if (s != 0) {
+            StringBuilder stringBuilder = new StringBuilder(
+                    "Le message n'a pas pu être distribué au" + (s == 1 ? "" : "x")
+                            + " destinataire" + (s == 1 ? "" : "s")
+                            + " suivant" + (s == 1 ? "" : "s") + " :\n");
+            for (String invalidTo : invalidTos) {
+                stringBuilder.append("- ");
+                stringBuilder.append(invalidTo);
+                stringBuilder.append('\n');
+            }
+            throw new ErrorResponseServerException(stringBuilder.toString());
+        }
     }
 
 

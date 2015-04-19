@@ -10,7 +10,6 @@ public class EmailHeader {
 
     public EmailHeader(Header header, String value) {
         this.header = header;
-        // TODO : Value en fonction de header (pour ajouter <> autour des adresses)
         this.value = value;
     }
 

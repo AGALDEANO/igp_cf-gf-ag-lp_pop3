@@ -160,6 +160,7 @@ public class EmailUtil {
 	}
 
 	public static boolean validEmailAddress(String address) {
-		return address.split("@").length == 2;
+		//return address.split("@").length == 2;
+		return true;
 	}
 }
