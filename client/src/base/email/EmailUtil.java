@@ -165,4 +165,8 @@ public class EmailUtil {
 		//return address.split("@").length == 2;
 		return true;
 	}
+
+	public static boolean validEmailAddress(String address, String host) {
+		return address.split("@").length == 2 && host.equals(address.split("@")[1]);
+	}
 }

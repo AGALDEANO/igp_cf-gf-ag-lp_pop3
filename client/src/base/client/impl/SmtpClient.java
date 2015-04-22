@@ -2,6 +2,7 @@ package base.client.impl;
 
 import base.client.Client;
 import base.client.Config;
+import base.client.Port;
 import base.email.Email;
 import base.email.EmailHeader;
 import base.email.EmailUtil;
@@ -156,66 +157,69 @@ public class SmtpClient extends Client {
     }
 
 
-    private void sendEmail(String body, EmailHeader... headers) throws ErrorResponseServerException, UnrespondingServerException {
+    private void sendEmail(String body, ArrayList<String> hosts, EmailHeader... headers) throws ErrorResponseServerException, UnrespondingServerException {
         body = body.replaceAll("\r\n", "\n")
                 .replaceAll("\n", "\r\n")
                 .replaceAll("\r\n.\r\n", "\r\n.\n");
         String from = "";
         ArrayList<String> invalidTos = new ArrayList<>();
-        LinkedList<String> tos = new LinkedList<>();
-        String value;
-        HashMap<Header, EmailHeader> emailHeaders = new HashMap<>();
-        for (EmailHeader header : headers) {
-            Header h = header.getHeader();
-            if (emailHeaders.containsKey(h)) emailHeaders.put(h,
-                    new EmailHeader(h, emailHeaders.get(h).getValue() + ", " + header.getValue()));
-            else emailHeaders.put(h, header);
-            if (Header.FROM.equals(h)) {
-                if (from != "") throw new RuntimeException("Multiple FROM");
-                value = header.getValue();
-                if (EmailUtil.validEmailAddress(value)) from = value;
+        for (String host : hosts) {
+            openConnexion(host, Port.SMTP.getValue());
+            LinkedList<String> tos = new LinkedList<>();
+            String value;
+            HashMap<Header, EmailHeader> emailHeaders = new HashMap<>();
+            for (EmailHeader header : headers) {
+                Header h = header.getHeader();
+                if (emailHeaders.containsKey(h)) emailHeaders.put(h,
+                        new EmailHeader(h, emailHeaders.get(h).getValue() + ", " + header.getValue()));
+                else emailHeaders.put(h, header);
+                if (Header.FROM.equals(h)) {
+                    if (from != "") throw new RuntimeException("Multiple FROM");
+                    value = header.getValue();
+                    if (EmailUtil.validEmailAddress(value)) from = value;
+                }
+                if (Header.TO.equals(h) || Header.CC.equals(h) || Header.BCC.equals(h)) {
+                    tos.addLast(header.getValue());
+                }
             }
-            if (Header.TO.equals(h) || Header.CC.equals(h) || Header.BCC.equals(h)) {
-                tos.addLast(header.getValue());
+
+            if (from == null) throw new RuntimeException("No from set");
+
+            ehlo(from);
+            mailfrom(from);
+            int nbTos = 0;
+            String last;
+            while (tos.size() > 1) {
+                last = tos.getLast();
+                if (EmailUtil.validEmailAddress(last, host)) {
+                    rcpt(last);
+                    if (response.getSucessMessage() != null && response.getSucessMessage().contains("553"))
+                        invalidTos.add(last);
+                    else nbTos++;
+                }
+                tos.removeLast();
             }
+
+            if (tos.size() == 1) {
+                last = tos.getLast();
+                if (EmailUtil.validEmailAddress(last, host)) {
+                    lastRcpt(last);
+                    if (response.getSucessMessage() != null && response.getSucessMessage().contains("553"))
+                        invalidTos.add(last);
+                    else nbTos++;
+                }
+                tos.removeLast();
+            }
+
+            if (nbTos == 0) throw new RuntimeException("No to set");
+
+            data();
+
+            emailHeaders.put(Header.DATE, new EmailHeader(Header.DATE, new SimpleDateFormat("MM/dd/yyyy - hh:mm:ss a").format(new Date())));
+            emailHeaders.put(Header.MESSAGE_ID, new EmailHeader(Header.MESSAGE_ID, Long.toHexString(new Date().getTime())));
+            sendEmailAction(body, emailHeaders.values().toArray(headers));
+            closeConnexion();
         }
-
-        if (from == null) throw new RuntimeException("No from set");
-
-        ehlo(from);
-        mailfrom(from);
-        int nbTos = 0;
-        String last;
-        while (tos.size() > 1) {
-            last = tos.getLast();
-            if (EmailUtil.validEmailAddress(last)) {
-                rcpt(last);
-                if (response.getSucessMessage() != null && response.getSucessMessage().contains("553"))
-                    invalidTos.add(last);
-                else nbTos++;
-            }
-            tos.removeLast();
-        }
-
-        if (tos.size() == 1) {
-            last = tos.getLast();
-            if (EmailUtil.validEmailAddress(last)) {
-                lastRcpt(last);
-                if (response.getSucessMessage() != null && response.getSucessMessage().contains("553"))
-                    invalidTos.add(last);
-                else nbTos++;
-            }
-            tos.removeLast();
-        }
-
-        if (nbTos == 0) throw new RuntimeException("No to set");
-
-        data();
-
-        emailHeaders.put(Header.DATE, new EmailHeader(Header.DATE, new SimpleDateFormat("MM/dd/yyyy - hh:mm:ss a").format(new Date())));
-        emailHeaders.put(Header.MESSAGE_ID, new EmailHeader(Header.MESSAGE_ID, Long.toHexString(new Date().getTime())));
-        sendEmailAction(body, emailHeaders.values().toArray(headers));
-        closeConnexion();
         exit();
         int s = invalidTos.size();
         if (s != 0) {
@@ -238,10 +242,17 @@ public class SmtpClient extends Client {
         tos[1] = new ArrayList<>();
         tos[2] = new ArrayList<>();
         EmailHeader header;
+        String host;
+        ArrayList<String> hosts = new ArrayList<>();
         for (int i = 0; i < headers.size(); i++) {
             header = headers.get(i);
             if (Header.TO.equals(header.getHeader())) {
-                tos[0].addAll(processHeaderValue(header.getValue()));
+                ArrayList<String> to = processHeaderValue(header.getValue());
+                tos[0].addAll(to);
+                for (String h : to) {
+                    host = h.split("@")[1];
+                    if (!hosts.contains(host)) hosts.add(host);
+                }
                 headers.remove(i);
                 i--;
             } else if (Header.CC.equals(header.getHeader())) {
@@ -264,7 +275,7 @@ public class SmtpClient extends Client {
             headers.add(new EmailHeader(Header.BCC, bcc));
         }
         EmailHeader[] a = new EmailHeader[headers.size()];
-        sendEmail(body, headers.toArray(a));
+        sendEmail(body, hosts, headers.toArray(a));
     }
 
     private ArrayList<String> processHeaderValue(String value) {
