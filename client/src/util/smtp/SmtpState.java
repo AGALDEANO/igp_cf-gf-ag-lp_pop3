@@ -34,6 +34,9 @@ public enum SmtpState {
                 return to;
             }
         }
+
+        if (QUITTING.equals(from) && STARTEMAIL.equals(to)) return to;
+
         try {
             throw new UnallowedStateChangeException(
                     String.format("Can't change %s to %s.",

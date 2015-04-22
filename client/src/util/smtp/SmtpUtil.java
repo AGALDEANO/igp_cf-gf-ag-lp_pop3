@@ -95,7 +95,7 @@ public class SmtpUtil {
         if (SmtpState.FROMSET.equals(smtpState)) return code == 250 || code == 553;
         if (SmtpState.TOSET.equals(smtpState)) return code == 354;
         if (SmtpState.EMAILSEND.equals(smtpState)) return code == 250;
-        if (SmtpState.QUITTING.equals(smtpState)) return code == 221;
+        if (SmtpState.QUITTING.equals(smtpState)) return code == 221 || code == 250;
         return Boolean.FALSE;
     }
 

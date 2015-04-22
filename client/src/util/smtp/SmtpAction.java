@@ -20,7 +20,7 @@ import java.util.Arrays;
 public enum SmtpAction {
     CONNEXION("CONNEXION", SmtpState.START, null),
     EHLO("EHLO", SmtpState.STARTEMAIL, null, SmtpState.START),
-    MAILFROM("MAILFROM", SmtpState.FROMSET, SmtpState.STARTEMAIL, SmtpState.STARTEMAIL),
+    MAILFROM("MAILFROM", SmtpState.FROMSET, SmtpState.STARTEMAIL, SmtpState.STARTEMAIL, SmtpState.QUITTING),
     RCPT("RCPT", SmtpState.FROMSET, SmtpState.FROMSET, SmtpState.FROMSET),
     LASTRCPT("RCPT", SmtpState.TOSET, SmtpState.FROMSET, SmtpState.FROMSET),
     DATA("DATA", SmtpState.EMAILSEND, SmtpState.TOSET, SmtpState.TOSET),
