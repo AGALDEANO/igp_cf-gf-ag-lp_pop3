@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="log4j">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/client/src/lib/log4j" />
+      <root url="file://$PROJECT_DIR$/client/src/main/java/lib/log4j" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="file://$PROJECT_DIR$/client/src/lib/log4j" />
+      <root url="file://$PROJECT_DIR$/client/src/main/java/lib/log4j" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/client/src/lib/log4j" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/client/src/lib/log4j" recursive="false" type="SOURCES" />

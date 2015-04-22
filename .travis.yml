@@ -1,0 +1,8 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+script:
+  - cd client
+  - mvn install -Dmaven.compiler.source1.8 -Dmaven.compiler.target1.8
