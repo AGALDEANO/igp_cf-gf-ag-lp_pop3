@@ -154,7 +154,7 @@ public class FenetrePrincipale extends JFrame {
 		);
 		panel.setLayout(gl_panel);
 		initComponents();
-		fenetreConnexion();
+		connecterServeur();
 	}
 
 	private void initComponents() {
@@ -320,7 +320,7 @@ public class FenetrePrincipale extends JFrame {
 		this.txtCci.setText("");
 		this.txtFrom.setText("");
 		this.txtObjet.setText("");
-		fenetreConnexion();
+		connecterServeur();
 	}
 }
 
