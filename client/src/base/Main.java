@@ -1,13 +1,9 @@
 package base;
 
-import base.client.impl.SmtpClient;
-import base.email.EmailHeader;
-import base.email.Header;
-import exception.ErrorResponseServerException;
-import exception.UnrespondingServerException;
+import base.client.Port;
+import base.client.impl.Pop3Client;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by alexandreg on 02/03/2015.
@@ -15,7 +11,7 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        SmtpClient smtpClient = new SmtpClient();
+        /*SmtpClient smtpClient = new SmtpClient();
         try {
             ArrayList<EmailHeader> emailHeaders = new ArrayList<>();
             emailHeaders.add(new EmailHeader(Header.FROM, "ALEXANDRE"));
@@ -28,7 +24,13 @@ public class Main {
             e.printStackTrace();
         } catch (UnrespondingServerException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        Pop3Client pop3Client = new Pop3Client();
+        pop3Client.openConnexion("localhost", Port.POP3.getValue());
+        pop3Client.signIn("laura");
+        pop3Client.getMessage(0);
+        pop3Client.getMessage(0);
 
     }
 }

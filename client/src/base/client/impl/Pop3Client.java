@@ -130,8 +130,7 @@ public class Pop3Client extends Client {
 						pop3State = null;
 					}
 					if (Pop3Action.RETR.equals(todo)) {
-						String[] firstLine = message.split(Email.getEndLine(), 2);
-						Email received = new Email(firstLine[1], Long.parseLong(firstLine[0]));
+						Email received = new Email(message);
 						setMessage(received);
 						try {
 							if (Config.getAutosave())

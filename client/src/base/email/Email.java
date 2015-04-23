@@ -43,6 +43,7 @@ public class Email {
         }
     }
 
+    @Deprecated
     public Email(String response, long id) {
         this.id = id;
         String[] splittedResponse = response.split(endHeader);
