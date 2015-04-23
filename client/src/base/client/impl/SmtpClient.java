@@ -157,6 +157,18 @@ public class SmtpClient extends Client {
         }
     }
 
+    private String getHostnameFromHost(String host) throws UnrespondingServerException {
+        String[] split = host.split(":");
+        if (split.length > 2) throw new UnrespondingServerException("Invalid hostname");
+        return split[0];
+    }
+
+    private Integer getPortFromHost(String host) throws UnrespondingServerException {
+        String[] split = host.split(":");
+        if (split.length > 2) throw new UnrespondingServerException("Invalid hostname");
+        return split.length == 2 ? Integer.parseInt(split[1]) : null;
+    }
+
     private void sendEmail(String body, ArrayList<String> hosts, EmailHeader... headers) throws ErrorResponseServerException, UnrespondingServerException {
         body = body.replaceAll("\r\n", "\n")
                 .replaceAll("\n", "\r\n")
@@ -166,7 +178,10 @@ public class SmtpClient extends Client {
         ArrayList<String> invalidTos = new ArrayList<>();
         for (String host : hosts) {
             try {
-                openConnexion(host, Port.SMTP.getValue());
+                Integer port = getPortFromHost(host);
+                host = getHostnameFromHost(host);
+                final String hostname = host;
+                openConnexion(host, port == null ? Port.SMTP.getValue() : port);
                 LinkedList<String> allTos = new LinkedList<>();
                 String value;
                 HashMap<Header, EmailHeader> emailHeaders = new HashMap<>();
@@ -190,7 +205,7 @@ public class SmtpClient extends Client {
                 ehlo(from);
                 mailfrom(from);
                 int nbTos = 0;
-                List<String> tos = allTos.stream().filter(a -> EmailUtil.validEmailAddress(a, host)).collect(Collectors.toList());
+                List<String> tos = allTos.stream().filter(a -> EmailUtil.validEmailAddress(a, hostname)).collect(Collectors.toList());
                 String last;
                 while (tos.size() > 1) {
                     last = tos.get(tos.size() - 1);

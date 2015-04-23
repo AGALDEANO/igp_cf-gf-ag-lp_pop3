@@ -19,8 +19,8 @@ public class Main {
         try {
             ArrayList<EmailHeader> emailHeaders = new ArrayList<>();
             emailHeaders.add(new EmailHeader(Header.FROM, "ALEXANDRE"));
-            emailHeaders.add(new EmailHeader(Header.TO, "laura@portable"));
-            emailHeaders.add(new EmailHeader(Header.TO, "corinne@localhost"));
+            emailHeaders.add(new EmailHeader(Header.TO, "laura@portable:1024"));
+            emailHeaders.add(new EmailHeader(Header.TO, "corinne@localhost:25"));
             emailHeaders.add(new EmailHeader(Header.SUBJECT, "Test"));
             smtpClient.sendEmail("Salut !", emailHeaders);
         } catch (ErrorResponseServerException e) {
