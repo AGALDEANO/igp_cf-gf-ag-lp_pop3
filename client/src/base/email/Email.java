@@ -19,7 +19,7 @@ public class Email {
         id = new Date().getTime();
         String[] splittedResponse = response.split(endHeader);
         String[] strHeader = splittedResponse[0].split(endLine);
-        body = splittedResponse[1].split(endFile)[0];
+        body = splittedResponse.length == 1 ? "" : splittedResponse[1].split(endFile)[0];
         if (strHeader.length > 0) {
             for (String header : strHeader) {
                 EmailHeader eh = getHeaderFromString(header);

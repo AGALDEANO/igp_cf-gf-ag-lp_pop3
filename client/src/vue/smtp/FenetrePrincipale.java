@@ -1,27 +1,17 @@
 package vue.smtp;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.Observable;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
 import base.client.impl.SmtpClient;
 import base.email.EmailHeader;
 import base.email.Header;
 import exception.ErrorResponseServerException;
 import exception.UnrespondingServerException;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Observable;
 
 public class FenetrePrincipale extends JFrame {
 
@@ -320,6 +310,7 @@ public class FenetrePrincipale extends JFrame {
 		this.txtCci.setText("");
 		this.txtFrom.setText("");
 		this.txtObjet.setText("");
+		this.message.setText("");
 		connecterServeur();
 	}
 }
