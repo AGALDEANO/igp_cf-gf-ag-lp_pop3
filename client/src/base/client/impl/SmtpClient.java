@@ -274,7 +274,10 @@ public class SmtpClient extends Client {
                 ArrayList<String> to = processHeaderValue(header.getValue());
                 tos[0].addAll(to);
                 for (String h : to) {
-                    host = h.split("@")[1];
+                    String[] split = h.split("@");
+                    if (split.length == 2) {
+                        host = split[1];
+                    } else host = "localhost";
                     if (!hosts.contains(host)) hosts.add(host);
                 }
                 headers.remove(i);
