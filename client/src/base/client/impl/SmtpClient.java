@@ -293,12 +293,15 @@ public class SmtpClient extends Client {
             }
         }
         for (String to : tos[0]) {
+            if (!to.contains("@")) to += "@localhost";
             headers.add(new EmailHeader(Header.TO, to));
         }
         for (String cc : tos[1]) {
+            if (!cc.contains("@")) cc += "@localhost";
             headers.add(new EmailHeader(Header.CC, cc));
         }
         for (String bcc : tos[2]) {
+            if (!bcc.contains("@")) bcc += "@localhost";
             headers.add(new EmailHeader(Header.BCC, bcc));
         }
         EmailHeader[] a = new EmailHeader[headers.size()];
