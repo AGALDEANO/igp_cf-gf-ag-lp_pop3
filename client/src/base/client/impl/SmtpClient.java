@@ -17,6 +17,7 @@ import util.smtp.SmtpState;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Alexandre
@@ -156,69 +157,71 @@ public class SmtpClient extends Client {
         }
     }
 
-
     private void sendEmail(String body, ArrayList<String> hosts, EmailHeader... headers) throws ErrorResponseServerException, UnrespondingServerException {
         body = body.replaceAll("\r\n", "\n")
                 .replaceAll("\n", "\r\n")
                 .replaceAll("\r\n.\r\n", "\r\n.\n");
+        ArrayList<UnrespondingServerException> errorReport = new ArrayList<>();
         String from = "";
         ArrayList<String> invalidTos = new ArrayList<>();
         for (String host : hosts) {
-            openConnexion(host, Port.SMTP.getValue());
-            LinkedList<String> tos = new LinkedList<>();
-            String value;
-            HashMap<Header, EmailHeader> emailHeaders = new HashMap<>();
-            for (EmailHeader header : headers) {
-                Header h = header.getHeader();
-                if (emailHeaders.containsKey(h)) emailHeaders.put(h,
-                        new EmailHeader(h, emailHeaders.get(h).getValue() + ", " + header.getValue()));
-                else emailHeaders.put(h, header);
-                if (Header.FROM.equals(h)) {
-                    if (from != "") throw new RuntimeException("Multiple FROM");
-                    value = header.getValue();
-                    if (EmailUtil.validEmailAddress(value)) from = value;
+            try {
+                openConnexion(host, Port.SMTP.getValue());
+                LinkedList<String> allTos = new LinkedList<>();
+                String value;
+                HashMap<Header, EmailHeader> emailHeaders = new HashMap<>();
+                for (EmailHeader header : headers) {
+                    Header h = header.getHeader();
+                    if (emailHeaders.containsKey(h)) emailHeaders.put(h,
+                            new EmailHeader(h, emailHeaders.get(h).getValue() + ", " + header.getValue()));
+                    else emailHeaders.put(h, header);
+                    if (Header.FROM.equals(h)) {
+                        if (from != "") throw new RuntimeException("Multiple FROM");
+                        value = header.getValue();
+                        if (EmailUtil.validEmailAddress(value)) from = value;
+                    }
+                    if (Header.TO.equals(h) || Header.CC.equals(h) || Header.BCC.equals(h)) {
+                        allTos.addLast(header.getValue());
+                    }
                 }
-                if (Header.TO.equals(h) || Header.CC.equals(h) || Header.BCC.equals(h)) {
-                    tos.addLast(header.getValue());
-                }
-            }
 
-            if (from == null) throw new RuntimeException("No from set");
+                if (from == null) throw new RuntimeException("No from set");
 
-            ehlo(from);
-            mailfrom(from);
-            int nbTos = 0;
-            String last;
-            while (tos.size() > 1) {
-                last = tos.getLast();
-                if (EmailUtil.validEmailAddress(last, host)) {
+                ehlo(from);
+                mailfrom(from);
+                int nbTos = 0;
+                List<String> tos = allTos.stream().filter(a -> EmailUtil.validEmailAddress(a, host)).collect(Collectors.toList());
+                String last;
+                while (tos.size() > 1) {
+                    last = tos.get(tos.size() - 1);
                     rcpt(last);
                     if (response.getSucessMessage() != null && response.getSucessMessage().contains("553"))
                         invalidTos.add(last);
                     else nbTos++;
+                    tos.remove(tos.size() - 1);
                 }
-                tos.removeLast();
-            }
 
-            if (tos.size() == 1) {
-                last = tos.getLast();
-                if (EmailUtil.validEmailAddress(last, host)) {
+                if (tos.size() == 1) {
+                    last = tos.get(tos.size() - 1);
                     lastRcpt(last);
                     if (response.getSucessMessage() != null && response.getSucessMessage().contains("553"))
                         invalidTos.add(last);
                     else nbTos++;
+                    tos.remove(tos.size() - 1);
                 }
-                tos.removeLast();
+
+                if (nbTos != 0) {
+
+                    data();
+
+                    emailHeaders.put(Header.DATE, new EmailHeader(Header.DATE, new SimpleDateFormat("MM/dd/yyyy - hh:mm:ss a").format(new Date())));
+                    emailHeaders.put(Header.MESSAGE_ID, new EmailHeader(Header.MESSAGE_ID, Long.toHexString(new Date().getTime())));
+                    sendEmailAction(body, emailHeaders.values().toArray(headers));
+                }
+                closeConnexion();
+            } catch (UnrespondingServerException e) {
+                errorReport.add(e);
             }
-
-            if (nbTos == 0) throw new RuntimeException("No to set");
-
-            data();
-
-            emailHeaders.put(Header.DATE, new EmailHeader(Header.DATE, new SimpleDateFormat("MM/dd/yyyy - hh:mm:ss a").format(new Date())));
-            emailHeaders.put(Header.MESSAGE_ID, new EmailHeader(Header.MESSAGE_ID, Long.toHexString(new Date().getTime())));
-            sendEmailAction(body, emailHeaders.values().toArray(headers));
-            closeConnexion();
         }
         exit();
         int s = invalidTos.size();
@@ -232,8 +235,14 @@ public class SmtpClient extends Client {
                 stringBuilder.append(invalidTo);
                 stringBuilder.append('\n');
             }
+            if (errorReport.size() != 0) stringBuilder.append('\n');
+            for (UnrespondingServerException e : errorReport) {
+                stringBuilder.append(e.getMessage());
+                stringBuilder.append('\n');
+            }
             throw new ErrorResponseServerException(stringBuilder.toString());
         }
+
     }
 
     public void sendEmail(String body, ArrayList<EmailHeader> headers) throws ErrorResponseServerException, UnrespondingServerException {

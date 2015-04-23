@@ -154,8 +154,8 @@ public class Server {
 			} else
 				socket = new Socket(inetAddress, port);
 		} catch (ConnectException e) {
-			throw new UnrespondingServerException(
-					"Il n'a pas été possible de se connecter au serveur !");
+			throw new UnrespondingServerException(String.format(
+					"Il n'a pas été possible de se connecter au serveur %s !", inetAddress.getHostName()));
 		}
 	}
 }
