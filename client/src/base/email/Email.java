@@ -12,7 +12,6 @@ public class Email {
     private static String headerSeparator = ": ";
     private static String endFile = "\r\n.\r\n";
     private long id;
-    private int bytes;
     private ArrayList<EmailHeader> headers = new ArrayList<>();
     private String body;
 
@@ -22,7 +21,6 @@ public class Email {
         String[] strHeader = splittedResponse[0].split(endLine);
         body = splittedResponse[1].split(endFile)[0];
         if (strHeader.length > 0) {
-            bytes = strHeader.length;
             for (String header : strHeader) {
                 EmailHeader eh = getHeaderFromString(header);
                 if (eh != null) {
@@ -50,7 +48,6 @@ public class Email {
         String[] strHeader = splittedResponse[0].split(endLine);
         body = splittedResponse[1].split(endFile)[0];
         if (strHeader.length > 0) {
-            bytes = Integer.parseInt(strHeader[0]);
             for (int i = 1; i < strHeader.length; i++) {
                 String header = strHeader[i];
                 Header h = null;
@@ -62,7 +59,6 @@ public class Email {
 
     public Email(Email e) {
         id = e.getId();
-        bytes = e.getBytes();
         body = e.getBody();
         headers = (ArrayList<EmailHeader>) e.getHeaders().clone();
     }
@@ -83,10 +79,6 @@ public class Email {
         return endFile;
     }
 
-    public int getBytes() {
-        return bytes;
-    }
-
     public long getId() {
         return id;
     }
@@ -100,8 +92,7 @@ public class Email {
     }
 
     public String headersToString() {
-        String str = Integer.toString(bytes) + "\r\n";
-        StringBuffer sb = new StringBuffer(str);
+        StringBuffer sb = new StringBuffer("");
         for (EmailHeader emailHeader : headers) {
             sb.append(emailHeader.getHeader().getLabel());
             sb.append(headerSeparator);

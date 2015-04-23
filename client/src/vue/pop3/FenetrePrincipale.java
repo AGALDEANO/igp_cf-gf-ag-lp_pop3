@@ -274,9 +274,7 @@ public class FenetrePrincipale extends JFrame {
             } else {
                 Email email = this.pop3Client.getMessage();
                 if (email != null) {
-                    this.fenetreConnecter.getChampMessage().setText(
-                            email.headersToString() + "\n" + email
-                                    .bodyToString());
+                    this.fenetreConnecter.getChampMessage().setText(email.toString());
                 }
             }
         } catch (java.lang.NumberFormatException e) {

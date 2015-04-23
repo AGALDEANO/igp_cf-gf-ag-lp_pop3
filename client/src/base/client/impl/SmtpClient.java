@@ -204,6 +204,7 @@ public class SmtpClient extends Client {
 
                 ehlo(from);
                 mailfrom(from);
+                from = "";
                 int nbTos = 0;
                 List<String> tos = allTos.stream().filter(a -> EmailUtil.validEmailAddress(a, hostname)).collect(Collectors.toList());
                 String last;
